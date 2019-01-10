@@ -1,1 +1,3 @@
-# atviras-seimas
+# Atviras seimas
+
+#### Master thesis repo
