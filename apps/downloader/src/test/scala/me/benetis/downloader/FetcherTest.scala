@@ -10,7 +10,7 @@ class FetcherTest extends FreeSpec with Matchers {
   }
 
   "save" - {
-    DataSaver()
+    DataSaver
   }
 
 }

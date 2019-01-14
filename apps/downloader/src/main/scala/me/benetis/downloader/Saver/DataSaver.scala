@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext
 object DataSaver {
 
   val config = new HikariConfig()
+  Class.forName("com.mysql.cj.jdbc.Driver")
   config.setJdbcUrl("jdbc:mysql://localhost/")
   config.setUsername("root")
   config.setPassword("not-so-sql")

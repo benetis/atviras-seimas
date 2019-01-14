@@ -2,7 +2,15 @@ lazy val commonSettings = Seq(
   organization := "me.benetis",
   version := "0.0.1-SNAPSHOT",
   scalaVersion := "2.12.8",
-  scalacOptions ++= Seq("-Ypartial-unification"),
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-encoding", "UTF-8",
+    "-language:higherKinds",
+    "-language:postfixOps",
+    "-feature",
+    "-Ypartial-unification",
+    "-Xfatal-warnings"
+  ),
   libraryDependencies ++= Seq(
     "joda-time" % "joda-time"  % "2.7",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
@@ -13,7 +21,8 @@ lazy val commonSettings = Seq(
     "org.tpolecat" %% "doobie-hikari"    % "0.6.0",
     "org.typelevel" %% "cats-core" % "1.5.0",
     "org.typelevel" %% "cats-effect" % "1.1.0",
-    "com.zaxxer" % "HikariCP" % "3.3.0"
+    "com.zaxxer" % "HikariCP" % "3.3.0",
+    "mysql" % "mysql-connector-java" % "8.0.13"
   )
 )
 
@@ -25,9 +34,9 @@ lazy val downloader = project
   .settings(
     name := "downloader",
     libraryDependencies ++= Seq(
-      "org.http4s"      %% "http4s-blaze-server" % "0.18.21",
-      "org.http4s"      %% "http4s-circe"        % "0.18.21",
-      "org.http4s"      %% "http4s-dsl"          % "0.18.21",
+      "org.http4s"      %% "http4s-blaze-server" % "0.20.0-M4",
+      "org.http4s"      %% "http4s-circe"        % "0.20.0-M4",
+      "org.http4s"      %% "http4s-dsl"          % "0.20.0-M4",
       "com.softwaremill.sttp" %% "core" % "1.5.2",
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
