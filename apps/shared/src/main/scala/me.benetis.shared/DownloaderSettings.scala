@@ -1,5 +1,6 @@
 package me.benetis.shared
 
+import io.getquill.Embedded
 import org.joda.time.DateTime
 
 sealed trait DownloaderSettings
@@ -76,5 +77,11 @@ case class Session(id: SessionId,
                    from: SessionTimeFrom,
                    to: SessionTimeTo)
 
-case class TermOfOfficeId(value: String)
-case class TermOfOffice(id: TermOfOfficeId)
+case class TermOfOfficeId(id: String) extends Embedded
+case class TermOfOfficeName(name: String) extends Embedded
+case class TermOfOfficeDateFrom(dateFrom: DateTime) extends Embedded
+case class TermOfOfficeDateTo(dateTo: DateTime) extends Embedded
+case class TermOfOffice(id: TermOfOfficeId,
+                        name: TermOfOfficeName,
+                        dateFrom: TermOfOfficeDateFrom,
+                        dateTo: Option[TermOfOfficeDateTo])
