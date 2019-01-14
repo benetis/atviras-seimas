@@ -4,6 +4,10 @@ import org.joda.time.DateTime
 
 sealed trait DownloaderSettings
 
+//Dar pagalvoti ar daryt tik naujiems duomenims, gal pradzioje nedaryt
+case object FetchTermOfOffice extends DownloaderSettings
+case object FetchSessions extends DownloaderSettings
+
 case class IndividualId(value: String)
 case class IndividualName(value: String)
 case class IndividualSurname(value: String)
