@@ -18,3 +18,8 @@ case class BadDateAndNonEmptyFormat(field: String) extends DomainValidation {
 case class EmptyField(field: String) extends DomainValidation {
   override def errorMessage: String = s"Field '$field' must be non empty"
 }
+
+case class FieldIsNotAnInt(field: String) extends DomainValidation {
+  override def errorMessage: String =
+    s"Field '$field' cannot be converted to int"
+}

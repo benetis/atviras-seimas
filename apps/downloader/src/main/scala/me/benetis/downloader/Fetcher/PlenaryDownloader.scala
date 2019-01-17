@@ -2,21 +2,23 @@ package me.benetis.downloader.Fetcher
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.shared.Repository.SessionRepo
+import me.benetis.shared.Repository.{PlenaryRepo, SessionRepo}
 import me.benetis.shared._
 import scala.xml._
 
 object PlenaryDownloader extends LazyLogging {
-//  def fetchAndSave() = {
-//    fetchLogIfErrorAndSave(SessionRepo.insert, () => fetch())
-//  }
-
-  //http://apps.lrs.lt/sip/p2b.ad_seimo_posedziai?sesijos_id=107
+  def fetchAndSave() = {
+    fetchLogIfErrorAndSave(PlenaryRepo.insert, () => fetch(SessionId(107)))
+  }
 
   private def fetch(sessionId: SessionId)
     : Either[String, Seq[Either[DomainValidation, Plenary]]] = {
+
+    val sesijos_id = sessionId.session_id
+
     val request =
-      sttp.get(uri"http://apps.lrs.lt/sip/p2b.ad_seimo_sesijos?ar_visos=T")
+      sttp.get(
+        uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedziai?sesijos_id=$sesijos_id")
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -42,7 +44,7 @@ object PlenaryDownloader extends LazyLogging {
       sessionId: SessionId): Either[DomainValidation, Plenary] = {
 
     for {
-      plenaryId <- node.validateNonEmpty("posėdžio_id")
+      plenaryId <- node.validateInt("posėdžio_id")
       number <- node.validateNonEmpty("numeris")
       plenaryType <- node.validateNonEmpty("tipas")
       dateStart <- node.validateDateTimeOrEmpty("pradžia")

@@ -2,9 +2,14 @@ package me.benetis.downloader
 
 import com.typesafe.scalalogging.LazyLogging
 import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import scala.util.Try
 import scala.xml.Node
 
 package object Fetcher extends LazyLogging {
+
+  val formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")
+
   implicit class nodeExt(val o: Node) extends AnyVal {
     private def tagText(tag: String): String = (o \ s"@$tag").text
 
@@ -39,7 +44,8 @@ package object Fetcher extends LazyLogging {
 
       Either.cond(
         isValidDateOrEmpty,
-        if (dateValue.isEmpty) None else Some(new DateTime(dateValue)),
+        if (dateValue.isEmpty) None
+        else Some(formatter.parseDateTime(dateValue)),
         BadDateAndNonEmptyFormat(tag)
       )
     }
@@ -52,6 +58,20 @@ package object Fetcher extends LazyLogging {
         fieldValue,
         EmptyField(tag)
       )
+    }
+
+    def validateInt(tag: String): Either[DomainValidation, Int] = {
+      val fieldValue = tagText(tag)
+
+      val result =
+        if (Try(fieldValue.toInt).isFailure)
+          Left(FieldIsNotAnInt(tag))
+        else if (fieldValue.isEmpty)
+          Left(EmptyField(tag))
+        else
+          Right(fieldValue.toInt)
+
+      result
     }
   }
 

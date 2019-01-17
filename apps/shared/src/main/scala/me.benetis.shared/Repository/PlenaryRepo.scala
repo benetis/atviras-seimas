@@ -18,7 +18,7 @@ object PlenaryRepo {
           query[Plenary]
             .insert(e)
             .onConflictUpdate((t, e) => { //Update both time start/end
-              t.timeEnd -> e.timeEnd
+              t.timeFinish -> e.timeFinish
             }, (t, e) => t.timeStart -> e.timeStart))
     }
     ctx.run(q)

@@ -34,7 +34,7 @@ object TermOfficeDownloader {
 
   private def validate(node: Node): Either[DomainValidation, TermOfOffice] = {
     for {
-      id <- node.validateNonEmpty("kadencijos_id")
+      id <- node.validateInt("kadencijos_id")
       name <- node.validateNonEmpty("pavadinimas")
       dateFrom <- node.validateDate("data_nuo")
       dateTo <- node.validateDateOrEmpty("data_iki")

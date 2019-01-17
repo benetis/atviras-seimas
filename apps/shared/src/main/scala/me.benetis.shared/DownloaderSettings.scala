@@ -62,7 +62,7 @@ case class PlenaryQuestion(id: PlenaryQuestionId,
                            number: PlenaryQuestionNumber,
                            status: PlenaryQuestionStatus)
 
-case class PlenaryId(plenary_id: String) extends Embedded
+case class PlenaryId(plenary_id: Int) extends Embedded
 case class PlenaryNumber(number: String) extends Embedded
 case class PlenaryType(plenary_type: String) extends Embedded
 case class PlenaryTimeStart(time_start: DateTime) extends Embedded
@@ -72,10 +72,10 @@ case class Plenary(id: PlenaryId,
                    number: PlenaryNumber,
                    plenaryType: PlenaryType,
                    timeStart: Option[PlenaryTimeStart],
-                   timeEnd: Option[PlenaryTimeFinish])
+                   timeFinish: Option[PlenaryTimeFinish])
     extends Embedded
 
-case class SessionId(session_id: String) extends Embedded
+case class SessionId(session_id: Int) extends Embedded
 case class SessionName(name: String) extends Embedded
 case class SessionNumber(number: String) extends Embedded
 case class SessionDateFrom(date_from: DateTime) extends Embedded
@@ -87,7 +87,7 @@ case class Session(id: SessionId,
                    date_from: SessionDateFrom,
                    date_to: Option[SessionDateTo])
 
-case class TermOfOfficeId(term_of_office_id: String) extends Embedded
+case class TermOfOfficeId(term_of_office_id: Int) extends Embedded
 case class TermOfOfficeName(name: String) extends Embedded
 case class TermOfOfficeDateFrom(dateFrom: DateTime) extends Embedded
 case class TermOfOfficeDateTo(dateTo: DateTime) extends Embedded

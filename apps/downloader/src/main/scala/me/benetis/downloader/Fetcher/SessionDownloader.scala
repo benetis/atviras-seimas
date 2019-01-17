@@ -32,7 +32,7 @@ object SessionDownloader extends LazyLogging {
 
     termsOfOfficeWithSessions.flatMap((termNode: Node) => {
       val id =
-        termNode.validateNonEmpty("kadencijos_id").map(TermOfOfficeId)
+        termNode.validateInt("kadencijos_id").map(TermOfOfficeId)
 
       val sessions = termNode \\ "SeimoSesija"
 
@@ -49,7 +49,7 @@ object SessionDownloader extends LazyLogging {
     termOfficeIdEith match {
       case Right(termId) =>
         for {
-          sessionId <- node.validateNonEmpty("sesijos_id")
+          sessionId <- node.validateInt("sesijos_id")
           number <- node.validateNonEmpty("numeris")
           name <- node.validateNonEmpty("pavadinimas")
           dateFrom <- node.validateDate("data_nuo")
