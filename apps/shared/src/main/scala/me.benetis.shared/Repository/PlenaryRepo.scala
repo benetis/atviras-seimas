@@ -2,6 +2,7 @@ package me.benetis.shared.Repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.shared.{Plenary, Session}
+import org.joda.time.DateTime
 
 object PlenaryRepo {
 
@@ -9,6 +10,8 @@ object PlenaryRepo {
 
   import ctx._
 
+  private implicit val encodeDateTime =
+    MappedEncoding[DateTime, String](_.toString("yyyy-MM-dd HH:mm:ss"))
   private implicit val SessionInsertMeta = insertMeta[Plenary]()
 
   def insert(plenaries: Seq[Plenary]): Unit = {
