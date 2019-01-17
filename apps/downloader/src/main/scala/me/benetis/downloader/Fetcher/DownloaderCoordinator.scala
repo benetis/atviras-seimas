@@ -8,7 +8,8 @@ class DownloaderCoordinator {
     downloaderSettings match {
       case FetchTermOfOffice =>
         TermOfficeDownloader.fetchAndSave()
-      case FetchSessions => ???
+      case FetchSessions =>
+        SessionDownloader.fetchAndSave()
     }
   }
 

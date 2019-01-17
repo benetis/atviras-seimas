@@ -1,24 +1,23 @@
 package me.benetis.shared.Repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.TermOfOffice
+import me.benetis.shared.Session
 
-object TermOfOfficeRepo {
+object SessionRepo {
 
   private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")
 
   import ctx._
 
-  private implicit val personInsertMeta = insertMeta[TermOfOffice]()
+  private implicit val SessionInsertMeta = insertMeta[Session]()
 
-  def insert(terms: Seq[TermOfOffice]) = {
-    println(terms)
+  def insert(sessions: Seq[Session]): Unit = {
     val q = quote {
-      liftQuery(terms).foreach(
+      liftQuery(sessions).foreach(
         e =>
-          query[TermOfOffice]
+          query[Session]
             .insert(e)
-            .onConflictUpdate((t, e) => t.dateTo -> e.dateTo))
+            .onConflictUpdate((t, e) => t.date_to -> e.date_to))
     }
     ctx.run(q)
   }

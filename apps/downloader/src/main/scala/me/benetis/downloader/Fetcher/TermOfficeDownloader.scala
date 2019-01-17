@@ -6,24 +6,10 @@ import scala.xml._
 import cats.implicits._
 import me.benetis.shared.Repository.TermOfOfficeRepo
 
-object TermOfficeDownloader extends LazyLogging {
+object TermOfficeDownloader {
 
   def fetchAndSave(): Unit = {
-    val data = fetch()
-
-    data match {
-      case Right(list) =>
-        TermOfOfficeRepo.insert(list.collect {
-          case Right(value) => value
-        })
-
-        list.collect {
-          case Left(err) => logger.warn(err.errorMessage)
-        }
-      case Left(err) => logger.error(err)
-
-    }
-
+    fetchLogIfErrorAndSave(TermOfOfficeRepo.insert, () => fetch())
   }
 
   private def fetch()
@@ -48,10 +34,10 @@ object TermOfficeDownloader extends LazyLogging {
 
   private def validate(node: Node): Either[DomainValidation, TermOfOffice] = {
     for {
-      id <- Validators.validateNonEmpty(node.tagText("kadencijos_id"))
-      name <- Validators.validateNonEmpty(node.tagText("pavadinimas"))
-      dateFrom <- Validators.validateDate(node.tagText("data_nuo"))
-      dateTo <- Validators.validateDateOrEmpty(node.tagText("data_iki"))
+      id <- node.validateNonEmpty("kadencijos_id")
+      name <- node.validateNonEmpty("pavadinimas")
+      dateFrom <- node.validateDate("data_nuo")
+      dateTo <- node.validateDateOrEmpty("data_iki")
     } yield
       TermOfOffice(
         TermOfOfficeId(id),
