@@ -60,8 +60,8 @@ object SessionDownloader extends LazyLogging {
             termId,
             SessionNumber(number),
             SessionName(name),
-            SessionTimeFrom(dateFrom),
-            dateTo.map(SessionTimeTo)
+            SessionDateFrom(dateFrom),
+            dateTo.map(SessionDateTo)
           )
 
       case Left(err) => Left(err)

@@ -30,6 +30,20 @@ package object Fetcher extends LazyLogging {
       )
     }
 
+    def validateDateTimeOrEmpty(
+        tag: String): Either[DomainValidation, Option[DateTime]] = {
+      val dateValue = tagText(tag)
+
+      val isValidDateOrEmpty = dateValue.matches(
+        """^\d{4}-\d{2}-\d{2}\s\d{2}\:\d{2}$""") || dateValue.isEmpty
+
+      Either.cond(
+        isValidDateOrEmpty,
+        if (dateValue.isEmpty) None else Some(new DateTime(dateValue)),
+        BadDateAndNonEmptyFormat(tag)
+      )
+    }
+
     def validateNonEmpty(tag: String): Either[DomainValidation, String] = {
       val fieldValue = tagText(tag)
 

@@ -9,7 +9,7 @@ class DownloaderCoordinator {
       case FetchTermOfOffice =>
         TermOfficeDownloader.fetchAndSave()
       case FetchSessions =>
-        SessionDownloader.fetchAndSave()
+        PlenaryDownloader.fetchAndSave()
     }
   }
 
