@@ -6,8 +6,9 @@ class DownloaderCoordinator {
 
   def apply(downloaderSettings: DownloaderSettings) = {
     downloaderSettings match {
-      case FetchTermOfOffice => TermOfficeDownloader.fetch()
-      case FetchSessions     => ???
+      case FetchTermOfOffice =>
+        TermOfficeDownloader.fetchAndSave()
+      case FetchSessions => ???
     }
   }
 

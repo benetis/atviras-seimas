@@ -21,7 +21,9 @@ lazy val commonSettings = Seq(
     "org.typelevel" %% "cats-effect" % "1.1.0",
     "mysql" % "mysql-connector-java" % "5.1.38",
     "io.getquill" %% "quill-jdbc" % "2.6.0",
-    "io.getquill" %% "quill-core" % "2.6.0"
+    "io.getquill" %% "quill-core" % "2.6.0",
+    "io.getquill" %% "quill-async" % "2.6.0",
+    "io.getquill" %% "quill-async-mysql" % "2.6.0"
   )
 )
 
@@ -37,6 +39,7 @@ lazy val downloader = project
       "org.http4s"      %% "http4s-circe"        % "0.20.0-M4",
       "org.http4s"      %% "http4s-dsl"          % "0.20.0-M4",
       "com.softwaremill.sttp" %% "core" % "1.5.2",
+      "org.scala-lang.modules" %% "scala-xml" % "1.1.1"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")

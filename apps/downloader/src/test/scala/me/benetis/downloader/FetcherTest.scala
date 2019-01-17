@@ -1,16 +1,16 @@
 package me.benetis.downloader
 
 import me.benetis.downloader.Fetcher.TermOfficeDownloader
-import me.benetis.downloader.Repository.TermOfOfficeRepo
+import me.benetis.shared.Repository.TermOfOfficeRepo
 import org.scalatest._
 
 class FetcherTest extends FreeSpec with Matchers {
   "test" - {
-    TermOfficeDownloader.fetch() should be(())
+    TermOfficeDownloader.fetchAndSave() should be(())
   }
 
-  "save" - {
-    TermOfOfficeRepo
-  }
+//  "save" - {
+//    TermOfOfficeRepo
+//  }
 
 }
