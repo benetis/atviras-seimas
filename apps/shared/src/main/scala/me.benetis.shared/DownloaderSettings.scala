@@ -46,21 +46,31 @@ case class VoteResults(voteId: VoteId,
                        voteAbstained: VoteAbstained,
                        voteComment: VoteComment)
 
-case class PlenaryQuestionId(value: String)
-case class PlenaryQuestionTitle(value: String)
-case class PlenaryQuestionTimeFrom(value: DateTime)
-case class PlenaryQuestionNumber(value: String)
+case class PlenaryQuestionId(plenary_question_id: Int) extends Embedded
+case class PlenaryQuestionGroupId(plenary_question_group_id: String)
+    extends Embedded
+case class PlenaryQuestionTitle(title: String) extends Embedded
+case class PlenaryQuestionTimeFrom(time_from: DateTime) extends Embedded
+case class PlenaryQuestionTimeTo(time_to: DateTime) extends Embedded
+case class PlenaryQuestionNumber(number: String) extends Embedded
+case class PlenaryQuestionDocumentLink(document_link: String) extends Embedded
+case class PlenaryQuestionSpeakers(speakers: Vector[String]) extends Embedded
 
-sealed trait PlenaryQuestionStatus
+sealed trait PlenaryQuestionStatus extends Embedded
 case object Admission extends PlenaryQuestionStatus
 case object Discussion extends PlenaryQuestionStatus
-case object Approval extends PlenaryQuestionStatus
+case object Affirmation extends PlenaryQuestionStatus
+case object Presentation extends PlenaryQuestionStatus
 
 case class PlenaryQuestion(id: PlenaryQuestionId,
+                           groupId: PlenaryQuestionGroupId,
                            title: PlenaryQuestionTitle,
-                           timeFrom: PlenaryQuestionTimeFrom,
-                           number: PlenaryQuestionNumber,
-                           status: PlenaryQuestionStatus)
+                           timeFrom: Option[PlenaryQuestionTimeFrom],
+                           timeTo: Option[PlenaryQuestionTimeTo],
+                           status: PlenaryQuestionStatus,
+                           documentLink: PlenaryQuestionDocumentLink,
+                           speakers: PlenaryQuestionSpeakers,
+                           number: PlenaryQuestionNumber)
 
 case class PlenaryId(plenary_id: Int) extends Embedded
 case class PlenaryNumber(number: String) extends Embedded

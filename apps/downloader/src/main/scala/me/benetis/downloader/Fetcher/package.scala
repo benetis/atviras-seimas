@@ -9,9 +9,10 @@ import scala.xml.Node
 package object Fetcher extends LazyLogging {
 
   val formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")
+  val formatterTime = DateTimeFormat.forPattern("HH:mm")
 
   implicit class nodeExt(val o: Node) extends AnyVal {
-    private def tagText(tag: String): String = (o \ s"@$tag").text
+    def tagText(tag: String): String = (o \ s"@$tag").text
 
     def validateDate(tag: String): Either[DomainValidation, DateTime] = {
       val dateValue = tagText(tag)
@@ -46,6 +47,20 @@ package object Fetcher extends LazyLogging {
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
         else Some(formatter.parseDateTime(dateValue)),
+        BadDateAndNonEmptyFormat(tag)
+      )
+    }
+
+    def validateTimeOrEmpty(
+        tag: String): Either[DomainValidation, Option[DateTime]] = {
+      val dateValue = tagText(tag)
+
+      val isValidDateOrEmpty = dateValue.matches("""^\d{2}\:\d{2}$""") || dateValue.isEmpty
+
+      Either.cond(
+        isValidDateOrEmpty,
+        if (dateValue.isEmpty) None
+        else Some(formatterTime.parseDateTime(dateValue)),
         BadDateAndNonEmptyFormat(tag)
       )
     }

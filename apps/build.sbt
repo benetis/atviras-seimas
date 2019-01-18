@@ -3,12 +3,12 @@ lazy val commonSettings = Seq(
   version := "0.0.1-SNAPSHOT",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
+    "-Ypartial-unification",
     "-deprecation",
     "-encoding", "UTF-8",
     "-language:higherKinds",
     "-language:postfixOps",
     "-feature",
-    "-Ypartial-unification",
     "-Xfatal-warnings"
   ),
   libraryDependencies ++= Seq(

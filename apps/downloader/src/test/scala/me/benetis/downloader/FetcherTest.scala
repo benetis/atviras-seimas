@@ -2,6 +2,7 @@ package me.benetis.downloader
 
 import me.benetis.downloader.Fetcher.{
   PlenaryDownloader,
+  PlenaryQuestionDownloader,
   SessionDownloader,
   TermOfficeDownloader
 }
@@ -12,7 +13,7 @@ class FetcherTest extends FreeSpec with Matchers {
   "test" - {
 //    TermOfficeDownloader.fetchAndSave() should be(())
 //    SessionDownloader.fetchAndSave() should be(())
-    PlenaryDownloader.fetchAndSave() should be(())
+    PlenaryQuestionDownloader.fetchAndSave() should be(())
   }
 
 //  "save" - {
