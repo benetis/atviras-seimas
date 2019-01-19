@@ -9,6 +9,11 @@ sealed trait DownloaderSettings
 case object FetchTermOfOffice extends DownloaderSettings
 case object FetchSessions extends DownloaderSettings
 
+case class FactionId(faction_id: Int) extends Embedded
+case class FactionName(name: String) extends Embedded
+case class FactionAcronym(acronym: String) extends Embedded
+case class Faction(id: FactionId, name: FactionName, acronym: FactionAcronym)
+
 case class IndividualId(value: String)
 case class IndividualName(value: String)
 case class IndividualSurname(value: String)
