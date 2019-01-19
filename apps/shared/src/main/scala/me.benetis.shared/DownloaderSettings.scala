@@ -62,7 +62,7 @@ case class PlenaryQuestionDocumentLink(document_link: String) extends Embedded
 case class PlenaryQuestionSpeakers(speakers: Vector[String]) extends Embedded
 
 sealed trait PlenaryQuestionStatus extends Embedded
-case object Admission extends PlenaryQuestionStatus
+case object Adtoption extends PlenaryQuestionStatus
 case object Discussion extends PlenaryQuestionStatus
 case object Affirmation extends PlenaryQuestionStatus
 case object Presentation extends PlenaryQuestionStatus

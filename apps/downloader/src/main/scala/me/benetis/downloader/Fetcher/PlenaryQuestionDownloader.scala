@@ -61,7 +61,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
   private def statusDecoder(status: String): PlenaryQuestionStatus = {
     status match {
       case "Tvirtinimas" => Affirmation
-      case "Priėmimas"   => Admission
+      case "Priėmimas"   => Adtoption
       case "Svarstymas"  => Discussion
       case "Pateikimas"  => Presentation
       case _ =>
