@@ -101,7 +101,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
       } yield
         PlenaryQuestion(
           PlenaryQuestionId(questionId),
-          PlenaryQuestionGroupId(s"${plenaryId.plenary_id}-$number"),
+          PlenaryQuestionGroupId(s"${plenaryId.plenary_id}/$number"),
           PlenaryQuestionTitle(title),
           timeFrom.map(PlenaryQuestionTimeFrom),
           timeTo.map(PlenaryQuestionTimeTo),

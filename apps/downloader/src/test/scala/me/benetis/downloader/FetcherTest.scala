@@ -15,7 +15,8 @@ class FetcherTest extends FreeSpec with Matchers {
   "test" - {
 //    TermOfficeDownloader.fetchAndSave() should be(())
 //    SessionDownloader.fetchAndSave() should be(())
-//    PlenaryQuestionDownloader.fetchAndSave() should be(())
+    PlenaryQuestionDownloader.fetchAndSave() should be(())
+//    PlenaryDownloader.fetchAndSave() should be(())
     VoteDownloader.fetchAndSave() should be(())
   }
 

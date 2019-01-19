@@ -2,7 +2,6 @@ package me.benetis.shared.Repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.shared.{DateTimeOnlyDate, TermOfOffice}
-import org.joda.time.DateTime
 
 object TermOfOfficeRepo {
 
@@ -16,7 +15,6 @@ object TermOfOfficeRepo {
   private implicit val personInsertMeta = insertMeta[TermOfOffice]()
 
   def insert(terms: Seq[TermOfOffice]) = {
-    println(terms)
     val q = quote {
       liftQuery(terms).foreach(
         e =>
@@ -26,19 +24,5 @@ object TermOfOfficeRepo {
     }
     ctx.run(q)
   }
-
-//  private def printList() = {
-//    val q = quote {
-//      for {
-//        p <- query[TermOfOffice]
-//      } yield {
-//        p.name
-//      }
-//    }
-//
-//    val res: List[TermOfOfficeName] = ctx.run(q)
-//
-//    res.foreach(println)
-//  }
 
 }

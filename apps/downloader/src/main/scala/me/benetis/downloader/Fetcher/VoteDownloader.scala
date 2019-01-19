@@ -53,6 +53,10 @@ object VoteDownloader extends LazyLogging {
     }
   }
 
+  private def votePersonId(id: VoteId, i: PersonId): VotePersonId = {
+    VotePersonId(s"${id.vote_id}/${i.person_id}")
+  }
+
   private def validate(generalVoteResultNode: Node,
                        individualVoteNode: Node,
                        voteId: VoteId): Either[DomainValidation, Vote] = {
@@ -75,6 +79,7 @@ object VoteDownloader extends LazyLogging {
     } yield
       Vote(
         voteId,
+        votePersonId(voteId, PersonId(personId)),
         VoteTime(voteTime),
         VoteTotal(voteTotal),
         VoteTotalMax(voteTotalMax),
