@@ -1,6 +1,7 @@
 package me.benetis.downloader
 
 import com.typesafe.scalalogging.LazyLogging
+import me.benetis.shared.DateTimeOnlyDate
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
@@ -42,11 +43,12 @@ package object Fetcher extends LazyLogging {
   implicit class nodeExt(val o: Node) extends AnyVal {
     def tagText(tag: String): String = (o \ s"@$tag").text
 
-    def validateDate(tag: String): Either[DomainValidation, DateTime] = {
+    def validateDate(
+        tag: String): Either[DomainValidation, DateTimeOnlyDate] = {
       val dateValue = tagText(tag)
       Either.cond(
         dateValue.matches("""^\d{4}-\d{2}-\d{2}$"""),
-        new DateTime(dateValue),
+        DateTimeOnlyDate(new DateTime(dateValue)),
         BadDateFormat(tag)
       )
     }
@@ -63,14 +65,15 @@ package object Fetcher extends LazyLogging {
     }
 
     def validateDateOrEmpty(
-        tag: String): Either[DomainValidation, Option[DateTime]] = {
+        tag: String): Either[DomainValidation, Option[DateTimeOnlyDate]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches("""^\d{4}-\d{2}-\d{2}$""") || dateValue.isEmpty
 
       Either.cond(
         isValidDateOrEmpty,
-        if (dateValue.isEmpty) None else Some(new DateTime(dateValue)),
+        if (dateValue.isEmpty) None
+        else Some(DateTimeOnlyDate(new DateTime(dateValue))),
         BadDateAndNonEmptyFormat(tag)
       )
     }

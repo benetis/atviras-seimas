@@ -91,8 +91,8 @@ case class Plenary(id: PlenaryId,
 case class SessionId(session_id: Int) extends Embedded
 case class SessionName(name: String) extends Embedded
 case class SessionNumber(number: String) extends Embedded
-case class SessionDateFrom(date_from: DateTime) extends Embedded
-case class SessionDateTo(date_to: DateTime) extends Embedded
+case class SessionDateFrom(date_from: DateTimeOnlyDate) extends Embedded
+case class SessionDateTo(date_to: DateTimeOnlyDate) extends Embedded
 case class Session(id: SessionId,
                    termOfOfficeId: TermOfOfficeId,
                    number: SessionNumber,
@@ -102,8 +102,8 @@ case class Session(id: SessionId,
 
 case class TermOfOfficeId(term_of_office_id: Int) extends Embedded
 case class TermOfOfficeName(name: String) extends Embedded
-case class TermOfOfficeDateFrom(dateFrom: DateTime) extends Embedded
-case class TermOfOfficeDateTo(dateTo: DateTime) extends Embedded
+case class TermOfOfficeDateFrom(dateFrom: DateTimeOnlyDate) extends Embedded
+case class TermOfOfficeDateTo(dateTo: DateTimeOnlyDate) extends Embedded
 case class TermOfOffice(id: TermOfOfficeId,
                         name: TermOfOfficeName,
                         dateFrom: TermOfOfficeDateFrom,
