@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.24)
 # Database: atviras-seimas
-# Generation Time: 2019-01-19 14:59:51 +0000
+# Generation Time: 2019-01-19 15:21:27 +0000
 # ************************************************************
 
 
@@ -97,6 +97,7 @@ CREATE TABLE `term_of_office` (
 # ------------------------------------------------------------
 
 CREATE TABLE `vote` (
+  `vote_person_id` varchar(255) NOT NULL,
   `time` datetime NOT NULL,
   `vote_total` int(11) NOT NULL,
   `vote_total_max` int(11) NOT NULL,
@@ -105,11 +106,12 @@ CREATE TABLE `vote` (
   `vote_abstained` int(11) NOT NULL,
   `comment` text,
   `person_id` int(11) NOT NULL,
-  `faction_acronym` varchar(255) NOT NULL DEFAULT '',
+  `faction_acronym` varchar(255) DEFAULT '',
   `vote` int(11) NOT NULL,
   `person_name` varchar(255) NOT NULL DEFAULT '',
   `person_surname` varchar(255) NOT NULL DEFAULT '',
-  `vote_id` int(11) NOT NULL
+  `vote_id` int(11) NOT NULL,
+  PRIMARY KEY (`vote_person_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
