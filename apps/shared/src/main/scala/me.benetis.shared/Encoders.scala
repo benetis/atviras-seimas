@@ -16,4 +16,13 @@ object Encoders {
     plenaryQuestionSpeakers.speakers.mkString("/")
   }
 
+  def voteSerializer(singleVote: SingleVote): Int = {
+    singleVote match {
+      case SingleVoteAbstain => 0
+      case SingleVoteFor     => 1
+      case SingleVoteAgainst => 2
+      case DidntVote         => 3
+    }
+  }
+
 }

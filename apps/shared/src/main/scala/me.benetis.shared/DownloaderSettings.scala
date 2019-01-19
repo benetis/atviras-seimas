@@ -11,45 +11,43 @@ case object FetchSessions extends DownloaderSettings
 
 case class FactionId(faction_id: Int) extends Embedded
 case class FactionName(name: String) extends Embedded
-case class FactionAcronym(acronym: String) extends Embedded
+case class FactionAcronym(faction_acronym: String) extends Embedded
 case class Faction(id: FactionId, name: FactionName, acronym: FactionAcronym)
 
-case class IndividualId(value: String)
-case class IndividualName(value: String)
-case class IndividualSurname(value: String)
-case class IndividualFraction(value: String)
+case class PersonId(person_id: Int) extends Embedded
+case class PersonName(person_name: String) extends Embedded
+case class PersonSurname(person_surname: String) extends Embedded
 
-sealed trait SingleVote
-case object VoteFor extends SingleVote
-case object VoteAgainst extends SingleVote
-case object VoteAbstain extends SingleVote
+sealed trait SingleVote extends Embedded
+case object SingleVoteFor extends SingleVote
+case object SingleVoteAgainst extends SingleVote
+case object SingleVoteAbstain extends SingleVote
 case object DidntVote extends SingleVote
 
-case class SingleVoteResult(
-    individualId: IndividualId,
-    name: IndividualName,
-    surname: IndividualSurname,
-    fraction: IndividualFraction,
+case class VoteTime(time: DateTime) extends Embedded
+case class VoteTotal(vote_total: Int) extends Embedded
+case class VoteTotalMax(vote_total_max: Int) extends Embedded
+case class VoteFor(vote_for: Int) extends Embedded
+case class VoteAgainst(vote_against: Int) extends Embedded
+case class VoteAbstained(vote_abstained: Int) extends Embedded
+case class VoteComment(comment: String) extends Embedded
+case class VoteId(vote_id: Int) extends Embedded
+
+case class Vote(
+    id: VoteId,
+    time: VoteTime,
+    voteTotal: VoteTotal,
+    voteTotalMax: VoteTotalMax,
+    voteFor: VoteFor,
+    voteAgainst: VoteAgainst,
+    voteAbstained: VoteAbstained,
+    comment: VoteComment,
+    personId: PersonId,
+    name: PersonName,
+    surname: PersonSurname,
+    faction: FactionAcronym,
     vote: SingleVote
 )
-
-case class VoteTime(value: DateTime)
-case class VoteTotal(value: Int)
-case class VoteTotalMax(value: Int)
-case class VoteFor(value: Int)
-case class VoteAgainst(value: Int)
-case class VoteAbstained(value: Int)
-case class VoteComment(value: String)
-case class VoteId(value: String)
-
-case class VoteResults(voteId: VoteId,
-                       voteTime: VoteTime,
-                       voteTotal: VoteTotal,
-                       voteTotalMax: VoteTotalMax,
-                       voteFor: VoteFor,
-                       voteAgainst: VoteAgainst,
-                       voteAbstained: VoteAbstained,
-                       voteComment: VoteComment)
 
 case class PlenaryQuestionId(plenary_question_id: Int) extends Embedded
 case class PlenaryQuestionGroupId(plenary_question_group_id: String)

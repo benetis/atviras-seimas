@@ -6,10 +6,38 @@ import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
 import scala.xml.Node
 
+sealed trait CustomDateFormat
+case object DateTimeWithoutSeconds extends CustomDateFormat
+case object DateTimeNormal extends CustomDateFormat
+
 package object Fetcher extends LazyLogging {
 
-  val formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")
-  val formatterTime = DateTimeFormat.forPattern("HH:mm")
+  val formatterDateTimeWithoutSeconds =
+    DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")
+  val formatterTimeWithoutSeconds = DateTimeFormat.forPattern("HH:mm")
+
+  val formatterDateTime =
+    DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss")
+
+  private def formatterForDateFormat(
+      customDateFormat: CustomDateFormat): DateTimeFormatter = {
+    customDateFormat match {
+      case DateTimeWithoutSeconds => formatterDateTimeWithoutSeconds
+      case DateTimeNormal         => formatterDateTime
+    }
+  }
+
+  private def validationFuncForDateFormat(
+      customDateFormat: CustomDateFormat): String => Boolean = {
+    customDateFormat match {
+      case DateTimeWithoutSeconds =>
+        (dateValue: String) =>
+          dateValue.matches("""^\d{4}-\d{2}-\d{2}\s\d{2}\:\d{2}$""")
+      case DateTimeNormal =>
+        (dateValue: String) =>
+          dateValue.matches("""^\d{4}-\d{2}-\d{2}\s\d{2}\:\d{2}\:\d{2}$""")
+    }
+  }
 
   implicit class nodeExt(val o: Node) extends AnyVal {
     def tagText(tag: String): String = (o \ s"@$tag").text
@@ -19,6 +47,17 @@ package object Fetcher extends LazyLogging {
       Either.cond(
         dateValue.matches("""^\d{4}-\d{2}-\d{2}$"""),
         new DateTime(dateValue),
+        BadDateFormat(tag)
+      )
+    }
+
+    def validateDateTime(tag: String, customDateFormat: CustomDateFormat)
+      : Either[DomainValidation, DateTime] = {
+
+      val dateValue = tagText(tag)
+      Either.cond(
+        validationFuncForDateFormat(customDateFormat)(dateValue),
+        formatterForDateFormat(customDateFormat).parseDateTime(dateValue),
         BadDateFormat(tag)
       )
     }
@@ -46,7 +85,7 @@ package object Fetcher extends LazyLogging {
       Either.cond(
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
-        else Some(formatter.parseDateTime(dateValue)),
+        else Some(formatterDateTimeWithoutSeconds.parseDateTime(dateValue)),
         BadDateAndNonEmptyFormat(tag)
       )
     }
@@ -60,7 +99,7 @@ package object Fetcher extends LazyLogging {
       Either.cond(
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
-        else Some(formatterTime.parseDateTime(dateValue)),
+        else Some(formatterTimeWithoutSeconds.parseDateTime(dateValue)),
         BadDateAndNonEmptyFormat(tag)
       )
     }

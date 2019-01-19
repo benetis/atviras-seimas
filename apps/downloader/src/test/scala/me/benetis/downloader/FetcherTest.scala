@@ -5,7 +5,8 @@ import me.benetis.downloader.Fetcher.{
   PlenaryDownloader,
   PlenaryQuestionDownloader,
   SessionDownloader,
-  TermOfficeDownloader
+  TermOfficeDownloader,
+  VoteDownloader
 }
 import me.benetis.shared.Repository.TermOfOfficeRepo
 import org.scalatest._
@@ -15,7 +16,7 @@ class FetcherTest extends FreeSpec with Matchers {
 //    TermOfficeDownloader.fetchAndSave() should be(())
 //    SessionDownloader.fetchAndSave() should be(())
 //    PlenaryQuestionDownloader.fetchAndSave() should be(())
-    FactionDownloader.fetchAndSave() should be(())
+    VoteDownloader.fetchAndSave() should be(())
   }
 
 //  "save" - {

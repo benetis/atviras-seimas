@@ -21,18 +21,16 @@ object FactionRepo {
     ctx.run(q)
   }
 
-//  private def printList() = {
-//    val q = quote {
-//      for {
-//        p <- query[TermOfOffice]
-//      } yield {
-//        p.name
-//      }
-//    }
-//
-//    val res: List[TermOfOfficeName] = ctx.run(q)
-//
-//    res.foreach(println)
-//  }
+  def list(): Vector[Faction] = {
+    val q = quote {
+      for {
+        p <- query[Faction]
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q).toVector
+  }
 
 }
