@@ -10,10 +10,8 @@ object PlenaryQuestionRepo {
 
   import ctx._
 
-  implicit val decodeDateTime =
-    MappedEncoding[String, DateTime](new DateTime(_))
   private implicit val encodeDateTime =
-    MappedEncoding[DateTime, String](_.toString("HH:mm:ss"))
+    MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
 
   implicit val PlenaryQuestionStatus =
     MappedEncoding[PlenaryQuestionStatus, Int](
@@ -37,19 +35,5 @@ object PlenaryQuestionRepo {
     }
     ctx.run(q)
   }
-
-//  private def printList() = {
-//    val q = quote {
-//      for {
-//        p <- query[TermOfOffice]
-//      } yield {
-//        p.name
-//      }
-//    }
-//
-//    val res: List[TermOfOfficeName] = ctx.run(q)
-//
-//    res.foreach(println)
-//  }
 
 }

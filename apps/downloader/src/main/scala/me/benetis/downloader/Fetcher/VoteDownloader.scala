@@ -68,7 +68,7 @@ object VoteDownloader extends LazyLogging {
       personId <- individualVoteNode.validateInt("asmens_id")
       personName <- individualVoteNode.validateNonEmpty("vardas")
       personLastName <- individualVoteNode.validateNonEmpty("pavardė")
-      factionAcr <- individualVoteNode.validateNonEmpty("frakcija")
+      factionAcr <- Right(individualVoteNode.tagText("frakcija"))
       vote <- Right(
         votedStringToVoted(individualVoteNode.tagText("kaip_balsavo")))
 
@@ -85,7 +85,7 @@ object VoteDownloader extends LazyLogging {
         PersonId(personId),
         PersonName(personName),
         PersonSurname(personLastName),
-        FactionAcronym(factionAcr),
+        if (factionAcr.isEmpty) None else Some(FactionAcronym(factionAcr)),
         vote
       )
 

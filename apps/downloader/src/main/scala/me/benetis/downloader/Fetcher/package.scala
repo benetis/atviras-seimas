@@ -1,7 +1,7 @@
 package me.benetis.downloader
 
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.shared.DateTimeOnlyDate
+import me.benetis.shared.{DateTimeOnlyDate, DateTimeOnlyTime}
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
@@ -94,7 +94,7 @@ package object Fetcher extends LazyLogging {
     }
 
     def validateTimeOrEmpty(
-        tag: String): Either[DomainValidation, Option[DateTime]] = {
+        tag: String): Either[DomainValidation, Option[DateTimeOnlyTime]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches("""^\d{2}\:\d{2}$""") || dateValue.isEmpty
@@ -102,7 +102,11 @@ package object Fetcher extends LazyLogging {
       Either.cond(
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
-        else Some(formatterTimeWithoutSeconds.parseDateTime(dateValue)),
+        else
+          Some(
+            DateTimeOnlyTime(
+              formatterTimeWithoutSeconds.parseDateTime(dateValue))
+          ),
         BadDateAndNonEmptyFormat(tag)
       )
     }

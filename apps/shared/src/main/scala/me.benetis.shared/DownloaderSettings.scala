@@ -45,7 +45,7 @@ case class Vote(
     personId: PersonId,
     name: PersonName,
     surname: PersonSurname,
-    faction: FactionAcronym,
+    faction: Option[FactionAcronym],
     vote: SingleVote
 )
 
@@ -53,8 +53,8 @@ case class PlenaryQuestionId(plenary_question_id: Int) extends Embedded
 case class PlenaryQuestionGroupId(plenary_question_group_id: String)
     extends Embedded
 case class PlenaryQuestionTitle(title: String) extends Embedded
-case class PlenaryQuestionTimeFrom(time_from: DateTime) extends Embedded
-case class PlenaryQuestionTimeTo(time_to: DateTime) extends Embedded
+case class PlenaryQuestionTimeFrom(time_from: DateTimeOnlyTime) extends Embedded
+case class PlenaryQuestionTimeTo(time_to: DateTimeOnlyTime) extends Embedded
 case class PlenaryQuestionNumber(number: String) extends Embedded
 case class PlenaryQuestionDocumentLink(document_link: String) extends Embedded
 case class PlenaryQuestionSpeakers(speakers: Vector[String]) extends Embedded
