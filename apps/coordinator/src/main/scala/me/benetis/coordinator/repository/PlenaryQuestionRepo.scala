@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.coordinator.utils.Encoders
+import me.benetis.coordinator.utils.SqlEncoders
 import me.benetis.shared._
 import org.joda.time.DateTime
 
@@ -16,11 +16,11 @@ object PlenaryQuestionRepo {
 
   implicit val PlenaryQuestionStatus =
     MappedEncoding[PlenaryQuestionStatus, Int](
-      Encoders.plenaryQuestionStatusSerializer)
+      SqlEncoders.plenaryQuestionStatusSerializer)
 
   implicit val PlenaryQuestionSpeakers =
     MappedEncoding[PlenaryQuestionSpeakers, String](
-      Encoders.plenaryQuestionSpeakersSerializer
+      SqlEncoders.plenaryQuestionSpeakersSerializer
     )
 
   private implicit val SessionInsertMeta = insertMeta[PlenaryQuestion]()

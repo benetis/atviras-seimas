@@ -2,7 +2,7 @@ package me.benetis.coordinator.utils
 
 import me.benetis.shared._
 
-object Encoders {
+object SqlEncoders {
   def plenaryQuestionStatusSerializer(
       plenaryQuestionStatus: PlenaryQuestionStatus): Int = {
     plenaryQuestionStatus match {
