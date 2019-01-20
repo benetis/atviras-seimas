@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import me.benetis.shared._
 import scala.xml._
 import cats.implicits._
-import me.benetis.shared.Repository.{SessionRepo, TermOfOfficeRepo}
+import me.benetis.coordinator.repository.{SessionRepo, TermOfOfficeRepo}
 
 object SessionDownloader extends LazyLogging {
   def fetchAndSave() = {

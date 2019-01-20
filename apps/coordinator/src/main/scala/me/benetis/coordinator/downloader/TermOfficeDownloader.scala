@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import me.benetis.shared._
 import scala.xml._
 import cats.implicits._
-import me.benetis.shared.Repository.TermOfOfficeRepo
+import me.benetis.coordinator.repository.TermOfOfficeRepo
 
 object TermOfficeDownloader {
 

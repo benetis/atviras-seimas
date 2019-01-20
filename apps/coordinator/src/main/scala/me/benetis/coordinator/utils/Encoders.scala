@@ -1,4 +1,6 @@
-package me.benetis.shared
+package me.benetis.coordinator.utils
+
+import me.benetis.shared._
 
 object Encoders {
   def plenaryQuestionStatusSerializer(

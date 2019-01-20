@@ -8,7 +8,7 @@ import me.benetis.coordinator.downloader.{
   TermOfficeDownloader,
   VoteDownloader
 }
-import me.benetis.shared.Repository.TermOfOfficeRepo
+import me.benetis.coordinator.repository.TermOfOfficeRepo
 import org.scalatest._
 
 class FetcherTest extends FreeSpec with Matchers {

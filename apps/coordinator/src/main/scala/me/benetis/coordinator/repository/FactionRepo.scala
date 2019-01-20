@@ -1,4 +1,4 @@
-package me.benetis.shared.Repository
+package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.shared.Faction

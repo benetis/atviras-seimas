@@ -3,7 +3,11 @@ package me.benetis.coordinator.downloader
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.DateTimeNormal
-import me.benetis.shared.Repository.{FactionRepo, PlenaryQuestionRepo, VoteRepo}
+import me.benetis.coordinator.repository.{
+  FactionRepo,
+  PlenaryQuestionRepo,
+  VoteRepo
+}
 import me.benetis.shared._
 import scala.xml._
 

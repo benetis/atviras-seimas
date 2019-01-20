@@ -1,7 +1,8 @@
-package me.benetis.shared.Repository
+package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{Encoders, Faction, SingleVote, Vote}
+import me.benetis.coordinator.utils.Encoders
+import me.benetis.shared.{Faction, SingleVote, Vote}
 import org.joda.time.DateTime
 
 object VoteRepo {

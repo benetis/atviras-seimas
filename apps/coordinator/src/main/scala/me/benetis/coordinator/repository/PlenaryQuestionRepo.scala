@@ -1,6 +1,7 @@
-package me.benetis.shared.Repository
+package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
+import me.benetis.coordinator.utils.Encoders
 import me.benetis.shared._
 import org.joda.time.DateTime
 
@@ -31,7 +32,7 @@ object PlenaryQuestionRepo {
           query[PlenaryQuestion]
             .insert(e)
             .onConflictUpdate((t, e) => t.timeFrom -> e.timeFrom,
-                              (t, e) => t.timeTo -> e.timeTo))
+                              (t, e) => t.timeTo   -> e.timeTo))
     }
     ctx.run(q)
   }
