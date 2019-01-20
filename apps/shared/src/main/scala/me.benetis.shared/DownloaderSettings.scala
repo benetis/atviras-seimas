@@ -9,6 +9,23 @@ sealed trait DownloaderSettings
 case object FetchTermOfOffice extends DownloaderSettings
 case object FetchSessions extends DownloaderSettings
 
+case class InitiatedLegislationIntervalFrom(date: DateTimeOnlyDate)
+case class InitiatedLegislationIntervalTo(date: DateTimeOnlyDate)
+case class InitiatedLegislationTotal(count_total: Int)
+case class InitiatedLegislationIndividual(count_individual: Int)
+case class InitiatedLegislationGroup(count_group: Int)
+
+case class InitiatedLegislation(
+    personId: PersonId,
+    personName: PersonName,
+    personSurname: PersonSurname,
+    legislationIntervalFrom: InitiatedLegislationIntervalFrom,
+    legislationIntervalTo: InitiatedLegislationIntervalTo,
+    countTotal: InitiatedLegislationTotal,
+    countIndividual: InitiatedLegislationIndividual,
+    countGroup: InitiatedLegislationGroup,
+)
+
 case class FactionId(faction_id: Int) extends Embedded
 case class FactionName(name: String) extends Embedded
 case class FactionAcronym(faction_acronym: String) extends Embedded
