@@ -45,6 +45,56 @@ lazy val downloader = project
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
   ).dependsOn(shared)
 
+
+val webpackResourcesBlob = Def.setting {
+  (baseDirectory in ThisProject).value / "webpack/" * "*.js"
+}
+
+val webpackDevConfigFilePath = Def.setting {
+  Some((baseDirectory in ThisProject).value / "webpack/webpack-dev.config.js")
+}
+
+val webpackProdConfigFilePath = Def.setting {
+  Some((baseDirectory in ThisProject).value / "webpack/webpack-prod.config.js")
+}
+
+lazy val frontend = project
+  .settings(commonSettings: _*)
+  .settings(
+    version in webpack := "4.28.3",
+    version in startWebpackDevServer := "3.1.2",
+    webpackDevServerExtraArgs := Seq("--watch-content-base"),
+    webpackResources := webpackResourcesBlob.value,
+    webpackConfigFile in fullOptJS := webpackProdConfigFilePath.value,
+    webpackConfigFile in fastOptJS := webpackDevConfigFilePath.value,
+    scalaJSUseMainModuleInitializer := true,
+    webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly(),
+    webpackBundlingMode in fullOptJS := BundlingMode.Application,
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "0.9.4",
+      "com.github.japgolly.scalajs-react" %%% "extra" % "1.3.1",
+      "com.github.japgolly.scalajs-react" %%% "core" % "1.3.1",
+      "com.github.japgolly.scalacss" %%% "core" % "0.5.4",
+      "com.github.japgolly.scalacss" %%% "ext-react" % "0.5.4",
+      "org.typelevel" %%% "cats-effect" % "1.0.0",
+    ),
+    npmDependencies in Compile ++= Seq(
+      "react" -> "16.5.1",
+      "react-dom" -> "16.5.1"
+    ),
+    npmDevDependencies in Compile ++= Seq(
+      "css-loader"                  -> "0.28.9",
+      "extract-text-webpack-plugin" -> "4.0.0-beta.0",
+      "html-webpack-plugin" -> "3.2.0",
+      "node-sass"                   -> "4.7.2",
+      "sass-loader"                 -> "6.0.6",
+      "style-loader"                -> "0.19.1",
+      "webpack-merge"               -> "4.1.1",
+      "file-loader"                 -> "1.1.11"
+    )
+  ).enablePlugins(ScalaJSBundlerPlugin, ScalaJSPlugin)
+
+
 lazy val shared = project
   .settings(commonSettings: _*)
   .settings(
