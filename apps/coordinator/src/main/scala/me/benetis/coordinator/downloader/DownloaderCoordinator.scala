@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import me.benetis.shared.{DownloaderSettings, FetchSessions, FetchTermOfOffice}
 

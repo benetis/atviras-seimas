@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
@@ -44,11 +44,11 @@ object PlenaryDownloader extends LazyLogging {
       sessionId: SessionId): Either[DomainValidation, Plenary] = {
 
     for {
-      plenaryId <- node.validateInt("posėdžio_id")
-      number <- node.validateNonEmpty("numeris")
+      plenaryId   <- node.validateInt("posėdžio_id")
+      number      <- node.validateNonEmpty("numeris")
       plenaryType <- node.validateNonEmpty("tipas")
-      dateStart <- node.validateDateTimeOrEmpty("pradžia")
-      dateFinish <- node.validateDateTimeOrEmpty("pabaiga")
+      dateStart   <- node.validateDateTimeOrEmpty("pradžia")
+      dateFinish  <- node.validateDateTimeOrEmpty("pabaiga")
     } yield
       Plenary(
         PlenaryId(plenaryId),

@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import org.joda.time.DateTime
 

@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.shared._
@@ -34,10 +34,10 @@ object TermOfficeDownloader {
 
   private def validate(node: Node): Either[DomainValidation, TermOfOffice] = {
     for {
-      id <- node.validateInt("kadencijos_id")
-      name <- node.validateNonEmpty("pavadinimas")
+      id       <- node.validateInt("kadencijos_id")
+      name     <- node.validateNonEmpty("pavadinimas")
       dateFrom <- node.validateDate("data_nuo")
-      dateTo <- node.validateDateOrEmpty("data_iki")
+      dateTo   <- node.validateDateOrEmpty("data_iki")
     } yield
       TermOfOffice(
         TermOfOfficeId(id),

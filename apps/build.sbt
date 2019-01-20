@@ -28,12 +28,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(downloader)
+  .aggregate(coordinator)
 
-lazy val downloader = project
+lazy val coordinator = project
   .settings(commonSettings: _*)
   .settings(
-    name := "downloader",
+    name := "coordinator",
     libraryDependencies ++= Seq(
       "org.http4s"      %% "http4s-blaze-server" % "0.20.0-M4",
       "org.http4s"      %% "http4s-circe"        % "0.20.0-M4",

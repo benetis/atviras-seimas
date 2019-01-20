@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
@@ -88,15 +88,15 @@ object PlenaryQuestionDownloader extends LazyLogging {
           })
 
       for {
-        number <- node.validateNonEmpty("numeris")
-        title <- node.validateNonEmpty("pavadinimas")
+        number   <- node.validateNonEmpty("numeris")
+        title    <- node.validateNonEmpty("pavadinimas")
         timeFrom <- node.validateTimeOrEmpty("laikas_nuo")
-        timeTo <- node.validateTimeOrEmpty("laikas_iki")
+        timeTo   <- node.validateTimeOrEmpty("laikas_iki")
 
-        status <- questionStatusNode.validateNonEmpty("pavadinimas")
+        status     <- questionStatusNode.validateNonEmpty("pavadinimas")
         questionId <- questionStatusNode.validateInt("darbotvarkės_klausimo_id")
-        docLink <- questionStatusNode.validateNonEmpty("dokumento_nuoroda")
-        speakers <- sequence(speakersEith)
+        docLink    <- questionStatusNode.validateNonEmpty("dokumento_nuoroda")
+        speakers   <- sequence(speakersEith)
 
       } yield
         PlenaryQuestion(

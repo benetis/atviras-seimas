@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
@@ -36,8 +36,8 @@ object FactionDownloader extends LazyLogging {
 
     for {
       factionId <- node.validateInt("padalinio_id")
-      name <- node.validateNonEmpty("padalinio_pavadinimas")
-      acronym <- node.validateNonEmpty("padalinio_pavadinimo_santrumpa")
+      name      <- node.validateNonEmpty("padalinio_pavadinimas")
+      acronym   <- node.validateNonEmpty("padalinio_pavadinimo_santrumpa")
     } yield
       Faction(
         FactionId(factionId),

@@ -1,4 +1,4 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
@@ -50,10 +50,10 @@ object SessionDownloader extends LazyLogging {
       case Right(termId) =>
         for {
           sessionId <- node.validateInt("sesijos_id")
-          number <- node.validateNonEmpty("numeris")
-          name <- node.validateNonEmpty("pavadinimas")
-          dateFrom <- node.validateDate("data_nuo")
-          dateTo <- node.validateDateOrEmpty("data_iki")
+          number    <- node.validateNonEmpty("numeris")
+          name      <- node.validateNonEmpty("pavadinimas")
+          dateFrom  <- node.validateDate("data_nuo")
+          dateTo    <- node.validateDateOrEmpty("data_iki")
         } yield
           Session(
             SessionId(sessionId),

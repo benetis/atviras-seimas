@@ -1,4 +1,4 @@
-package me.benetis.downloader
+package me.benetis.coordinator
 
 import cats.effect.Sync
 import io.circe.Json

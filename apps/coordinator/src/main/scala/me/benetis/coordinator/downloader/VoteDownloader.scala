@@ -1,8 +1,8 @@
-package me.benetis.downloader.Fetcher
+package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.downloader.DateTimeNormal
+import me.benetis.coordinator.DateTimeNormal
 import me.benetis.shared.Repository.{FactionRepo, PlenaryQuestionRepo, VoteRepo}
 import me.benetis.shared._
 import scala.xml._
@@ -63,16 +63,16 @@ object VoteDownloader extends LazyLogging {
     for {
       voteTime <- generalVoteResultNode.validateDateTime("balsavimo_laikas",
                                                          DateTimeNormal)
-      voteTotal <- generalVoteResultNode.validateInt("balsavo")
-      voteTotalMax <- generalVoteResultNode.validateInt("viso")
-      voteFor <- generalVoteResultNode.validateInt("už")
-      voteAgainst <- generalVoteResultNode.validateInt("prieš")
-      voteAbstain <- generalVoteResultNode.validateInt("susilaikė")
-      comment <- Right(generalVoteResultNode.tagText("komentaras"))
-      personId <- individualVoteNode.validateInt("asmens_id")
-      personName <- individualVoteNode.validateNonEmpty("vardas")
+      voteTotal      <- generalVoteResultNode.validateInt("balsavo")
+      voteTotalMax   <- generalVoteResultNode.validateInt("viso")
+      voteFor        <- generalVoteResultNode.validateInt("už")
+      voteAgainst    <- generalVoteResultNode.validateInt("prieš")
+      voteAbstain    <- generalVoteResultNode.validateInt("susilaikė")
+      comment        <- Right(generalVoteResultNode.tagText("komentaras"))
+      personId       <- individualVoteNode.validateInt("asmens_id")
+      personName     <- individualVoteNode.validateNonEmpty("vardas")
       personLastName <- individualVoteNode.validateNonEmpty("pavardė")
-      factionAcr <- Right(individualVoteNode.tagText("frakcija"))
+      factionAcr     <- Right(individualVoteNode.tagText("frakcija"))
       vote <- Right(
         votedStringToVoted(individualVoteNode.tagText("kaip_balsavo")))
 

@@ -1,4 +1,4 @@
-package me.benetis.downloader
+package me.benetis.coordinator
 
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.shared.{DateTimeOnlyDate, DateTimeOnlyTime}
@@ -9,9 +9,9 @@ import scala.xml.Node
 
 sealed trait CustomDateFormat
 case object DateTimeWithoutSeconds extends CustomDateFormat
-case object DateTimeNormal extends CustomDateFormat
+case object DateTimeNormal         extends CustomDateFormat
 
-package object Fetcher extends LazyLogging {
+package object downloader extends LazyLogging {
 
   val formatterDateTimeWithoutSeconds =
     DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")

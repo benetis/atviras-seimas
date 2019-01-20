@@ -1,6 +1,6 @@
 package me.benetis.downloader
 
-import me.benetis.downloader.Fetcher.{
+import me.benetis.coordinator.downloader.{
   FactionDownloader,
   PlenaryDownloader,
   PlenaryQuestionDownloader,
