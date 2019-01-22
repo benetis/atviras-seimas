@@ -1,5 +1,6 @@
 package me.benetis.coordinator.downloader
 
+import cats.effect.IO
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{PlenaryRepo, SessionRepo}
@@ -7,8 +8,11 @@ import me.benetis.shared._
 import scala.xml._
 
 object PlenaryDownloader extends LazyLogging {
-  def fetchAndSave() = {
-    fetchLogIfErrorAndSave(PlenaryRepo.insert, () => fetch(SessionId(107)))
+  def fetchAndSave(sessions: Vector[Session]) = {
+    sessions.foreach(session => {
+      fetchLogIfErrorAndSave(PlenaryRepo.insert, () => fetch(session.id))
+      Thread.sleep(250)
+    })
   }
 
   private def fetch(sessionId: SessionId)

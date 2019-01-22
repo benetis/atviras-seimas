@@ -1,15 +1,25 @@
 package me.benetis.coordinator.downloader
 
-import me.benetis.shared.{DownloaderSettings, FetchSessions, FetchTermOfOffice}
+import cats.effect.IO
+import me.benetis.coordinator.repository.SessionRepo
+import me.benetis.shared.{
+  DownloaderSettings,
+  FetchPlenaries,
+  FetchSessions,
+  FetchTermOfOffice
+}
 
-class DownloaderCoordinator {
+object DownloaderCoordinator {
 
   def apply(downloaderSettings: DownloaderSettings) = {
     downloaderSettings match {
       case FetchTermOfOffice =>
         TermOfficeDownloader.fetchAndSave()
       case FetchSessions =>
-        PlenaryDownloader.fetchAndSave()
+        SessionDownloader.fetchAndSave()
+      case FetchPlenaries =>
+        val sessions = SessionRepo.list()
+        PlenaryDownloader.fetchAndSave(sessions)
     }
   }
 
