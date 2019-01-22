@@ -9,7 +9,7 @@ import me.benetis.coordinator.repository.TermOfOfficeRepo
 object TermOfficeDownloader {
 
   def fetchAndSave(): Unit = {
-    fetchLogIfErrorAndSave(TermOfOfficeRepo.insert, () => fetch())
+    fetchLogIfErrorAndSaveWithSleep(TermOfOfficeRepo.insert, () => fetch())
   }
 
   private def fetch()

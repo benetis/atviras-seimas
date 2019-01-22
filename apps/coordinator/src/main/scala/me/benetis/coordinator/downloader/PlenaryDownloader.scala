@@ -10,8 +10,8 @@ import scala.xml._
 object PlenaryDownloader extends LazyLogging {
   def fetchAndSave(sessions: Vector[Session]) = {
     sessions.foreach(session => {
-      fetchLogIfErrorAndSave(PlenaryRepo.insert, () => fetch(session.id))
-      Thread.sleep(250)
+      fetchLogIfErrorAndSaveWithSleep(PlenaryRepo.insert,
+                                      () => fetch(session.id))
     })
   }
 

@@ -9,7 +9,7 @@ import me.benetis.coordinator.repository.{SessionRepo, TermOfOfficeRepo}
 
 object SessionDownloader extends LazyLogging {
   def fetchAndSave() = {
-    fetchLogIfErrorAndSave(SessionRepo.insert, () => fetch())
+    fetchLogIfErrorAndSaveWithSleep(SessionRepo.insert, () => fetch())
   }
 
   private def fetch()

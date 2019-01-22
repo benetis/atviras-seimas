@@ -13,7 +13,8 @@ import scala.xml._
 
 object VoteDownloader extends LazyLogging {
   def fetchAndSave() = {
-    fetchLogIfErrorAndSave(VoteRepo.insert, () => fetch(VoteId(-27089)))
+    fetchLogIfErrorAndSaveWithSleep(VoteRepo.insert,
+                                    () => fetch(VoteId(-27089)))
   }
 
   private def fetch(

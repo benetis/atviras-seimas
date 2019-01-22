@@ -136,7 +136,7 @@ package object downloader extends LazyLogging {
     }
   }
 
-  def fetchLogIfErrorAndSave[T](
+  def fetchLogIfErrorAndSaveWithSleep[T](
       insertF: Seq[T] => Unit,
       fetchF: () => Either[String, Seq[Either[DomainValidation, T]]]) = {
     fetchF() match {
@@ -144,6 +144,8 @@ package object downloader extends LazyLogging {
         insertF(list.collect {
           case Right(value) => value
         })
+
+        Thread.sleep(250)
 
         list.collect {
           case Left(err) => logger.warn(err.errorMessage)

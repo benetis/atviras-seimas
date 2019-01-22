@@ -10,8 +10,8 @@ import scala.collection.immutable
 
 object PlenaryQuestionDownloader extends LazyLogging {
   def fetchAndSave() = {
-    fetchLogIfErrorAndSave(PlenaryQuestionRepo.insert,
-                           () => fetch(PlenaryId(-501109)))
+    fetchLogIfErrorAndSaveWithSleep(PlenaryQuestionRepo.insert,
+                                    () => fetch(PlenaryId(-501109)))
   }
 
   private def fetch(plenaryId: PlenaryId)

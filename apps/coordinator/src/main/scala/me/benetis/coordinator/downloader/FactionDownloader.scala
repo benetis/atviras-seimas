@@ -8,7 +8,7 @@ import scala.xml._
 
 object FactionDownloader extends LazyLogging {
   def fetchAndSave() = {
-    fetchLogIfErrorAndSave(FactionRepo.insert, () => fetch())
+    fetchLogIfErrorAndSaveWithSleep(FactionRepo.insert, () => fetch())
   }
 
   private def fetch()
