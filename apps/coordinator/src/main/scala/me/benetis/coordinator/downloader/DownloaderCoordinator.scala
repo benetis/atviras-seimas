@@ -2,12 +2,7 @@ package me.benetis.coordinator.downloader
 
 import cats.effect.IO
 import me.benetis.coordinator.repository.SessionRepo
-import me.benetis.shared.{
-  DownloaderSettings,
-  FetchPlenaries,
-  FetchSessions,
-  FetchTermOfOffice
-}
+import me.benetis.shared._
 
 object DownloaderCoordinator {
 
@@ -20,6 +15,8 @@ object DownloaderCoordinator {
       case FetchPlenaries =>
         val sessions = SessionRepo.list()
         PlenaryDownloader.fetchAndSave(sessions)
+      case FetchAgendaQuestions =>
+        AgendaQuestionDownloader.fetchAndSave()
     }
   }
 

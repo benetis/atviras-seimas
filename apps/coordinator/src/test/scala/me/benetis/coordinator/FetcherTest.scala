@@ -4,7 +4,6 @@ import me.benetis.coordinator.downloader.{
   DownloaderCoordinator,
   FactionDownloader,
   PlenaryDownloader,
-  AgendaQuestionAgendaDownloader,
   SessionDownloader,
   TermOfficeDownloader,
   VoteDownloader
