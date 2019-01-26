@@ -15,6 +15,11 @@ case class BadDateAndNonEmptyFormat(field: String) extends DomainValidation {
     s"Field $field date format is invalid and field is not empty"
 }
 
+case class BadTimeFormat(field: String) extends DomainValidation {
+  override def errorMessage: String =
+    s"Field $field time format is invalid"
+}
+
 case class EmptyField(field: String) extends DomainValidation {
   override def errorMessage: String = s"Field '$field' must be non empty"
 }

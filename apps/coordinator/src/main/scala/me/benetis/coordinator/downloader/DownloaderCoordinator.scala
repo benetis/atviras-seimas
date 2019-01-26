@@ -17,6 +17,8 @@ object DownloaderCoordinator {
         PlenaryDownloader.fetchAndSave(sessions)
       case FetchAgendaQuestions =>
         AgendaQuestionDownloader.fetchAndSave()
+      case FetchPlenaryQuestions =>
+        PlenaryQuestionDownloader.fetchAndSave()
     }
   }
 

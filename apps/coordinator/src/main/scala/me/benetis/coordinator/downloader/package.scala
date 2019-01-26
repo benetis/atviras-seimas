@@ -93,6 +93,17 @@ package object downloader extends LazyLogging {
       )
     }
 
+    def validateTime(
+        tag: String): Either[DomainValidation, DateTimeOnlyTime] = {
+      val dateValue = tagText(tag)
+
+      Either.cond(
+        dateValue.matches("""^\d{2}\:\d{2}$"""),
+        DateTimeOnlyTime(formatterTimeWithoutSeconds.parseDateTime(dateValue)),
+        BadTimeFormat(tag)
+      )
+    }
+
     def validateTimeOrEmpty(
         tag: String): Either[DomainValidation, Option[DateTimeOnlyTime]] = {
       val dateValue = tagText(tag)
@@ -123,7 +134,6 @@ package object downloader extends LazyLogging {
 
     def validateInt(tag: String): Either[DomainValidation, Int] = {
       val fieldValue = tagText(tag)
-
       val result =
         if (Try(fieldValue.toInt).isFailure)
           Left(FieldIsNotAnInt(tag))

@@ -9,7 +9,11 @@ import me.benetis.coordinator.downloader.{
   VoteDownloader
 }
 import me.benetis.coordinator.repository.TermOfOfficeRepo
-import me.benetis.shared.{FetchPlenaries, FetchAgendaQuestions}
+import me.benetis.shared.{
+  FetchAgendaQuestions,
+  FetchPlenaries,
+  FetchPlenaryQuestions
+}
 import org.scalatest._
 
 class FetcherTest extends FreeSpec with Matchers {
@@ -19,7 +23,7 @@ class FetcherTest extends FreeSpec with Matchers {
 //    AgendaQuestionAgendaDownloader.fetchAndSave() should be(())
 //    PlenaryDownloader.fetchAndSave() should be(())
 //    VoteDownloader.fetchAndSave() should be(())
-    DownloaderCoordinator(FetchAgendaQuestions)
+    DownloaderCoordinator(FetchPlenaryQuestions)
 
   }
 

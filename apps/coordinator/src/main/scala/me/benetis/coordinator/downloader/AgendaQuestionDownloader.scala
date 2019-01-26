@@ -2,7 +2,11 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.{AgendaQuestionRepo, PlenaryRepo}
+import me.benetis.coordinator.repository.{
+  AgendaQuestionRepo,
+  PlenaryQuestionRepo,
+  PlenaryRepo
+}
 import me.benetis.shared._
 import scala.xml._
 import cats._

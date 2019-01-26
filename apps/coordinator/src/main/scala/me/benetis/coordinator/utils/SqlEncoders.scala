@@ -13,6 +13,16 @@ object SqlEncoders {
     }
   }
 
+  def plenaryQuestionStatusSerializer(
+      PlenaryQuestionStatus: PlenaryQuestionStatus): Int = {
+    PlenaryQuestionStatus match {
+      case PlenaryQuestionAdoption     => 0
+      case PlenaryQuestionDiscussion   => 1
+      case PlenaryQuestionAffirmation  => 2
+      case PlenaryQuestionPresentation => 3
+    }
+  }
+
   def AgendaQuestionSpeakersSerializer(
       AgendaQuestionSpeakers: AgendaQuestionSpeakers): String = {
     AgendaQuestionSpeakers.speakers.mkString("/")
