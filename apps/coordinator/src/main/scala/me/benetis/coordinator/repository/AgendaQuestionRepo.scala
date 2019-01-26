@@ -5,7 +5,7 @@ import me.benetis.coordinator.utils.SqlEncoders
 import me.benetis.shared._
 import org.joda.time.DateTime
 
-object PlenaryQuestionRepo {
+object AgendaQuestionRepo {
 
   private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")
 
@@ -14,22 +14,22 @@ object PlenaryQuestionRepo {
   private implicit val encodeDateTime =
     MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
 
-  implicit val PlenaryQuestionStatus =
-    MappedEncoding[PlenaryQuestionStatus, Int](
-      SqlEncoders.plenaryQuestionStatusSerializer)
+  implicit val AgendaQuestionStatus =
+    MappedEncoding[AgendaQuestionStatus, Int](
+      SqlEncoders.AgendaQuestionStatusSerializer)
 
-  implicit val PlenaryQuestionSpeakers =
-    MappedEncoding[PlenaryQuestionSpeakers, String](
-      SqlEncoders.plenaryQuestionSpeakersSerializer
+  implicit val AgendaQuestionSpeakers =
+    MappedEncoding[AgendaQuestionSpeakers, String](
+      SqlEncoders.AgendaQuestionSpeakersSerializer
     )
 
-  private implicit val SessionInsertMeta = insertMeta[PlenaryQuestion]()
+  private implicit val SessionInsertMeta = insertMeta[AgendaQuestion]()
 
-  def insert(sessions: Seq[PlenaryQuestion]): Unit = {
+  def insert(sessions: Seq[AgendaQuestion]): Unit = {
     val q = quote {
       liftQuery(sessions).foreach(
         e =>
-          query[PlenaryQuestion]
+          query[AgendaQuestion]
             .insert(e)
             .onConflictUpdate((t, e) => t.timeFrom -> e.timeFrom,
                               (t, e) => t.timeTo   -> e.timeTo))

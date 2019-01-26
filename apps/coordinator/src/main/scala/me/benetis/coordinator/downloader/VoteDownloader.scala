@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.DateTimeNormal
 import me.benetis.coordinator.repository.{
   FactionRepo,
-  PlenaryQuestionRepo,
+  AgendaQuestionRepo,
   VoteRepo
 }
 import me.benetis.shared._

@@ -1,26 +1,27 @@
-package me.benetis.downloader
+package me.benetis.coordinator
 
 import me.benetis.coordinator.downloader.{
   DownloaderCoordinator,
   FactionDownloader,
   PlenaryDownloader,
-  PlenaryQuestionDownloader,
+  AgendaQuestionAgendaDownloader,
   SessionDownloader,
   TermOfficeDownloader,
   VoteDownloader
 }
 import me.benetis.coordinator.repository.TermOfOfficeRepo
-import me.benetis.shared.FetchPlenaries
+import me.benetis.shared.{FetchPlenaries, FetchAgendaQuestions}
 import org.scalatest._
 
 class FetcherTest extends FreeSpec with Matchers {
   "test" - {
 //    TermOfficeDownloader.fetchAndSave() should be(())
 //    SessionDownloader.fetchAndSave() should be(())
-//    PlenaryQuestionDownloader.fetchAndSave() should be(())
+//    AgendaQuestionAgendaDownloader.fetchAndSave() should be(())
 //    PlenaryDownloader.fetchAndSave() should be(())
 //    VoteDownloader.fetchAndSave() should be(())
-    DownloaderCoordinator(FetchPlenaries)
+    DownloaderCoordinator(FetchAgendaQuestions)
+
   }
 
 //  "save" - {

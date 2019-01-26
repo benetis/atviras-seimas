@@ -2,20 +2,20 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.{PlenaryQuestionRepo, PlenaryRepo}
+import me.benetis.coordinator.repository.{AgendaQuestionRepo, PlenaryRepo}
 import me.benetis.shared._
 import scala.xml._
 import cats._
 import scala.collection.immutable
 
-object PlenaryQuestionDownloader extends LazyLogging {
+object AgendaQuestionDownloader extends LazyLogging {
   def fetchAndSave() = {
-    fetchLogIfErrorAndSaveWithSleep(PlenaryQuestionRepo.insert,
+    fetchLogIfErrorAndSaveWithSleep(AgendaQuestionRepo.insert,
                                     () => fetch(PlenaryId(-501109)))
   }
 
   private def fetch(plenaryId: PlenaryId)
-    : Either[String, Seq[Either[DomainValidation, PlenaryQuestion]]] = {
+    : Either[String, Seq[Either[DomainValidation, AgendaQuestion]]] = {
 
     val posedzio_id = plenaryId.plenary_id
 
@@ -36,10 +36,10 @@ object PlenaryQuestionDownloader extends LazyLogging {
 
   private def parse(
       body: Elem,
-      plenaryId: PlenaryId): Seq[Either[DomainValidation, PlenaryQuestion]] = {
+      plenaryId: PlenaryId): Seq[Either[DomainValidation, AgendaQuestion]] = {
     val agendaQuestions = body \\ "SeimoInformacija" \\ "SeimoPosėdis" \\ "DarbotvarkėsKlausimas"
 
-    val result: Seq[Either[DomainValidation, Seq[PlenaryQuestion]]] =
+    val result: Seq[Either[DomainValidation, Seq[AgendaQuestion]]] =
       agendaQuestions.map((questionNode: Node) =>
         validate(questionNode, plenaryId))
 
@@ -58,10 +58,10 @@ object PlenaryQuestionDownloader extends LazyLogging {
 
   }
 
-  private def statusDecoder(status: String): PlenaryQuestionStatus = {
+  private def statusDecoder(status: String): AgendaQuestionStatus = {
     status match {
       case "Tvirtinimas" => Affirmation
-      case "Priėmimas"   => Adtoption
+      case "Priėmimas"   => Adoption
       case "Svarstymas"  => Discussion
       case "Pateikimas"  => Presentation
       case _ =>
@@ -72,7 +72,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
 
   private def validate(
       node: Node,
-      plenaryId: PlenaryId): Either[DomainValidation, Seq[PlenaryQuestion]] = {
+      plenaryId: PlenaryId): Either[DomainValidation, Seq[AgendaQuestion]] = {
 
     val questionStatuses = node \\ "KlausimoStadija"
     val questionSpeakers = node \\ "KlausimoPranešėjas"
@@ -99,16 +99,16 @@ object PlenaryQuestionDownloader extends LazyLogging {
         speakers   <- sequence(speakersEith)
 
       } yield
-        PlenaryQuestion(
-          PlenaryQuestionId(questionId),
-          PlenaryQuestionGroupId(s"${plenaryId.plenary_id}/$number"),
-          PlenaryQuestionTitle(title),
-          timeFrom.map(PlenaryQuestionTimeFrom),
-          timeTo.map(PlenaryQuestionTimeTo),
+        AgendaQuestion(
+          AgendaQuestionId(questionId),
+          AgendaQuestionGroupId(s"${plenaryId.plenary_id}/$number"),
+          AgendaQuestionTitle(title),
+          timeFrom.map(AgendaQuestionTimeFrom),
+          timeTo.map(AgendaQuestionTimeTo),
           statusDecoder(status),
-          PlenaryQuestionDocumentLink(docLink),
-          PlenaryQuestionSpeakers(speakers.toVector),
-          PlenaryQuestionNumber(number)
+          AgendaQuestionDocumentLink(docLink),
+          AgendaQuestionSpeakers(speakers.toVector),
+          AgendaQuestionNumber(number)
         )
     })
 

@@ -69,31 +69,31 @@ case class Vote(
     vote: SingleVote
 )
 
-case class PlenaryQuestionId(plenary_question_id: Int) extends Embedded
-case class PlenaryQuestionGroupId(plenary_question_group_id: String)
+case class AgendaQuestionId(plenary_question_id: Int) extends Embedded
+case class AgendaQuestionGroupId(plenary_question_group_id: String)
     extends Embedded
-case class PlenaryQuestionTitle(title: String)                  extends Embedded
-case class PlenaryQuestionTimeFrom(time_from: DateTimeOnlyTime) extends Embedded
-case class PlenaryQuestionTimeTo(time_to: DateTimeOnlyTime)     extends Embedded
-case class PlenaryQuestionNumber(number: String)                extends Embedded
-case class PlenaryQuestionDocumentLink(document_link: String)   extends Embedded
-case class PlenaryQuestionSpeakers(speakers: Vector[String])    extends Embedded
+case class AgendaQuestionTitle(title: String)                  extends Embedded
+case class AgendaQuestionTimeFrom(time_from: DateTimeOnlyTime) extends Embedded
+case class AgendaQuestionTimeTo(time_to: DateTimeOnlyTime)     extends Embedded
+case class AgendaQuestionNumber(number: String)                extends Embedded
+case class AgendaQuestionDocumentLink(document_link: String)   extends Embedded
+case class AgendaQuestionSpeakers(speakers: Vector[String])    extends Embedded
 
-sealed trait PlenaryQuestionStatus extends Embedded
-case object Adtoption              extends PlenaryQuestionStatus
-case object Discussion             extends PlenaryQuestionStatus
-case object Affirmation            extends PlenaryQuestionStatus
-case object Presentation           extends PlenaryQuestionStatus
+sealed trait AgendaQuestionStatus extends Embedded
+case object Adoption              extends AgendaQuestionStatus
+case object Discussion            extends AgendaQuestionStatus
+case object Affirmation           extends AgendaQuestionStatus
+case object Presentation          extends AgendaQuestionStatus
 
-case class PlenaryQuestion(id: PlenaryQuestionId,
-                           groupId: PlenaryQuestionGroupId,
-                           title: PlenaryQuestionTitle,
-                           timeFrom: Option[PlenaryQuestionTimeFrom],
-                           timeTo: Option[PlenaryQuestionTimeTo],
-                           status: PlenaryQuestionStatus,
-                           documentLink: PlenaryQuestionDocumentLink,
-                           speakers: PlenaryQuestionSpeakers,
-                           number: PlenaryQuestionNumber)
+case class AgendaQuestion(id: AgendaQuestionId,
+                          groupId: AgendaQuestionGroupId,
+                          title: AgendaQuestionTitle,
+                          timeFrom: Option[AgendaQuestionTimeFrom],
+                          timeTo: Option[AgendaQuestionTimeTo],
+                          status: AgendaQuestionStatus,
+                          documentLink: AgendaQuestionDocumentLink,
+                          speakers: AgendaQuestionSpeakers,
+                          number: AgendaQuestionNumber)
 
 case class PlenaryId(plenary_id: Int)               extends Embedded
 case class PlenaryNumber(number: String)            extends Embedded
