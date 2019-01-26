@@ -11,6 +11,7 @@ import me.benetis.coordinator.downloader.{
 import me.benetis.coordinator.repository.TermOfOfficeRepo
 import me.benetis.shared.{
   FetchAgendaQuestions,
+  FetchDiscussionEvents,
   FetchPlenaries,
   FetchPlenaryQuestions
 }
@@ -23,7 +24,6 @@ class FetcherTest extends FreeSpec with Matchers {
 //    AgendaQuestionAgendaDownloader.fetchAndSave() should be(())
 //    PlenaryDownloader.fetchAndSave() should be(())
 //    VoteDownloader.fetchAndSave() should be(())
-    DownloaderCoordinator(FetchPlenaryQuestions)
 
   }
 

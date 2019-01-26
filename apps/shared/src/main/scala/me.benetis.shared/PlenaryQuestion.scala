@@ -21,4 +21,5 @@ case class PlenaryQuestion(agendaQuestionId: AgendaQuestionId,
                            title: PlenaryQuestionTitle,
                            timeFrom: PlenaryQuestionTimeFrom,
                            status: PlenaryQuestionStatus,
-                           number: PlenaryQuestionNumber)
+                           number: PlenaryQuestionNumber,
+                           plenaryId: PlenaryId)

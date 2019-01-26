@@ -15,14 +15,15 @@ object PlenaryDownloader extends LazyLogging {
     })
   }
 
-  private def fetch(sessionId: SessionId)
-    : Either[String, Seq[Either[DomainValidation, Plenary]]] = {
+  private def fetch(
+      sessionId: SessionId): Either[FileOrConnectivityError,
+                                    Seq[Either[DomainValidation, Plenary]]] = {
 
     val sesijos_id = sessionId.session_id
-
+    val uri =
+      uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedziai?sesijos_id=$sesijos_id"
     val request =
-      sttp.get(
-        uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedziai?sesijos_id=$sesijos_id")
+      sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -31,7 +32,8 @@ object PlenaryDownloader extends LazyLogging {
     response match {
       case Right(body) =>
         Right(parse(scala.xml.XML.loadString(body), sessionId))
-      case Left(err) => Left(err)
+      case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
+
     }
   }
 

@@ -2,12 +2,12 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.DateTimeNormal
 import me.benetis.coordinator.repository.{
+  DiscussionEventRepo,
   FactionRepo,
-  PlenaryQuestionRepo,
   VoteRepo
 }
+import me.benetis.coordinator.utils.DateFormatters.CustomFormatDateTime
 import me.benetis.shared._
 import scala.xml._
 
@@ -17,14 +17,13 @@ object VoteDownloader extends LazyLogging {
                                     () => fetch(VoteId(-27089)))
   }
 
-  private def fetch(
-      voteId: VoteId): Either[String, Seq[Either[DomainValidation, Vote]]] = {
+  private def fetch(voteId: VoteId)
+    : Either[FileOrConnectivityError, Seq[Either[DomainValidation, Vote]]] = {
 
     val balsavimo_id = voteId.vote_id
-
-    val request =
-      sttp.get(
-        uri"http://apps.lrs.lt/sip/p2b.ad_sp_balsavimo_rezultatai?balsavimo_id=$balsavimo_id")
+    val uri =
+      uri"http://apps.lrs.lt/sip/p2b.ad_sp_balsavimo_rezultatai?balsavimo_id=$balsavimo_id"
+    val request = sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -33,7 +32,8 @@ object VoteDownloader extends LazyLogging {
     response match {
       case Right(body) =>
         Right(parse(scala.xml.XML.loadString(body), voteId))
-      case Left(err) => Left(err)
+      case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
+
     }
   }
 
@@ -67,7 +67,7 @@ object VoteDownloader extends LazyLogging {
                        voteId: VoteId): Either[DomainValidation, Vote] = {
     for {
       voteTime <- generalVoteResultNode.validateDateTime("balsavimo_laikas",
-                                                         DateTimeNormal)
+                                                         CustomFormatDateTime)
       voteTotal      <- generalVoteResultNode.validateInt("balsavo")
       voteTotalMax   <- generalVoteResultNode.validateInt("viso")
       voteFor        <- generalVoteResultNode.validateInt("už")

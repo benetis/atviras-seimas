@@ -1,8 +1,8 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.coordinator.utils.SqlEncoders
 import me.benetis.shared._
+import me.benetis.shared.serializers.DTOSerializers
 import org.joda.time.DateTime
 
 object AgendaQuestionRepo {
@@ -11,16 +11,15 @@ object AgendaQuestionRepo {
 
   import ctx._
 
-  private implicit val encodeDateTime =
-    MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   implicit val AgendaQuestionStatus =
     MappedEncoding[AgendaQuestionStatus, Int](
-      SqlEncoders.AgendaQuestionStatusSerializer)
+      DTOSerializers.AgendaQuestionStatusSerializer)
 
   implicit val AgendaQuestionSpeakers =
     MappedEncoding[AgendaQuestionSpeakers, String](
-      SqlEncoders.AgendaQuestionSpeakersSerializer
+      DTOSerializers.AgendaQuestionSpeakersSerializer
     )
 
   private implicit val SessionInsertMeta = insertMeta[AgendaQuestion]()

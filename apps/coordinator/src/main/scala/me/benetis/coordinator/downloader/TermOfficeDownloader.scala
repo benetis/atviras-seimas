@@ -12,9 +12,10 @@ object TermOfficeDownloader {
     fetchLogIfErrorAndSaveWithSleep(TermOfOfficeRepo.insert, () => fetch())
   }
 
-  private def fetch()
-    : Either[String, Seq[Either[DomainValidation, TermOfOffice]]] = {
-    val request = sttp.get(uri"http://apps.lrs.lt/sip/p2b.ad_seimo_kadencijos")
+  private def fetch(): Either[FileOrConnectivityError,
+                              Seq[Either[DomainValidation, TermOfOffice]]] = {
+    val uri     = uri"http://apps.lrs.lt/sip/p2b.ad_seimo_kadencijos"
+    val request = sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -22,7 +23,8 @@ object TermOfficeDownloader {
 
     response match {
       case Right(body) => Right(parse(scala.xml.XML.loadString(body)))
-      case Left(err)   => Left(err)
+      case Left(err)   => Left(CannotReachWebsite(uri.toString(), err))
+
     }
   }
 

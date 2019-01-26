@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{Plenary, Session}
+import me.benetis.shared.{DateTimeOnlyDate, Plenary, PlenaryId, Session}
 import org.joda.time.DateTime
 
 object PlenaryRepo {
@@ -10,8 +10,8 @@ object PlenaryRepo {
 
   import ctx._
 
-  private implicit val encodeDateTime =
-    MappedEncoding[DateTime, String](_.toString("yyyy-MM-dd HH:mm:ss"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
+
   private implicit val SessionInsertMeta = insertMeta[Plenary]()
 
   def insert(plenaries: Seq[Plenary]): Unit = {
@@ -27,18 +27,29 @@ object PlenaryRepo {
     ctx.run(q)
   }
 
-//  private def printList() = {
-//    val q = quote {
-//      for {
-//        p <- query[TermOfOffice]
-//      } yield {
-//        p.name
-//      }
-//    }
-//
-//    val res: List[TermOfOfficeName] = ctx.run(q)
-//
-//    res.foreach(println)
-//  }
+  def list(): List[Plenary] = {
+    val q = quote {
+      for {
+        p <- query[Plenary]
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q)
+  }
+
+  def findById(plenaryId: PlenaryId): Option[Plenary] = {
+    val q = quote {
+      for {
+        p <- query[Plenary].filter(
+          _.id.plenary_id == lift(plenaryId.plenary_id))
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q).headOption
+  }
 
 }

@@ -6,39 +6,9 @@ import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
 import scala.xml.Node
-
-sealed trait CustomDateFormat
-case object DateTimeWithoutSeconds extends CustomDateFormat
-case object DateTimeNormal         extends CustomDateFormat
+import me.benetis.coordinator.utils.DateFormatters._
 
 package object downloader extends LazyLogging {
-
-  val formatterDateTimeWithoutSeconds =
-    DateTimeFormat.forPattern("YYYY-MM-dd HH:mm")
-  val formatterTimeWithoutSeconds = DateTimeFormat.forPattern("HH:mm")
-
-  val formatterDateTime =
-    DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss")
-
-  private def formatterForDateFormat(
-      customDateFormat: CustomDateFormat): DateTimeFormatter = {
-    customDateFormat match {
-      case DateTimeWithoutSeconds => formatterDateTimeWithoutSeconds
-      case DateTimeNormal         => formatterDateTime
-    }
-  }
-
-  private def validationFuncForDateFormat(
-      customDateFormat: CustomDateFormat): String => Boolean = {
-    customDateFormat match {
-      case DateTimeWithoutSeconds =>
-        (dateValue: String) =>
-          dateValue.matches("""^\d{4}-\d{2}-\d{2}\s\d{2}\:\d{2}$""")
-      case DateTimeNormal =>
-        (dateValue: String) =>
-          dateValue.matches("""^\d{4}-\d{2}-\d{2}\s\d{2}\:\d{2}\:\d{2}$""")
-    }
-  }
 
   implicit class nodeExt(val o: Node) extends AnyVal {
     def tagText(tag: String): String = (o \ s"@$tag").text
@@ -93,13 +63,14 @@ package object downloader extends LazyLogging {
       )
     }
 
-    def validateTime(
-        tag: String): Either[DomainValidation, DateTimeOnlyTime] = {
+    def validateTime(tag: String, customDateFormat: CustomDateFormat)
+      : Either[DomainValidation, DateTimeOnlyTime] = {
       val dateValue = tagText(tag)
 
       Either.cond(
-        dateValue.matches("""^\d{2}\:\d{2}$"""),
-        DateTimeOnlyTime(formatterTimeWithoutSeconds.parseDateTime(dateValue)),
+        validationFuncForDateFormat(customDateFormat)(dateValue),
+        DateTimeOnlyTime(
+          formatterForDateFormat(customDateFormat).parseDateTime(dateValue)),
         BadTimeFormat(tag)
       )
     }
@@ -122,13 +93,15 @@ package object downloader extends LazyLogging {
       )
     }
 
-    def validateNonEmpty(tag: String): Either[DomainValidation, String] = {
+    def validateNonEmpty(
+        tag: String,
+        customMsg: String = ""): Either[DomainValidation, String] = {
       val fieldValue = tagText(tag)
 
       Either.cond(
         fieldValue.nonEmpty,
         fieldValue,
-        EmptyField(tag)
+        EmptyField(tag, customMsg)
       )
     }
 
@@ -144,23 +117,48 @@ package object downloader extends LazyLogging {
 
       result
     }
+
+    def validateIntOrEmpty(
+        tag: String): Either[DomainValidation, Option[Int]] = {
+      val fieldValue = tagText(tag)
+
+      if (fieldValue.isEmpty)
+        Right(None)
+      else if (Try(fieldValue.toInt).isFailure)
+        Left(FieldIsNotAnInt(tag))
+      else
+        Right(Some(fieldValue.toInt))
+
+    }
+
+    def stringOrNone(tag: String): Option[String] = {
+      val fieldValue = tagText(tag)
+
+      if (fieldValue.nonEmpty)
+        Some(fieldValue)
+      else
+        None
+
+    }
   }
 
   def fetchLogIfErrorAndSaveWithSleep[T](
       insertF: Seq[T] => Unit,
-      fetchF: () => Either[String, Seq[Either[DomainValidation, T]]]) = {
+      fetchF: () => Either[FileOrConnectivityError,
+                           Seq[Either[DomainValidation, T]]]) = {
     fetchF() match {
       case Right(list) =>
         insertF(list.collect {
           case Right(value) => value
         })
 
+        print(".")
         Thread.sleep(250)
 
         list.collect {
           case Left(err) => logger.warn(err.errorMessage)
         }
-      case Left(err) => logger.error(err)
+      case Left(err) => logger.error(err.errorMessage)
 
     }
   }

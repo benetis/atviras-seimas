@@ -11,10 +11,12 @@ object FactionDownloader extends LazyLogging {
     fetchLogIfErrorAndSaveWithSleep(FactionRepo.insert, () => fetch())
   }
 
-  private def fetch()
-    : Either[String, Seq[Either[DomainValidation, Faction]]] = {
+  private def fetch(): Either[FileOrConnectivityError,
+                              Seq[Either[DomainValidation, Faction]]] = {
+
+    val uri = uri"http://apps.lrs.lt/sip/p2b.ad_seimo_frakcijos"
     val request =
-      sttp.get(uri"http://apps.lrs.lt/sip/p2b.ad_seimo_frakcijos")
+      sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -22,7 +24,7 @@ object FactionDownloader extends LazyLogging {
 
     response match {
       case Right(body) => Right(parse(scala.xml.XML.loadString(body)))
-      case Left(err)   => Left(err)
+      case Left(err)   => Left(CannotReachWebsite(uri.toString(), err))
     }
   }
 

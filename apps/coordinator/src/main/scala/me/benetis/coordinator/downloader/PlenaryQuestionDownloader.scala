@@ -2,7 +2,11 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.PlenaryQuestionRepo
+import me.benetis.coordinator.repository.{
+  DiscussionEventRepo,
+  PlenaryQuestionRepo
+}
+import me.benetis.coordinator.utils.DateFormatters.CustomFormatDateTimeWithoutSeconds
 import me.benetis.shared._
 import scala.xml._
 
@@ -13,13 +17,14 @@ object PlenaryQuestionDownloader extends LazyLogging {
   }
 
   private def fetch(plenaryId: PlenaryId)
-    : Either[String, Seq[Either[DomainValidation, PlenaryQuestion]]] = {
+    : Either[FileOrConnectivityError,
+             Seq[Either[DomainValidation, PlenaryQuestion]]] = {
 
     val posedzio_id = plenaryId.plenary_id
-
+    val uri =
+      uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedzio_eiga?posedzio_id=$posedzio_id"
     val request =
-      sttp.get(
-        uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedzio_eiga?posedzio_id=$posedzio_id")
+      sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -28,7 +33,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
     response match {
       case Right(body) =>
         Right(parse(scala.xml.XML.loadString(body), plenaryId))
-      case Left(err) => Left(err)
+      case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
     }
   }
 
@@ -57,9 +62,10 @@ object PlenaryQuestionDownloader extends LazyLogging {
       node: Node,
       plenaryId: PlenaryId): Either[DomainValidation, PlenaryQuestion] = {
     for {
-      number           <- node.validateNonEmpty("numeris")
-      title            <- node.validateNonEmpty("pavadinimas")
-      timeFrom         <- node.validateTime("laikas_nuo")
+      number <- node.validateNonEmpty("numeris")
+      title  <- node.validateNonEmpty("pavadinimas")
+      timeFrom <- node.validateTime("laikas_nuo",
+                                    CustomFormatDateTimeWithoutSeconds)
       status           <- node.validateNonEmpty("stadija")
       agendaQuestionId <- node.validateInt("svarstomo_klausimo_id")
 
@@ -70,7 +76,8 @@ object PlenaryQuestionDownloader extends LazyLogging {
         PlenaryQuestionTitle(title),
         PlenaryQuestionTimeFrom(timeFrom),
         statusDecoder(status),
-        PlenaryQuestionNumber(number)
+        PlenaryQuestionNumber(number),
+        plenaryId
       )
   }
 

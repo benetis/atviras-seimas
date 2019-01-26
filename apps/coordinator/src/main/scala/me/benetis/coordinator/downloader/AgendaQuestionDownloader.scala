@@ -4,48 +4,61 @@ import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{
   AgendaQuestionRepo,
-  PlenaryQuestionRepo,
+  DiscussionEventRepo,
   PlenaryRepo
 }
 import me.benetis.shared._
 import scala.xml._
 import cats._
 import scala.collection.immutable
+import scala.util.Try
 
 object AgendaQuestionDownloader extends LazyLogging {
-  def fetchAndSave() = {
-    fetchLogIfErrorAndSaveWithSleep(AgendaQuestionRepo.insert,
-                                    () => fetch(PlenaryId(-501109)))
+  def fetchAndSave(plenaries: List[Plenary]) = {
+    plenaries.map(
+      plenary =>
+        fetchLogIfErrorAndSaveWithSleep(
+          AgendaQuestionRepo.insert,
+          () => fetch(plenary)
+      ))
+
   }
 
-  private def fetch(plenaryId: PlenaryId)
-    : Either[String, Seq[Either[DomainValidation, AgendaQuestion]]] = {
+  private def fetch(plenary: Plenary)
+    : Either[FileOrConnectivityError,
+             Seq[Either[DomainValidation, AgendaQuestion]]] = {
 
-    val posedzio_id = plenaryId.plenary_id
+    val posedzio_id = plenary.id.plenary_id
 
-    val request =
-      sttp.get(
-        uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedzio_darbotvarke?posedzio_id=$posedzio_id")
+    val uri =
+      uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedzio_darbotvarke?posedzio_id=$posedzio_id"
 
+    val request          = sttp.get(uri)
     implicit val backend = HttpURLConnectionBackend()
 
     val response = request.send().body
 
     response match {
       case Right(body) =>
-        Right(parse(scala.xml.XML.loadString(body), plenaryId))
-      case Left(err) => Left(err)
+        val xmlEith = Try(scala.xml.XML.loadString(body)).toEither
+
+        xmlEith match {
+          case Right(xml: Elem) =>
+            Right(parse(xml, plenary))
+          case Left(err) => Left(BadXML(uri.toString(), err.getMessage))
+        }
+      case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
     }
   }
 
   private def parse(
       body: Elem,
-      plenaryId: PlenaryId): Seq[Either[DomainValidation, AgendaQuestion]] = {
+      plenary: Plenary): Seq[Either[DomainValidation, AgendaQuestion]] = {
     val agendaQuestions = body \\ "SeimoInformacija" \\ "SeimoPosėdis" \\ "DarbotvarkėsKlausimas"
 
     val result: Seq[Either[DomainValidation, Seq[AgendaQuestion]]] =
       agendaQuestions.map((questionNode: Node) =>
-        validate(questionNode, plenaryId))
+        validate(questionNode, plenary))
 
     val rightSeq = result
       .collect {
@@ -64,19 +77,22 @@ object AgendaQuestionDownloader extends LazyLogging {
 
   private def statusDecoder(status: String): AgendaQuestionStatus = {
     status match {
-      case "Tvirtinimas" => Affirmation
-      case "Priėmimas"   => Adoption
-      case "Svarstymas"  => Discussion
-      case "Pateikimas"  => Presentation
+      case "Tvirtinimas"                  => Affirmation
+      case "Priėmimas"                    => Adoption
+      case "Svarstymas"                   => Discussion
+      case "Pateikimas"                   => Presentation
+      case "Grąžinto įstatymo pateikimas" => PresentationOfReturnedLawDocument
+      case "Klausimas"                    => Question
+      case "Interpeliacijos nagrinėjimas" => InterpolationAnalysis
       case _ =>
-        logger.error("Not supported status")
+        logger.error(s"Not supported status '$status'")
         Presentation
     }
   }
 
   private def validate(
       node: Node,
-      plenaryId: PlenaryId): Either[DomainValidation, Seq[AgendaQuestion]] = {
+      plenary: Plenary): Either[DomainValidation, Seq[AgendaQuestion]] = {
 
     val questionStatuses = node \\ "KlausimoStadija"
     val questionSpeakers = node \\ "KlausimoPranešėjas"
@@ -84,36 +100,55 @@ object AgendaQuestionDownloader extends LazyLogging {
     val result = questionStatuses.map((questionStatusNode: Node) => {
 
       val speakersEith: Seq[Either[DomainValidation, String]] =
-        questionSpeakers
-          .map((speakerNode: Node) => {
-            for {
-              person <- speakerNode.validateNonEmpty("asmuo")
-            } yield person
-          })
+        if (questionSpeakers.isEmpty)
+          Seq.empty[Either[DomainValidation, String]]
+        else
+          questionSpeakers
+            .map((speakerNode: Node) => {
+              for {
+                person <- speakerNode.validateNonEmpty("asmuo")
+              } yield person
+            })
 
-      for {
-        number   <- node.validateNonEmpty("numeris")
-        title    <- node.validateNonEmpty("pavadinimas")
-        timeFrom <- node.validateTimeOrEmpty("laikas_nuo")
-        timeTo   <- node.validateTimeOrEmpty("laikas_iki")
+      plenary.timeStart match {
+        case Some(plenaryStart) =>
+          for {
+            number   <- node.validateNonEmpty("numeris")
+            title    <- node.validateNonEmpty("pavadinimas")
+            timeFrom <- node.validateTimeOrEmpty("laikas_nuo")
+            timeTo   <- node.validateTimeOrEmpty("laikas_iki")
 
-        status     <- questionStatusNode.validateNonEmpty("pavadinimas")
-        questionId <- questionStatusNode.validateInt("darbotvarkės_klausimo_id")
-        docLink    <- questionStatusNode.validateNonEmpty("dokumento_nuoroda")
-        speakers   <- sequence(speakersEith)
+            status <- Right(questionStatusNode.stringOrNone("pavadinimas"))
+            questionId <- questionStatusNode.validateInt(
+              "darbotvarkės_klausimo_id")
+            docLink <- Right(
+              questionStatusNode.stringOrNone("dokumento_nuoroda"))
+            speakers <- sequence(speakersEith)
 
-      } yield
-        AgendaQuestion(
-          AgendaQuestionId(questionId),
-          AgendaQuestionGroupId(s"${plenaryId.plenary_id}/$number"),
-          AgendaQuestionTitle(title),
-          timeFrom.map(AgendaQuestionTimeFrom),
-          timeTo.map(AgendaQuestionTimeTo),
-          statusDecoder(status),
-          AgendaQuestionDocumentLink(docLink),
-          AgendaQuestionSpeakers(speakers.toVector),
-          AgendaQuestionNumber(number)
-        )
+          } yield
+            AgendaQuestion(
+              AgendaQuestionId(questionId),
+              AgendaQuestionGroupId(s"${plenary.id.plenary_id}/$number"),
+              AgendaQuestionTitle(title),
+              timeFrom.map(AgendaQuestionTimeFrom),
+              timeTo.map(AgendaQuestionTimeTo),
+              timeFrom
+                .map(t =>
+                  DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
+                .map(AgendaQuestionDateTimeFrom),
+              timeTo
+                .map(t =>
+                  DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
+                .map(AgendaQuestionDateTimeTo),
+              DateTimeOnlyDate(plenaryStart.time_start),
+              status.map(statusDecoder),
+              docLink.map(AgendaQuestionDocumentLink),
+              AgendaQuestionSpeakers(speakers.toVector),
+              AgendaQuestionNumber(number),
+              plenary.id
+            )
+        case None => Left(PlenaryShouldBeStarted(plenary.id))
+      }
     })
 
     sequence(result)

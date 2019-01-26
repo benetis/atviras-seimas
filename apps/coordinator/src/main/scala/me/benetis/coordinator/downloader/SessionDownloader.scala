@@ -12,10 +12,11 @@ object SessionDownloader extends LazyLogging {
     fetchLogIfErrorAndSaveWithSleep(SessionRepo.insert, () => fetch())
   }
 
-  private def fetch()
-    : Either[String, Seq[Either[DomainValidation, Session]]] = {
+  private def fetch(): Either[FileOrConnectivityError,
+                              Seq[Either[DomainValidation, Session]]] = {
+    val uri = uri"http://apps.lrs.lt/sip/p2b.ad_seimo_sesijos?ar_visos=T"
     val request =
-      sttp.get(uri"http://apps.lrs.lt/sip/p2b.ad_seimo_sesijos?ar_visos=T")
+      sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -23,7 +24,8 @@ object SessionDownloader extends LazyLogging {
 
     response match {
       case Right(body) => Right(parse(scala.xml.XML.loadString(body)))
-      case Left(err)   => Left(err)
+      case Left(err)   => Left(CannotReachWebsite(uri.toString(), err))
+
     }
   }
 

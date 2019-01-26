@@ -1,7 +1,7 @@
 package me.benetis.coordinator.downloader
 
 import cats.effect.IO
-import me.benetis.coordinator.repository.SessionRepo
+import me.benetis.coordinator.repository.{PlenaryRepo, SessionRepo}
 import me.benetis.shared._
 
 object DownloaderCoordinator {
@@ -16,9 +16,14 @@ object DownloaderCoordinator {
         val sessions = SessionRepo.list()
         PlenaryDownloader.fetchAndSave(sessions)
       case FetchAgendaQuestions =>
-        AgendaQuestionDownloader.fetchAndSave()
+        val plenaries = PlenaryRepo.list()
+//        val plenary = PlenaryRepo.findById(PlenaryId(-501307))
+//        plenary.map(p => AgendaQuestionDownloader.fetchAndSave(List(p)))
+        AgendaQuestionDownloader.fetchAndSave(plenaries)
       case FetchPlenaryQuestions =>
-        PlenaryQuestionDownloader.fetchAndSave()
+        DiscussionEventDownloader.fetchAndSave()
+      case FetchDiscussionEvents =>
+        DiscussionEventDownloader.fetchAndSave()
     }
   }
 

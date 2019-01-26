@@ -1,5 +1,6 @@
 package me.benetis.coordinator.downloader
 
+import me.benetis.shared.PlenaryId
 import org.joda.time.DateTime
 
 sealed trait DomainValidation {
@@ -20,11 +21,40 @@ case class BadTimeFormat(field: String) extends DomainValidation {
     s"Field $field time format is invalid"
 }
 
-case class EmptyField(field: String) extends DomainValidation {
-  override def errorMessage: String = s"Field '$field' must be non empty"
+case class EmptyField(field: String, customMsg: String = "")
+    extends DomainValidation {
+
+  val msgToAdd =
+    if (customMsg.nonEmpty)
+      s". Custom message: '$customMsg'"
+    else ""
+
+  override def errorMessage: String =
+    s"Field '$field' must be non empty $msgToAdd"
 }
 
 case class FieldIsNotAnInt(field: String) extends DomainValidation {
   override def errorMessage: String =
     s"Field '$field' cannot be converted to int"
+}
+
+case class PlenaryShouldBeStarted(plenaryId: PlenaryId)
+    extends DomainValidation {
+  override def errorMessage: String =
+    s"Plenary '${plenaryId.plenary_id}' must have start time for it to have agenda questions"
+}
+
+sealed trait FileOrConnectivityError {
+  def errorMessage: String
+}
+
+case class BadXML(link: String, error: String) extends FileOrConnectivityError {
+  override def errorMessage: String =
+    s"XML cannot be parsed as it is bad '$link', error: '$error'"
+}
+
+case class CannotReachWebsite(link: String, error: String)
+    extends FileOrConnectivityError {
+  override def errorMessage: String =
+    s"Link '$link' cannot be reached. Error: '$error'"
 }
