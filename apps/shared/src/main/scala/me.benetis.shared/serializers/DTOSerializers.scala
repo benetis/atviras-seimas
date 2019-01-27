@@ -13,7 +13,7 @@ object DTOSerializers {
       case PresentationOfReturnedLawDocument => 4
       case Question                          => 5
       case InterpolationAnalysis             => 6
-
+      case UnknownStatus                     => 7
     }
   }
 

@@ -86,7 +86,7 @@ object AgendaQuestionDownloader extends LazyLogging {
       case "Interpeliacijos nagrinėjimas" => InterpolationAnalysis
       case _ =>
         logger.error(s"Not supported status '$status'")
-        Presentation
+        UnknownStatus
     }
   }
 
@@ -118,7 +118,8 @@ object AgendaQuestionDownloader extends LazyLogging {
             timeFrom <- node.validateTimeOrEmpty("laikas_nuo")
             timeTo   <- node.validateTimeOrEmpty("laikas_iki")
 
-            status <- Right(questionStatusNode.stringOrNone("pavadinimas"))
+            statusRawV <- Right(questionStatusNode.tagText("pavadinimas"))
+            status     <- Right(questionStatusNode.stringOrNone("pavadinimas"))
             questionId <- questionStatusNode.validateInt(
               "darbotvarkės_klausimo_id")
             docLink <- Right(
@@ -127,25 +128,27 @@ object AgendaQuestionDownloader extends LazyLogging {
 
           } yield
             AgendaQuestion(
-              AgendaQuestionId(questionId),
-              AgendaQuestionGroupId(s"${plenary.id.plenary_id}/$number"),
-              AgendaQuestionTitle(title),
-              timeFrom.map(AgendaQuestionTimeFrom),
-              timeTo.map(AgendaQuestionTimeTo),
-              timeFrom
+              id = AgendaQuestionId(questionId),
+              groupId =
+                AgendaQuestionGroupId(s"${plenary.id.plenary_id}/$number"),
+              title = AgendaQuestionTitle(title),
+              timeFrom = timeFrom.map(AgendaQuestionTimeFrom),
+              timeTo = timeTo.map(AgendaQuestionTimeTo),
+              dateTimeFrom = timeFrom
                 .map(t =>
                   DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
                 .map(AgendaQuestionDateTimeFrom),
-              timeTo
+              dateTimeTo = timeTo
                 .map(t =>
                   DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
                 .map(AgendaQuestionDateTimeTo),
-              DateTimeOnlyDate(plenaryStart.time_start),
-              status.map(statusDecoder),
-              docLink.map(AgendaQuestionDocumentLink),
-              AgendaQuestionSpeakers(speakers.toVector),
-              AgendaQuestionNumber(number),
-              plenary.id
+              date = DateTimeOnlyDate(plenaryStart.time_start),
+              statusRaw = AgendaQuestionStatusRaw(statusRawV),
+              status = status.map(statusDecoder),
+              documentLink = docLink.map(AgendaQuestionDocumentLink),
+              speakers = AgendaQuestionSpeakers(speakers.toVector),
+              number = AgendaQuestionNumber(number),
+              plenaryId = plenary.id
             )
         case None => Left(PlenaryShouldBeStarted(plenary.id))
       }

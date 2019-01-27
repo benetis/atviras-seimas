@@ -14,6 +14,7 @@ case class AgendaQuestionDateTimeTo(datetime_to: DateTime)     extends Embedded
 case class AgendaQuestionNumber(number: String)                extends Embedded
 case class AgendaQuestionDocumentLink(document_link: String)   extends Embedded
 case class AgendaQuestionSpeakers(speakers: Vector[String])    extends Embedded
+case class AgendaQuestionStatusRaw(raw_status: String)         extends Embedded
 
 sealed trait AgendaQuestionStatus             extends Embedded
 case object Adoption                          extends AgendaQuestionStatus
@@ -23,6 +24,7 @@ case object Presentation                      extends AgendaQuestionStatus
 case object PresentationOfReturnedLawDocument extends AgendaQuestionStatus
 case object Question                          extends AgendaQuestionStatus
 case object InterpolationAnalysis             extends AgendaQuestionStatus
+case object UnknownStatus                     extends AgendaQuestionStatus
 
 case class AgendaQuestion(id: AgendaQuestionId,
                           groupId: AgendaQuestionGroupId,
@@ -32,6 +34,7 @@ case class AgendaQuestion(id: AgendaQuestionId,
                           dateTimeFrom: Option[AgendaQuestionDateTimeFrom],
                           dateTimeTo: Option[AgendaQuestionDateTimeTo],
                           date: DateTimeOnlyDate,
+                          statusRaw: AgendaQuestionStatusRaw,
                           status: Option[AgendaQuestionStatus],
                           documentLink: Option[AgendaQuestionDocumentLink],
                           speakers: AgendaQuestionSpeakers,
