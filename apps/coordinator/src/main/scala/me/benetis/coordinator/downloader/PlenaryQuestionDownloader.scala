@@ -66,7 +66,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
           title  <- node.validateNonEmpty("pavadinimas")
           timeFrom <- node.validateTime("laikas_nuo",
                                         CustomFormatTimeOnlyWithoutSeconds)
-          status           <- node.validateNonEmpty("stadija")
+          status           <- Right(node.stringOrNone("stadija"))
           agendaQuestionId <- node.validateInt("svarstomo_klausimo_id")
 
         } yield
@@ -79,8 +79,8 @@ object PlenaryQuestionDownloader extends LazyLogging {
               DateUtils.timeWithDateToDateTime(timeFrom,
                                                plenaryStart.time_start)
             ),
-            Decoders.agendaQuestionStatus(status),
-            PlenaryQuestionStatusRaw(status),
+            status.map(Decoders.agendaQuestionStatus),
+            status.map(PlenaryQuestionStatusRaw),
             PlenaryQuestionNumber(number),
             plenary.id
           )
