@@ -2,7 +2,6 @@ package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.shared._
-import me.benetis.shared.serializers.DTOSerializers
 
 object PlenaryQuestionRepo {
 
@@ -10,12 +9,9 @@ object PlenaryQuestionRepo {
 
   import ctx._
 
-  private implicit val encodeDateTime =
-    MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
-  implicit val AgendaQuestionStatus =
-    MappedEncoding[PlenaryQuestionStatus, Int](
-      DTOSerializers.plenaryQuestionStatusSerializer)
+  import AgendaQuestionRepo.AgendaQuestionStatus
 
   private implicit val SessionInsertMeta = insertMeta[PlenaryQuestion]()
 

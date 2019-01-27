@@ -10,6 +10,7 @@ import me.benetis.coordinator.repository.{
 import me.benetis.shared._
 import scala.xml._
 import cats._
+import me.benetis.shared.encoding.Decoders
 import scala.collection.immutable
 import scala.util.Try
 
@@ -75,21 +76,6 @@ object AgendaQuestionDownloader extends LazyLogging {
 
   }
 
-  private def statusDecoder(status: String): AgendaQuestionStatus = {
-    status match {
-      case "Tvirtinimas"                  => Affirmation
-      case "Priėmimas"                    => Adoption
-      case "Svarstymas"                   => Discussion
-      case "Pateikimas"                   => Presentation
-      case "Grąžinto įstatymo pateikimas" => PresentationOfReturnedLawDocument
-      case "Klausimas"                    => Question
-      case "Interpeliacijos nagrinėjimas" => InterpolationAnalysis
-      case _ =>
-        logger.error(s"Not supported status '$status'")
-        UnknownStatus
-    }
-  }
-
   private def validate(
       node: Node,
       plenary: Plenary): Either[DomainValidation, Seq[AgendaQuestion]] = {
@@ -144,7 +130,7 @@ object AgendaQuestionDownloader extends LazyLogging {
                 .map(AgendaQuestionDateTimeTo),
               date = DateTimeOnlyDate(plenaryStart.time_start),
               statusRaw = AgendaQuestionStatusRaw(statusRawV),
-              status = status.map(statusDecoder),
+              status = status.map(Decoders.agendaQuestionStatus),
               documentLink = docLink.map(AgendaQuestionDocumentLink),
               speakers = AgendaQuestionSpeakers(speakers.toVector),
               number = AgendaQuestionNumber(number),

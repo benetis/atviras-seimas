@@ -6,21 +6,30 @@ import me.benetis.coordinator.repository.{
   DiscussionEventRepo,
   PlenaryQuestionRepo
 }
-import me.benetis.coordinator.utils.DateFormatters.CustomFormatDateTimeWithoutSeconds
+import me.benetis.coordinator.utils.DateFormatters.{
+  CustomFormatDateTimeWithoutSeconds,
+  CustomFormatTimeOnlyWithoutSeconds
+}
 import me.benetis.shared._
+import me.benetis.shared.encoding.Decoders
 import scala.xml._
 
 object PlenaryQuestionDownloader extends LazyLogging {
-  def fetchAndSave() = {
-    fetchLogIfErrorAndSaveWithSleep(PlenaryQuestionRepo.insert,
-                                    () => fetch(PlenaryId(-501109)))
+  def fetchAndSave(plenaries: List[Plenary]) = {
+    plenaries.map(
+      plenary =>
+        fetchLogIfErrorAndSaveWithSleep(
+          PlenaryQuestionRepo.insert,
+          () => fetch(plenary)
+      ))
+
   }
 
-  private def fetch(plenaryId: PlenaryId)
+  private def fetch(plenary: Plenary)
     : Either[FileOrConnectivityError,
              Seq[Either[DomainValidation, PlenaryQuestion]]] = {
 
-    val posedzio_id = plenaryId.plenary_id
+    val posedzio_id = plenary.id.plenary_id
     val uri =
       uri"http://apps.lrs.lt/sip/p2b.ad_seimo_posedzio_eiga?posedzio_id=$posedzio_id"
     val request =
@@ -32,53 +41,53 @@ object PlenaryQuestionDownloader extends LazyLogging {
 
     response match {
       case Right(body) =>
-        Right(parse(scala.xml.XML.loadString(body), plenaryId))
+        Right(parse(scala.xml.XML.loadString(body), plenary))
       case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
     }
   }
 
   private def parse(
       body: Elem,
-      plenaryId: PlenaryId): Seq[Either[DomainValidation, PlenaryQuestion]] = {
+      plenary: Plenary): Seq[Either[DomainValidation, PlenaryQuestion]] = {
     val plenaryQuestions = body \\ "SeimoInformacija" \\ "SeimoPosėdis" \\ "EigosKlausimas"
 
     plenaryQuestions.map((questionNode: Node) =>
-      validate(questionNode, plenaryId))
-  }
-
-  private def statusDecoder(status: String): PlenaryQuestionStatus = {
-    status match {
-      case "Tvirtinimas" => PlenaryQuestionAffirmation
-      case "Priėmimas"   => PlenaryQuestionAdoption
-      case "Svarstymas"  => PlenaryQuestionDiscussion
-      case "Pateikimas"  => PlenaryQuestionPresentation
-      case _ =>
-        logger.error(s"Not supported status for plenary question '$status'")
-        PlenaryQuestionPresentation
-    }
+      validate(questionNode, plenary))
   }
 
   private def validate(
       node: Node,
-      plenaryId: PlenaryId): Either[DomainValidation, PlenaryQuestion] = {
-    for {
-      number <- node.validateNonEmpty("numeris")
-      title  <- node.validateNonEmpty("pavadinimas")
-      timeFrom <- node.validateTime("laikas_nuo",
-                                    CustomFormatDateTimeWithoutSeconds)
-      status           <- node.validateNonEmpty("stadija")
-      agendaQuestionId <- node.validateInt("svarstomo_klausimo_id")
+      plenary: Plenary): Either[DomainValidation, PlenaryQuestion] = {
 
-    } yield
-      PlenaryQuestion(
-        AgendaQuestionId(agendaQuestionId),
-        PlenaryQuestionGroupId(s"${plenaryId.plenary_id}/$number"),
-        PlenaryQuestionTitle(title),
-        PlenaryQuestionTimeFrom(timeFrom),
-        statusDecoder(status),
-        PlenaryQuestionNumber(number),
-        plenaryId
-      )
+    plenary.timeStart match {
+      case Some(plenaryStart) =>
+        for {
+          number <- node.validateNonEmpty("numeris")
+          title  <- node.validateNonEmpty("pavadinimas")
+          timeFrom <- node.validateTime("laikas_nuo",
+                                        CustomFormatTimeOnlyWithoutSeconds)
+          status           <- node.validateNonEmpty("stadija")
+          agendaQuestionId <- node.validateInt("svarstomo_klausimo_id")
+
+        } yield
+          PlenaryQuestion(
+            AgendaQuestionId(agendaQuestionId),
+            PlenaryQuestionGroupId(s"${plenary.id.plenary_id}/$number"),
+            PlenaryQuestionTitle(title),
+            PlenaryQuestionTimeFrom(timeFrom),
+            PlenaryQuestionDateTimeFrom(
+              DateUtils.timeWithDateToDateTime(timeFrom,
+                                               plenaryStart.time_start)
+            ),
+            Decoders.agendaQuestionStatus(status),
+            PlenaryQuestionStatusRaw(status),
+            PlenaryQuestionNumber(number),
+            plenary.id
+          )
+
+      case None => Left(PlenaryShouldBeStarted(plenary.id))
+    }
+
   }
 
 }

@@ -17,11 +17,10 @@ object DownloaderCoordinator {
         PlenaryDownloader.fetchAndSave(sessions)
       case FetchAgendaQuestions =>
         val plenaries = PlenaryRepo.list()
-//        val plenary = PlenaryRepo.findById(PlenaryId(-501307))
-//        plenary.map(p => AgendaQuestionDownloader.fetchAndSave(List(p)))
         AgendaQuestionDownloader.fetchAndSave(plenaries)
       case FetchPlenaryQuestions =>
-        DiscussionEventDownloader.fetchAndSave()
+        val plenaries = PlenaryRepo.list()
+        PlenaryQuestionDownloader.fetchAndSave(plenaries)
       case FetchDiscussionEvents =>
         DiscussionEventDownloader.fetchAndSave()
     }

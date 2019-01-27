@@ -1,8 +1,8 @@
-package me.benetis.shared.serializers
+package me.benetis.shared.encoding
 
 import me.benetis.shared._
 
-object DTOSerializers {
+object Encoders {
   def AgendaQuestionStatusSerializer(
       AgendaQuestionStatus: AgendaQuestionStatus): Int = {
     AgendaQuestionStatus match {
@@ -14,16 +14,6 @@ object DTOSerializers {
       case Question                          => 5
       case InterpolationAnalysis             => 6
       case UnknownStatus                     => 7
-    }
-  }
-
-  def plenaryQuestionStatusSerializer(
-      PlenaryQuestionStatus: PlenaryQuestionStatus): Int = {
-    PlenaryQuestionStatus match {
-      case PlenaryQuestionAdoption     => 0
-      case PlenaryQuestionDiscussion   => 1
-      case PlenaryQuestionAffirmation  => 2
-      case PlenaryQuestionPresentation => 3
     }
   }
 
