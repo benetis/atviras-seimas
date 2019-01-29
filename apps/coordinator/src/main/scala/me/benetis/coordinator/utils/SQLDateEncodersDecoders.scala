@@ -22,7 +22,7 @@ object SQLDateEncodersDecoders {
 
   implicit val encodeDate =
     MappedEncoding[SharedDateOnly, String](d =>
-      new DateTime(d.timestamp).toString(formatterDateOnly))
+      new DateTime(d.millis).toString(formatterDateOnly))
 
   implicit val decodeDate =
     MappedEncoding[String, SharedDateOnly](x =>

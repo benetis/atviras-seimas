@@ -6,17 +6,16 @@ object SharedDateEncoders {
   implicit class customDateTimeExtensions(val self: org.joda.time.DateTime)
       extends AnyVal {
     def toSharedDateTime(): SharedDateTime = {
-      SharedDateTime(toTimestamp())
+      SharedDateTime(self.getMillis)
     }
 
     def toSharedDateOnly(): SharedDateOnly = {
-      SharedDateOnly(toTimestamp())
+      SharedDateOnly(self.getMillis)
     }
 
     def toSharedTimeOnly(): SharedTimeOnly = {
       SharedTimeOnly(self.toString("HH:mm:ss"))
     }
 
-    private def toTimestamp(): String = (self.getMillis / 1000).toString
   }
 }

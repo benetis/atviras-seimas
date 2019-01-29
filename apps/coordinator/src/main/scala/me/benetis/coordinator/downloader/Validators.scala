@@ -18,7 +18,7 @@ case class BadDateAndNonEmptyFormat(field: String) extends DomainValidation {
 
 case class BadTimeFormat(field: String) extends DomainValidation {
   override def errorMessage: String =
-    s"Field $field time format is invalid"
+    s"Field $field timeString format is invalid"
 }
 
 case class EmptyField(field: String, customMsg: String = "")
@@ -41,7 +41,7 @@ case class FieldIsNotAnInt(field: String) extends DomainValidation {
 case class PlenaryShouldBeStarted(plenaryId: PlenaryId)
     extends DomainValidation {
   override def errorMessage: String =
-    s"Plenary '${plenaryId.plenary_id}' must have start time for it to have agenda questions"
+    s"Plenary '${plenaryId.plenary_id}' must have start timeString for it to have agenda questions"
 }
 
 sealed trait FileOrConnectivityError {

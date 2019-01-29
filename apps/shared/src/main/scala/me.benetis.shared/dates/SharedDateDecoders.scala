@@ -3,41 +3,21 @@ package me.benetis.shared.dates
 import org.joda.time.DateTime
 import me.benetis.shared.dates.SharedDateEncoders._
 
-case class SharedDateTime(timestamp: String) {
-  def toDateTime(): DateTime = SharedDateDecoders.toDateTime(timestamp)
+case class SharedDateTime(millis: Long) {
+  def toDateTime(): DateTime = SharedDateDecoders.toDateTime(millis)
   def toSharedTimeOnly(): SharedTimeOnly =
-    SharedDateDecoders.toSharedTimeOnly(timestamp)
+    SharedDateDecoders.toSharedTimeOnly(millis)
 }
-case class SharedDateOnly(timestamp: String)
-case class SharedTimeOnly(time: String) {
-  def toDateTime(): DateTime = DateFormatters.formatterTime.parseDateTime(time)
+case class SharedDateOnly(millis: Long)
+case class SharedTimeOnly(timeString: String) {
+  def toDateTime(): DateTime =
+    DateFormatters.formatterTime.parseDateTime(timeString)
 }
 
 object SharedDateDecoders {
-  def toDateTime(timestamp: String): DateTime = new DateTime(timestamp.toInt)
-  def toSharedTimeOnly(timestamp: String): SharedTimeOnly =
-    toDateTime(timestamp).toSharedTimeOnly()
+  def toDateTime(millis: Long): DateTime = {
+    new DateTime(millis)
+  }
+  def toSharedTimeOnly(millis: Long): SharedTimeOnly =
+    toDateTime(millis).toSharedTimeOnly()
 }
-
-//object DateWrapperDecoders {
-//
-//  implicit def sharedDateTimeToDateTime(
-//      sharedDateTime: SharedDateTime): DateTime = {
-//    val millisInSecond = 1000
-//    new DateTime(sharedDateTime.timestamp * millisInSecond)
-//  }
-//
-//  implicit def sharedDateOnlyToDateOnly(
-//      sharedDateOnly: SharedDateOnly): DateTimeOnlyDate = {
-//    val millisInSecond = 1000
-//    DateTimeOnlyDate(new DateTime(sharedDateOnly.timestamp * millisInSecond))
-//  }
-//
-//  implicit def sharedTimeOnly(
-//      sharedTimeOnly: SharedTimeOnly): DateTimeOnlyTime = {
-//    //"HH:mm:ss"
-//    DateTimeOnlyTime(
-//      DateFormatters.formatterTime.parseDateTime(sharedTimeOnly.time))
-//  }
-//
-//}
