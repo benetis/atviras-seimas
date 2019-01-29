@@ -1,20 +1,22 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import org.joda.time.DateTime
+import me.benetis.shared.dates.{SharedDateTime, SharedTimeOnly}
 
 case class AgendaQuestionId(agenda_question_id: Int) extends Embedded
 case class AgendaQuestionGroupId(agenda_question_group_id: String)
     extends Embedded
-case class AgendaQuestionTitle(title: String)                  extends Embedded
-case class AgendaQuestionTimeFrom(time_from: DateTimeOnlyTime) extends Embedded
-case class AgendaQuestionTimeTo(time_to: DateTimeOnlyTime)     extends Embedded
-case class AgendaQuestionDateTimeFrom(datetime_from: DateTime) extends Embedded
-case class AgendaQuestionDateTimeTo(datetime_to: DateTime)     extends Embedded
-case class AgendaQuestionNumber(number: String)                extends Embedded
-case class AgendaQuestionDocumentLink(document_link: String)   extends Embedded
-case class AgendaQuestionSpeakers(speakers: Vector[String])    extends Embedded
-case class AgendaQuestionStatusRaw(raw_status: String)         extends Embedded
+case class AgendaQuestionTitle(title: String)                extends Embedded
+case class AgendaQuestionTimeFrom(time_from: SharedTimeOnly) extends Embedded
+case class AgendaQuestionTimeTo(time_to: SharedTimeOnly)     extends Embedded
+case class AgendaQuestionDateTimeFrom(datetime_from: SharedDateTime)
+    extends Embedded
+case class AgendaQuestionDateTimeTo(datetime_to: SharedDateTime)
+    extends Embedded
+case class AgendaQuestionNumber(number: String)              extends Embedded
+case class AgendaQuestionDocumentLink(document_link: String) extends Embedded
+case class AgendaQuestionSpeakers(speakers: Vector[String])  extends Embedded
+case class AgendaQuestionStatusRaw(raw_status: String)       extends Embedded
 
 sealed trait AgendaQuestionStatus             extends Embedded
 case object Adoption                          extends AgendaQuestionStatus
@@ -33,7 +35,7 @@ case class AgendaQuestion(id: AgendaQuestionId,
                           timeTo: Option[AgendaQuestionTimeTo],
                           dateTimeFrom: Option[AgendaQuestionDateTimeFrom],
                           dateTimeTo: Option[AgendaQuestionDateTimeTo],
-                          date: DateTimeOnlyDate,
+                          date: SharedTimeOnly,
                           statusRaw: AgendaQuestionStatusRaw,
                           status: Option[AgendaQuestionStatus],
                           documentLink: Option[AgendaQuestionDocumentLink],

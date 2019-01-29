@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{DateTimeOnlyDate, Session}
+import me.benetis.shared.Session
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
@@ -11,13 +11,7 @@ object SessionRepo {
 
   import ctx._
 
-  val formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd")
-
-  implicit val encodeDateTime =
-    MappedEncoding[DateTimeOnlyDate, String](_.date.toString("yyyy-MM-dd"))
-  implicit val decodeDateTime =
-    MappedEncoding[String, DateTimeOnlyDate](x =>
-      DateTimeOnlyDate(formatterDate.parseDateTime(x)))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   private implicit val SessionInsertMeta = insertMeta[Session]()
 

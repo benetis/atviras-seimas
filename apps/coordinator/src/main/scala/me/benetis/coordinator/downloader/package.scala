@@ -1,41 +1,43 @@
 package me.benetis.coordinator
 
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.shared.{DateTimeOnlyDate, DateTimeOnlyTime}
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
 import scala.xml.Node
-import me.benetis.coordinator.utils.DateFormatters._
+import me.benetis.shared.dates.DateFormatters._
+import me.benetis.shared.dates._
+import me.benetis.shared.dates.SharedDateEncoders._
 
 package object downloader extends LazyLogging {
 
   implicit class nodeExt(val o: Node) extends AnyVal {
     def tagText(tag: String): String = (o \ s"@$tag").text
 
-    def validateDate(
-        tag: String): Either[DomainValidation, DateTimeOnlyDate] = {
+    def validateDate(tag: String): Either[DomainValidation, SharedDateOnly] = {
       val dateValue = tagText(tag)
       Either.cond(
         dateValue.matches("""^\d{4}-\d{2}-\d{2}$"""),
-        DateTimeOnlyDate(new DateTime(dateValue)),
+        new DateTime(dateValue).toSharedDateOnly(),
         BadDateFormat(tag)
       )
     }
 
     def validateDateTime(tag: String, customDateFormat: CustomDateFormat)
-      : Either[DomainValidation, DateTime] = {
+      : Either[DomainValidation, SharedDateTime] = {
 
       val dateValue = tagText(tag)
       Either.cond(
         validationFuncForDateFormat(customDateFormat)(dateValue),
-        formatterForDateFormat(customDateFormat).parseDateTime(dateValue),
+        formatterForDateFormat(customDateFormat)
+          .parseDateTime(dateValue)
+          .toSharedDateTime(),
         BadDateFormat(tag)
       )
     }
 
     def validateDateOrEmpty(
-        tag: String): Either[DomainValidation, Option[DateTimeOnlyDate]] = {
+        tag: String): Either[DomainValidation, Option[SharedDateOnly]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches("""^\d{4}-\d{2}-\d{2}$""") || dateValue.isEmpty
@@ -43,13 +45,13 @@ package object downloader extends LazyLogging {
       Either.cond(
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
-        else Some(DateTimeOnlyDate(new DateTime(dateValue))),
+        else Some(new DateTime(dateValue).toSharedDateOnly()),
         BadDateAndNonEmptyFormat(tag)
       )
     }
 
     def validateDateTimeOrEmpty(
-        tag: String): Either[DomainValidation, Option[DateTime]] = {
+        tag: String): Either[DomainValidation, Option[SharedDateTime]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches(
@@ -58,25 +60,30 @@ package object downloader extends LazyLogging {
       Either.cond(
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
-        else Some(formatterDateTimeWithoutSeconds.parseDateTime(dateValue)),
+        else
+          Some(
+            formatterDateTimeWithoutSeconds
+              .parseDateTime(dateValue)
+              .toSharedDateTime()),
         BadDateAndNonEmptyFormat(tag)
       )
     }
 
     def validateTime(tag: String, customDateFormat: CustomDateFormat)
-      : Either[DomainValidation, DateTimeOnlyTime] = {
+      : Either[DomainValidation, SharedTimeOnly] = {
       val dateValue = tagText(tag)
 
       Either.cond(
         validationFuncForDateFormat(customDateFormat)(dateValue),
-        DateTimeOnlyTime(
-          formatterForDateFormat(customDateFormat).parseDateTime(dateValue)),
+        formatterForDateFormat(customDateFormat)
+          .parseDateTime(dateValue)
+          .toSharedTimeOnly(),
         BadTimeFormat(tag)
       )
     }
 
     def validateTimeOrEmpty(
-        tag: String): Either[DomainValidation, Option[DateTimeOnlyTime]] = {
+        tag: String): Either[DomainValidation, Option[SharedTimeOnly]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches("""^\d{2}\:\d{2}$""") || dateValue.isEmpty
@@ -86,8 +93,9 @@ package object downloader extends LazyLogging {
         if (dateValue.isEmpty) None
         else
           Some(
-            DateTimeOnlyTime(
-              formatterTimeWithoutSeconds.parseDateTime(dateValue))
+            formatterTimeWithoutSeconds
+              .parseDateTime(dateValue)
+              .toSharedTimeOnly()
           ),
         BadDateAndNonEmptyFormat(tag)
       )

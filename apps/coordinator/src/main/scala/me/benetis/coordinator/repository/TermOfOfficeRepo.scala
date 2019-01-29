@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{DateTimeOnlyDate, TermOfOffice}
+import me.benetis.shared.{TermOfOffice}
 
 object TermOfOfficeRepo {
 
@@ -9,8 +9,7 @@ object TermOfOfficeRepo {
 
   import ctx._
 
-  implicit val encodeDateTime =
-    MappedEncoding[DateTimeOnlyDate, String](_.date.toString("yyyy-MM-dd"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   private implicit val personInsertMeta = insertMeta[TermOfOffice]()
 

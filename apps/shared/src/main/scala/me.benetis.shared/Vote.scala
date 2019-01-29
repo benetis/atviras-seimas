@@ -1,7 +1,7 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import org.joda.time.DateTime
+import me.benetis.shared.dates.SharedDateTime
 
 sealed trait SingleVote       extends Embedded
 case object SingleVoteFor     extends SingleVote
@@ -13,7 +13,7 @@ sealed trait VoteType extends Embedded
 case object Open      extends VoteType
 case object Closed    extends VoteType
 
-case class VoteTime(time: DateTime)             extends Embedded
+case class VoteTime(time: SharedDateTime)       extends Embedded
 case class VoteTotal(vote_total: Int)           extends Embedded
 case class VoteTotalMax(vote_total_max: Int)    extends Embedded
 case class VoteFor(vote_for: Int)               extends Embedded

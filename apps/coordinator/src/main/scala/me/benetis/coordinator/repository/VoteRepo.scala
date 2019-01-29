@@ -11,8 +11,7 @@ object VoteRepo {
 
   import ctx._
 
-  private implicit val encodeDateTime =
-    MappedEncoding[DateTime, String](_.toString("yyyy-MM-dd HH:mm:ss"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   private implicit val encodeSingleVote =
     MappedEncoding[SingleVote, Int](Encoders.voteSerializer)

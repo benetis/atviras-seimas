@@ -3,7 +3,7 @@ package me.benetis.coordinator.downloader
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.DiscussionEventRepo
-import me.benetis.coordinator.utils.DateFormatters.CustomFormatTimeOnly
+import me.benetis.shared.dates.DateFormatters.CustomFormatTimeOnly
 import me.benetis.shared._
 import scala.xml._
 

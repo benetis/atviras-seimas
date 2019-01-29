@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{DateTimeOnlyDate, Plenary, PlenaryId, Session}
+import me.benetis.shared.{Plenary, PlenaryId, Session}
 import org.joda.time.DateTime
 
 object PlenaryRepo {

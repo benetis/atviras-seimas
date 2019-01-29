@@ -10,8 +10,7 @@ object DiscussionEventRepo {
 
   import ctx._
 
-  private implicit val encodeDateTime =
-    MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
+  import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   implicit val AgendaQuestionStatus =
     MappedEncoding[DiscussionEventType, Int](Encoders.discussionEventSerializer)

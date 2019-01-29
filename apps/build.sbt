@@ -9,8 +9,12 @@ lazy val commonSettings = Seq(
     "-language:higherKinds",
     "-language:postfixOps",
     "-feature",
-    "-Xfatal-warnings"
-  ),
+    "-Xfatal-warnings",
+    "-language:implicitConversions"
+  )
+)
+
+lazy val serverCommonSettings = Seq(
   libraryDependencies ++= Seq(
     "joda-time" % "joda-time"  % "2.7",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
@@ -23,7 +27,10 @@ lazy val commonSettings = Seq(
     "io.getquill" %% "quill-jdbc" % "2.6.0",
     "io.getquill" %% "quill-core" % "2.6.0",
     "io.getquill" %% "quill-async" % "2.6.0",
-    "io.getquill" %% "quill-async-mysql" % "2.6.0"
+    "io.getquill" %% "quill-async-mysql" % "2.6.0",
+    "io.suzaku" %% "boopickle" % "1.3.0",
+    "com.lihaoyi" %% "autowire" % "0.2.6",
+    "com.github.nscala-time" %% "nscala-time" % "2.20.0"
   )
 )
 
@@ -32,6 +39,7 @@ lazy val root = (project in file("."))
 
 lazy val coordinator = project
   .settings(commonSettings: _*)
+  .settings(serverCommonSettings: _*)
   .settings(
     name := "coordinator",
     libraryDependencies ++= Seq(
@@ -77,6 +85,10 @@ lazy val frontend = project
       "com.github.japgolly.scalacss" %%% "core" % "0.5.4",
       "com.github.japgolly.scalacss" %%% "ext-react" % "0.5.4",
       "org.typelevel" %%% "cats-effect" % "1.0.0",
+      "io.suzaku" %%% "boopickle" % "1.3.0",
+      "io.suzaku" %%% "diode" % "1.1.4",
+      "io.suzaku" %%% "diode-react" % "1.1.4.131",
+      "com.lihaoyi" %%% "autowire" % "0.2.6"
     ),
     npmDependencies in Compile ++= Seq(
       "react" -> "16.5.1",
@@ -92,14 +104,14 @@ lazy val frontend = project
       "webpack-merge"               -> "4.1.1",
       "file-loader"                 -> "1.1.11"
     )
-  ).enablePlugins(ScalaJSBundlerPlugin, ScalaJSPlugin)
+  )
+  .dependsOn(shared)
+  .enablePlugins(ScalaJSBundlerPlugin, ScalaJSPlugin)
 
 
 lazy val shared = project
   .settings(commonSettings: _*)
+  .settings(serverCommonSettings: _*)
   .settings(
     name := "shared"
   )
-
-
-//onLoad in Global ~= (_ andThen ("project coordinator" :: _))

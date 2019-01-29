@@ -7,7 +7,7 @@ import me.benetis.coordinator.repository.{
   FactionRepo,
   VoteRepo
 }
-import me.benetis.coordinator.utils.DateFormatters.CustomFormatDateTime
+import me.benetis.shared.dates.DateFormatters.CustomFormatDateTime
 import me.benetis.shared._
 import scala.xml._
 

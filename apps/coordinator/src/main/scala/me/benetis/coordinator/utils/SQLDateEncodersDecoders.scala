@@ -1,27 +1,39 @@
 package me.benetis.coordinator.utils
-import DateFormatters._
+import me.benetis.shared.dates.DateFormatters._
 import io.getquill.MappedEncoding
-import me.benetis.shared.{DateTimeOnlyDate, DateTimeOnlyTime}
+import me.benetis.shared.dates._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import me.benetis.shared.dates.SharedDateEncoders._
 
 object SQLDateEncodersDecoders {
 
   implicit val encodeDateTime =
-    MappedEncoding[DateTime, String](_.toString(formatterDateTime))
+    MappedEncoding[SharedDateTime, String](d =>
+      d.toDateTime().toString(formatterDateTime))
 
   implicit val decodeDateTime =
-    MappedEncoding[String, DateTime](
-      DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.0").parseDateTime)
+    MappedEncoding[String, SharedDateTime](
+      d =>
+        DateTimeFormat
+          .forPattern("YYYY-MM-dd HH:mm:ss.0")
+          .parseDateTime(d)
+          .toSharedDateTime())
 
   implicit val encodeDate =
-    MappedEncoding[DateTimeOnlyDate, String](_.date.toString(formatterDateOnly))
+    MappedEncoding[SharedDateOnly, String](d =>
+      new DateTime(d.timestamp).toString(formatterDateOnly))
 
   implicit val decodeDate =
-    MappedEncoding[String, DateTimeOnlyDate](x =>
-      DateTimeOnlyDate(formatterDateOnly.parseDateTime(x)))
+    MappedEncoding[String, SharedDateOnly](x =>
+      formatterDateOnly.parseDateTime(x).toSharedDateOnly())
 
   implicit val encodeTime =
-    MappedEncoding[DateTimeOnlyTime, String](_.time.toString("HH:mm:ss"))
+    MappedEncoding[SharedTimeOnly, String](d =>
+      d.toDateTime().toString("HH:mm:ss"))
+
+  implicit val decodeTime =
+    MappedEncoding[String, SharedTimeOnly](d =>
+      formatterTime.parseDateTime(d).toSharedTimeOnly())
 
 }
