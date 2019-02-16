@@ -1,7 +1,5 @@
 package me.benetis.shared
 
-import me.benetis.shared.dates.SharedDateOnly
-
 case class InitiatedLegislationIntervalFrom(date: SharedDateOnly)
 case class InitiatedLegislationIntervalTo(date: SharedDateOnly)
 case class InitiatedLegislationTotal(count_total: Int)

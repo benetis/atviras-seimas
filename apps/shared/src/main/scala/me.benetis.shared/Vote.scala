@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.SharedDateTime
 
 sealed trait SingleVote       extends Embedded
 case object SingleVoteFor     extends SingleVote

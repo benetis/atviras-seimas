@@ -7,6 +7,7 @@ import diode.react.ReactConnector
 import me.benetis.shared.DiscussionLength
 import me.benetis.shared.api.ApiForFrontend
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import boopickle.Default._
 
 case class RootModel(counter: Int, discussionLength: Option[DiscussionLength])
 

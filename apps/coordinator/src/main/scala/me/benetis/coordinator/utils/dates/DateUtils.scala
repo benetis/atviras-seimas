@@ -1,6 +1,7 @@
-package me.benetis.shared.dates
+package me.benetis.coordinator.utils.dates
 import org.joda.time.DateTime
-import me.benetis.shared.dates.SharedDateEncoders._
+import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import me.benetis.shared.{SharedDateTime, SharedTimeOnly}
 
 object DateUtils {
   def timeWithDateToDateTime(time: SharedTimeOnly,

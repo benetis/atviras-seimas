@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.{SharedDateTime, SharedTimeOnly}
 
 case class PlenaryQuestionGroupId(plenary_question_group_id: String)
     extends Embedded

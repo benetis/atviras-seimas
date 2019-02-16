@@ -1,3 +1,5 @@
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+
 lazy val commonSettings = Seq(
   organization := "me.benetis",
   version := "0.0.1-SNAPSHOT",
@@ -14,32 +16,8 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val serverCommonSettings = Seq(
-  libraryDependencies ++= Seq(
-    "joda-time" % "joda-time"  % "2.7",
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
-    "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
-    "org.scalactic" %% "scalactic" % "3.0.5",
-    "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-    "org.typelevel" %% "cats-core" % "1.5.0",
-    "org.typelevel" %% "cats-effect" % "1.1.0",
-    "mysql" % "mysql-connector-java" % "5.1.38",
-    "io.getquill" %% "quill-jdbc" % "2.6.0",
-    "io.getquill" %% "quill-core" % "2.6.0",
-    "io.getquill" %% "quill-async" % "2.6.0",
-    "io.getquill" %% "quill-async-mysql" % "2.6.0",
-    "io.suzaku" %% "boopickle" % "1.3.0",
-    "com.lihaoyi" %% "autowire" % "0.2.6",
-    "com.github.nscala-time" %% "nscala-time" % "2.20.0"
-  )
-)
-
-lazy val root = (project in file("."))
-  .aggregate(coordinator)
-
-lazy val coordinator = project
+lazy val coordinator = crossProject(JSPlatform)
   .settings(commonSettings: _*)
-  .settings(serverCommonSettings: _*)
   .settings(
     name := "coordinator",
     libraryDependencies ++= Seq(
@@ -47,7 +25,21 @@ lazy val coordinator = project
       "org.http4s"      %% "http4s-circe"        % "0.20.0-M4",
       "org.http4s"      %% "http4s-dsl"          % "0.20.0-M4",
       "com.softwaremill.sttp" %% "core" % "1.5.2",
-      "org.scala-lang.modules" %% "scala-xml" % "1.1.1"
+      "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
+      "joda-time" % "joda-time"  % "2.7",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+      "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
+      "org.scalactic" %% "scalactic" % "3.0.5",
+      "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+      "org.typelevel" %% "cats-core" % "1.5.0",
+      "org.typelevel" %% "cats-effect" % "1.1.0",
+      "mysql" % "mysql-connector-java" % "5.1.38",
+      "io.getquill" %% "quill-jdbc" % "2.6.0",
+      "io.getquill" %% "quill-core" % "2.6.0",
+      "io.getquill" %% "quill-async" % "2.6.0",
+      "io.getquill" %% "quill-async-mysql" % "2.6.0",
+      "io.suzaku" %% "boopickle" % "1.3.0",
+      "com.lihaoyi" %% "autowire" % "0.2.6"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
@@ -103,15 +95,28 @@ lazy val frontend = project
       "style-loader"                -> "0.19.1",
       "webpack-merge"               -> "4.1.1",
       "file-loader"                 -> "1.1.11"
-    )
-  )
-  .dependsOn(shared)
+    ))
   .enablePlugins(ScalaJSBundlerPlugin, ScalaJSPlugin)
+  .dependsOn(sharedJS)
 
 
-lazy val shared = project
+lazy val shared = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
   .settings(commonSettings: _*)
-  .settings(serverCommonSettings: _*)
   .settings(
     name := "shared"
   )
+  .settings(
+    libraryDependencies ++= Seq(
+      "io.suzaku" %%% "boopickle" % "1.3.0",
+      "io.getquill" %%% "quill-core" % "2.6.0"
+    )
+  )
+  .jvmSettings(
+  // Add JVM-specific settings here
+  ).jsSettings(
+  // Add JS-specific settings here
+  )
+
+lazy val sharedJVM = shared.jvm
+lazy val sharedJS = shared.js

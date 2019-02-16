@@ -4,6 +4,7 @@ import japgolly.scalajs.react.extra.OnUnmount
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.html.Div
+import services.AppCircuit
 
 sealed trait Page
 case object Home extends Page
@@ -12,11 +13,13 @@ object AppRouter {
 
   val baseUrl = BaseUrl.fromWindowOrigin
 
-  val config = RouterConfigDsl[Page].buildConfig { dsl =>
+  val config = RouterConfigDsl[Page].buildConfig { dsl: RouterConfigDsl[Page] =>
     import dsl._
 
+    val circuit = AppCircuit.connect(zoomFunc = _.discussionLength)
+
     (trimSlashes
-      | staticRoute(root, Home) ~> render(HomePage()))
+      | staticRoute(root, Home) ~> renderR(ctl => circuit(p => HomePage())))
       .notFound(redirectToPage(Home)(Redirect.Replace))
       .renderWith(layout)
   }

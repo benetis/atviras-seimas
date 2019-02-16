@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.{SharedDateTime, SharedTimeOnly}
 
 case class AgendaQuestionId(agenda_question_id: Int) extends Embedded
 case class AgendaQuestionGroupId(agenda_question_group_id: String)

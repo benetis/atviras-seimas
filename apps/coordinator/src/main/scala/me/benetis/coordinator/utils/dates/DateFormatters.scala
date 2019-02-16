@@ -1,4 +1,4 @@
-package me.benetis.shared.dates
+package me.benetis.coordinator.utils.dates
 
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 

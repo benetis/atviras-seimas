@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.SharedDateOnly
 
 case class TermOfOfficeId(term_of_office_id: Int)         extends Embedded
 case class TermOfOfficeName(name: String)                 extends Embedded

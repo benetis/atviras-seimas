@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.SharedDateOnly
 
 case class SessionId(session_id: Int)                 extends Embedded
 case class SessionName(name: String)                  extends Embedded

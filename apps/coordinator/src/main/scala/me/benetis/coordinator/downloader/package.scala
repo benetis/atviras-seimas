@@ -5,9 +5,10 @@ import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import scala.util.Try
 import scala.xml.Node
-import me.benetis.shared.dates.DateFormatters._
-import me.benetis.shared.dates._
-import me.benetis.shared.dates.SharedDateEncoders._
+import me.benetis.coordinator.utils.dates.DateFormatters._
+import me.benetis.coordinator.utils.dates._
+import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import me.benetis.shared.{SharedDateOnly, SharedDateTime, SharedTimeOnly}
 
 package object downloader extends LazyLogging {
 

@@ -1,5 +1,6 @@
-package me.benetis.shared.dates
-import com.github.nscala_time.time.Imports._
+package me.benetis.coordinator.utils.dates
+
+import me.benetis.shared.{SharedDateOnly, SharedDateTime, SharedTimeOnly}
 
 object SharedDateEncoders {
 

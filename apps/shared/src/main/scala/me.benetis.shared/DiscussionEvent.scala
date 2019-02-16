@@ -1,7 +1,6 @@
 package me.benetis.shared
 
 import io.getquill.Embedded
-import me.benetis.shared.dates.SharedTimeOnly
 
 sealed trait DiscussionEventType extends Embedded
 case object Speech               extends DiscussionEventType

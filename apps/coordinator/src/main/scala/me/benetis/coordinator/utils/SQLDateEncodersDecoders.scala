@@ -1,10 +1,11 @@
 package me.benetis.coordinator.utils
-import me.benetis.shared.dates.DateFormatters._
+import me.benetis.coordinator.utils.dates.DateFormatters._
 import io.getquill.MappedEncoding
-import me.benetis.shared.dates._
+import me.benetis.coordinator.utils.dates._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import me.benetis.shared.dates.SharedDateEncoders._
+import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import me.benetis.shared.{SharedDateOnly, SharedDateTime, SharedTimeOnly}
 
 object SQLDateEncodersDecoders {
 

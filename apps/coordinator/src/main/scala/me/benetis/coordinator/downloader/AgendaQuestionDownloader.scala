@@ -10,7 +10,7 @@ import me.benetis.coordinator.repository.{
 import me.benetis.shared._
 import scala.xml._
 import cats._
-import me.benetis.shared.dates.DateUtils
+import me.benetis.coordinator.utils.dates.DateUtils
 import me.benetis.shared.encoding.Decoders
 import scala.collection.immutable
 import scala.util.Try

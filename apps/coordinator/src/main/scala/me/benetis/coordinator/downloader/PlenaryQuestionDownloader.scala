@@ -6,12 +6,12 @@ import me.benetis.coordinator.repository.{
   DiscussionEventRepo,
   PlenaryQuestionRepo
 }
-import me.benetis.shared.dates.DateFormatters.{
+import me.benetis.coordinator.utils.dates.DateFormatters.{
   CustomFormatDateTimeWithoutSeconds,
   CustomFormatTimeOnlyWithoutSeconds
 }
 import me.benetis.shared._
-import me.benetis.shared.dates.DateUtils
+import me.benetis.coordinator.utils.dates.DateUtils
 import me.benetis.shared.encoding.Decoders
 import scala.xml._
 
