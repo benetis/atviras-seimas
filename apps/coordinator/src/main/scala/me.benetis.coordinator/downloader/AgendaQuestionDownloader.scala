@@ -2,15 +2,11 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.{
-  AgendaQuestionRepo,
-  DiscussionEventRepo,
-  PlenaryRepo
-}
+import me.benetis.coordinator.repository.{AgendaQuestionRepo, DiscussionEventRepo, PlenaryRepo}
 import me.benetis.shared._
 import scala.xml._
 import cats._
-import me.benetis.coordinator.utils.dates.DateUtils
+import me.benetis.coordinator.utils.dates.{DateUtils, SharedDateDecoders}
 import me.benetis.shared.encoding.Decoders
 import scala.collection.immutable
 import scala.util.Try
@@ -129,7 +125,7 @@ object AgendaQuestionDownloader extends LazyLogging {
                 .map(t =>
                   DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
                 .map(AgendaQuestionDateTimeTo),
-              date = plenaryStart.time_start.toSharedTimeOnly(),
+              date = SharedDateDecoders.sharedDTToTimeOnly(plenaryStart.time_start),
               statusRaw = AgendaQuestionStatusRaw(statusRawV),
               status = status.map(Decoders.agendaQuestionStatus),
               documentLink = docLink.map(AgendaQuestionDocumentLink),

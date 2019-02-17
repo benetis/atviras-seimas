@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val coordinator = crossProject(JSPlatform)
+lazy val coordinator = project
   .settings(commonSettings: _*)
   .settings(
     name := "coordinator",
@@ -37,13 +37,11 @@ lazy val coordinator = crossProject(JSPlatform)
       "io.getquill" %% "quill-jdbc" % "2.6.0",
       "io.getquill" %% "quill-core" % "2.6.0",
       "io.getquill" %% "quill-async" % "2.6.0",
-      "io.getquill" %% "quill-async-mysql" % "2.6.0",
-      "io.suzaku" %% "boopickle" % "1.3.0",
-      "com.lihaoyi" %% "autowire" % "0.2.6"
+      "io.getquill" %% "quill-async-mysql" % "2.6.0"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
-  ).dependsOn(shared)
+  ).dependsOn(sharedJVM)
 
 
 val webpackResourcesBlob = Def.setting {
@@ -77,10 +75,8 @@ lazy val frontend = project
       "com.github.japgolly.scalacss" %%% "core" % "0.5.4",
       "com.github.japgolly.scalacss" %%% "ext-react" % "0.5.4",
       "org.typelevel" %%% "cats-effect" % "1.0.0",
-      "io.suzaku" %%% "boopickle" % "1.3.0",
       "io.suzaku" %%% "diode" % "1.1.4",
-      "io.suzaku" %%% "diode-react" % "1.1.4.131",
-      "com.lihaoyi" %%% "autowire" % "0.2.6"
+      "io.suzaku" %%% "diode-react" % "1.1.4.131"
     ),
     npmDependencies in Compile ++= Seq(
       "react" -> "16.5.1",
@@ -108,7 +104,6 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
   )
   .settings(
     libraryDependencies ++= Seq(
-      "io.suzaku" %%% "boopickle" % "1.3.0",
       "io.getquill" %%% "quill-core" % "2.6.0"
     )
   )

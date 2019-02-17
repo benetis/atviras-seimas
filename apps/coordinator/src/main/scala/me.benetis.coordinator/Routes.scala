@@ -17,6 +17,7 @@ class Routes[F[_]: Sync] extends Http4sDsl[F] {
       case GET -> Root / "download-my-stuff" / "plenary-questions" =>
         DownloaderCoordinator(FetchPlenaryQuestions)
         responseOk()
+      case GET -> Root / "api" / "test" => Ok()
     }
 
   def responseOk() =

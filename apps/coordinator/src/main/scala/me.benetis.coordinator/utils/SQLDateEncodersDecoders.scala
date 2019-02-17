@@ -11,7 +11,7 @@ object SQLDateEncodersDecoders {
 
   implicit val encodeDateTime =
     MappedEncoding[SharedDateTime, String](d =>
-      d.toDateTime().toString(formatterDateTime))
+      SharedDateDecoders.sharedDTToDT(d).toString(formatterDateTime))
 
   implicit val decodeDateTime =
     MappedEncoding[String, SharedDateTime](
@@ -31,7 +31,7 @@ object SQLDateEncodersDecoders {
 
   implicit val encodeTime =
     MappedEncoding[SharedTimeOnly, String](d =>
-      d.toDateTime().toString("HH:mm:ss"))
+      SharedDateDecoders.sharedTimeOnlyToDT(d).toString("HH:mm:ss"))
 
   implicit val decodeTime =
     MappedEncoding[String, SharedTimeOnly](d =>

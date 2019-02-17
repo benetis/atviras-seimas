@@ -2,12 +2,8 @@ package services
 
 import diode.ActionResult.ModelUpdate
 import diode._
-import autowire._
 import diode.react.ReactConnector
 import me.benetis.shared.DiscussionLength
-import me.benetis.shared.api.ApiForFrontend
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import boopickle.Default._
 
 case class RootModel(counter: Int, discussionLength: Option[DiscussionLength])
 
@@ -31,17 +27,17 @@ object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
     }
   }
 
-  val vizHandler = new ActionHandler(zoomTo(_.discussionLength)) {
-    override def handle = {
-      case LoadDiscussionLength =>
-        effectOnly(
-          Effect(
-            AjaxClient[ApiForFrontend]
-              .getDiscussionLengths()
-              .call()
-              .map(DiscussionLengthLoaded)))
-    }
-  }
+//  val vizHandler = new ActionHandler(zoomTo(_.discussionLength)) {
+//    override def handle = {
+////      case LoadDiscussionLength =>
+////        effectOnly(
+////          Effect(
+////            AjaxClient[ApiForFrontend]
+////              .getDiscussionLengths()
+////              .call()
+////              .map(_.mkString(" "))
+//    }
+//  }
 
-  val actionHandler = composeHandlers(counterHandler, vizHandler)
+  val actionHandler = composeHandlers(counterHandler)
 }
