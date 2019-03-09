@@ -47,7 +47,7 @@ package object downloader extends LazyLogging {
         isValidDateOrEmpty,
         if (dateValue.isEmpty) None
         else Some(new DateTime(dateValue).toSharedDateOnly()),
-        BadDateAndNonEmptyFormat(tag)
+        BadDateAndNonEmptyFormat(tag, dateValue)
       )
     }
 
@@ -66,7 +66,7 @@ package object downloader extends LazyLogging {
             formatterDateTimeWithoutSeconds
               .parseDateTime(dateValue)
               .toSharedDateTime()),
-        BadDateAndNonEmptyFormat(tag)
+        BadDateAndNonEmptyFormat(tag, dateValue)
       )
     }
 
@@ -79,12 +79,11 @@ package object downloader extends LazyLogging {
         formatterForDateFormat(customDateFormat)
           .parseDateTime(dateValue)
           .toSharedTimeOnly(),
-        BadTimeFormat(tag)
+        BadTimeFormat(tag, dateValue)
       )
     }
 
-    def validateTimeOrEmpty(
-        tag: String): Either[DomainValidation, Option[SharedTimeOnly]] = {
+    def validateTimeOrEmpty(tag: String): Either[DomainValidation, Option[SharedTimeOnly]] = {
       val dateValue = tagText(tag)
 
       val isValidDateOrEmpty = dateValue.matches("""^\d{2}\:\d{2}$""") || dateValue.isEmpty
@@ -98,7 +97,23 @@ package object downloader extends LazyLogging {
               .parseDateTime(dateValue)
               .toSharedTimeOnly()
           ),
-        BadDateAndNonEmptyFormat(tag)
+        BadDateAndNonEmptyFormat(tag, dateValue)
+      )
+    }
+
+    def validateTimeOrEmpty(tag: String, customDateFormat: CustomDateFormat)
+    : Either[DomainValidation, Option[SharedTimeOnly]] = {
+      val dateValue = tagText(tag)
+
+      val isValidDateOrEmpty = validationFuncForDateFormat(customDateFormat)(dateValue) || dateValue.isEmpty
+
+      Either.cond(
+        isValidDateOrEmpty,
+        if(dateValue.isEmpty) None
+        else Some(formatterForDateFormat(customDateFormat)
+            .parseDateTime(dateValue)
+            .toSharedTimeOnly()),
+        BadTimeFormat(tag, dateValue)
       )
     }
 

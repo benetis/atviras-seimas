@@ -87,4 +87,16 @@ object AgendaQuestionRepo {
     ctx.run(q)
   }
 
+  def listBeforePlenary(plenaryId: PlenaryId): List[AgendaQuestion] = {
+    val q = quote {
+      for {
+        p <- query[AgendaQuestion].filter(_.plenaryId.plenary_id > lift(plenaryId.plenary_id))
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q)
+  }
+
 }

@@ -48,6 +48,8 @@ object DiscussionEventDownloader extends LazyLogging {
     voteType match {
       case "Atviras" => Open
       case "Uždaras" => Closed
+      case "Pritarta bendru sutarimu" => AgreedByConsensus
+      case "Alternatyvus balsavimas" => AlternativeVoting
       case _ =>
         logger.error(s"Not supported vote type '$voteType'")
         Open
@@ -71,7 +73,7 @@ object DiscussionEventDownloader extends LazyLogging {
       agendaQuestionId: AgendaQuestionId,
       plenaryId: PlenaryId): Either[DomainValidation, DiscussionEvent] = {
     for {
-      timeFrom       <- node.validateTime("laikas_nuo", CustomFormatTimeOnly)
+      timeFrom       <- node.validateTimeOrEmpty("laikas_nuo", CustomFormatTimeOnly)
       eventTypeStr   <- node.validateNonEmpty("įvykio_tipas")
       personId       <- node.validateIntOrEmpty("asmens_id")
       personFullName <- Right(node.stringOrNone("asmuo"))
@@ -82,7 +84,7 @@ object DiscussionEventDownloader extends LazyLogging {
     } yield
       DiscussionEvent(
         agendaQuestionId,
-        DiscussionEventTimeFrom(timeFrom),
+        timeFrom.map(DiscussionEventTimeFrom),
         eventTypeDecoder(eventTypeStr),
         personId.map(PersonId),
         personFullName.map(PersonFullName),

@@ -11,6 +11,8 @@ case object DidntVote         extends SingleVote
 sealed trait VoteType extends Embedded
 case object Open      extends VoteType
 case object Closed    extends VoteType
+case object AgreedByConsensus extends VoteType
+case object AlternativeVoting extends VoteType
 
 case class VoteTime(time: SharedDateTime)       extends Embedded
 case class VoteTotal(vote_total: Int)           extends Embedded

@@ -51,6 +51,8 @@ object EncodersDecoders extends LazyLogging {
     voteType match {
       case Open   => 0
       case Closed => 1
+      case AgreedByConsensus => 2
+      case AlternativeVoting => 3
     }
   }
 

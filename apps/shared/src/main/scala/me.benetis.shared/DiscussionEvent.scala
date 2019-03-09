@@ -12,7 +12,7 @@ case class DiscussionEventTimeFrom(discussion_time_from: SharedTimeOnly)
 
 case class DiscussionEvent(
     agendaQuestionId: AgendaQuestionId,
-    timeFrom: DiscussionEventTimeFrom,
+    timeFrom: Option[DiscussionEventTimeFrom],
     eventType: DiscussionEventType,
     personId: Option[PersonId],
     personFullName: Option[PersonFullName],
