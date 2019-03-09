@@ -37,4 +37,6 @@ object SQLDateEncodersDecoders {
     MappedEncoding[String, SharedTimeOnly](d =>
       formatterTime.parseDateTime(d).toSharedTimeOnly())
 
+
+
 }

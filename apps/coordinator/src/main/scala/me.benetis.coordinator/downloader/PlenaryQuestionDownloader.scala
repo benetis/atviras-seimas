@@ -2,17 +2,11 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.{
-  DiscussionEventRepo,
-  PlenaryQuestionRepo
-}
-import me.benetis.coordinator.utils.dates.DateFormatters.{
-  CustomFormatDateTimeWithoutSeconds,
-  CustomFormatTimeOnlyWithoutSeconds
-}
+import me.benetis.coordinator.repository.{DiscussionEventRepo, PlenaryQuestionRepo}
+import me.benetis.coordinator.utils.dates.DateFormatters.{CustomFormatDateTimeWithoutSeconds, CustomFormatTimeOnlyWithoutSeconds}
 import me.benetis.shared._
 import me.benetis.coordinator.utils.dates.DateUtils
-import me.benetis.shared.encoding.Decoders
+import me.benetis.shared.encoding.EncodersDecoders
 import scala.xml._
 
 object PlenaryQuestionDownloader extends LazyLogging {
@@ -80,7 +74,7 @@ object PlenaryQuestionDownloader extends LazyLogging {
               DateUtils.timeWithDateToDateTime(timeFrom,
                                                plenaryStart.time_start)
             ),
-            status.map(Decoders.agendaQuestionStatus),
+            status.map(EncodersDecoders.agendaQuestionStatus),
             status.map(PlenaryQuestionStatusRaw),
             PlenaryQuestionNumber(number),
             plenary.id

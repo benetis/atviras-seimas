@@ -7,7 +7,7 @@ import me.benetis.shared._
 import scala.xml._
 import cats._
 import me.benetis.coordinator.utils.dates.{DateUtils, SharedDateDecoders}
-import me.benetis.shared.encoding.Decoders
+import me.benetis.shared.encoding.EncodersDecoders
 import scala.collection.immutable
 import scala.util.Try
 
@@ -125,9 +125,9 @@ object AgendaQuestionDownloader extends LazyLogging {
                 .map(t =>
                   DateUtils.timeWithDateToDateTime(t, plenaryStart.time_start))
                 .map(AgendaQuestionDateTimeTo),
-              date = SharedDateDecoders.sharedDTToTimeOnly(plenaryStart.time_start),
+              date = SharedDateDecoders.sharedDTToDateOnly(plenaryStart.time_start),
               statusRaw = AgendaQuestionStatusRaw(statusRawV),
-              status = status.map(Decoders.agendaQuestionStatus),
+              status = status.map(EncodersDecoders.agendaQuestionStatus),
               documentLink = docLink.map(AgendaQuestionDocumentLink),
               speakers = AgendaQuestionSpeakers(speakers.toVector),
               number = AgendaQuestionNumber(number),

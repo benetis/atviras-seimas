@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.encoding.Encoders
+import me.benetis.shared.encoding.EncodersDecoders
 import me.benetis.shared.{Faction, SingleVote, Vote}
 import org.joda.time.DateTime
 
@@ -14,7 +14,7 @@ object VoteRepo {
   import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   private implicit val encodeSingleVote =
-    MappedEncoding[SingleVote, Int](Encoders.voteSerializer)
+    MappedEncoding[SingleVote, Int](EncodersDecoders.voteSerializer)
 
   private implicit val FactionInsertMeta = insertMeta[Vote]()
 

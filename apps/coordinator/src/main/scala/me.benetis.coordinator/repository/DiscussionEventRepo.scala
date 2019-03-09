@@ -2,7 +2,7 @@ package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.shared._
-import me.benetis.shared.encoding.Encoders
+import me.benetis.shared.encoding.EncodersDecoders
 
 object DiscussionEventRepo {
 
@@ -13,16 +13,17 @@ object DiscussionEventRepo {
   import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   implicit val AgendaQuestionStatus =
-    MappedEncoding[DiscussionEventType, Int](Encoders.discussionEventSerializer)
+    MappedEncoding[DiscussionEventType, Int](
+      EncodersDecoders.discussionEventSerializer)
 
   implicit val voteTypeEnc =
-    MappedEncoding[VoteType, Int](Encoders.voteTypeSerialize)
+    MappedEncoding[VoteType, Int](EncodersDecoders.voteTypeSerialize)
 
   private implicit val SessionInsertMeta = insertMeta[DiscussionEvent]()
 
-  def insert(sessions: Seq[DiscussionEvent]): Unit = {
+  def insert(events: Seq[DiscussionEvent]): Unit = {
     val q = quote {
-      liftQuery(sessions).foreach(
+      liftQuery(events).foreach(
         e =>
           query[DiscussionEvent]
             .insert(e)

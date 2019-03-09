@@ -2,27 +2,27 @@ package me.benetis.coordinator.downloader
 
 import com.softwaremill.sttp._
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.DiscussionEventRepo
+import me.benetis.coordinator.repository.{AgendaQuestionRepo, DiscussionEventRepo}
 import me.benetis.coordinator.utils.dates.DateFormatters.CustomFormatTimeOnly
 import me.benetis.shared._
 import scala.xml._
 
 object DiscussionEventDownloader extends LazyLogging {
-  def fetchAndSave() = {
-
-//    val agendaQuestionId = AgendaQuestionId(-25758)
-
-//    fetchLogIfErrorAndSaveWithSleep(DiscussionEventRepo.insert, () => fetch())
+  def fetchAndSave(agendaQuestions: List[AgendaQuestion]) = {
+    agendaQuestions.map(
+      question =>
+        fetchLogIfErrorAndSaveWithSleep(
+          DiscussionEventRepo.insert,
+          () => fetch(question)
+        ))
   }
 
-  private def fetch(agendaQuestionId: AgendaQuestionId, plenary: Plenary)
-    : Either[String, Seq[Either[DomainValidation, DiscussionEvent]]] = {
+  private def fetch(agendaQuestion: AgendaQuestion)
+    : Either[FileOrConnectivityError, Seq[Either[DomainValidation, DiscussionEvent]]] = {
 
-    val darbotvarkes_klausimo_id = agendaQuestionId.agenda_question_id
-
-    val request =
-      sttp.get(
-        uri"http://apps.lrs.lt/sip/p2b.ad_sp_klausimo_svarstymo_eiga?darbotvarkes_klausimo_id=$darbotvarkes_klausimo_id")
+    val darbotvarkes_klausimo_id = agendaQuestion.id.agenda_question_id
+    val uri = uri"http://apps.lrs.lt/sip/p2b.ad_sp_klausimo_svarstymo_eiga?darbotvarkes_klausimo_id=$darbotvarkes_klausimo_id"
+    val request = sttp.get(uri)
 
     implicit val backend = HttpURLConnectionBackend()
 
@@ -30,19 +30,18 @@ object DiscussionEventDownloader extends LazyLogging {
 
     response match {
       case Right(body) =>
-        Right(parse(scala.xml.XML.loadString(body), agendaQuestionId, plenary))
-      case Left(err) => Left(err)
+        Right(parse(scala.xml.XML.loadString(body), agendaQuestion))
+      case Left(err) => Left(CannotReachWebsite(uri.toString(), err))
     }
   }
 
   private def parse(
       body: Elem,
-      agendaQuestionId: AgendaQuestionId,
-      plenary: Plenary): Seq[Either[DomainValidation, DiscussionEvent]] = {
+      agendaQuestion: AgendaQuestion): Seq[Either[DomainValidation, DiscussionEvent]] = {
     val discussions = body \\ "SeimoInformacija" \\ "SeimoPosėdžioKlausimas" \\ "SvarstymoEigosĮvykis"
 
     discussions.map((discussionEvent: Node) =>
-      validate(discussionEvent, agendaQuestionId, plenary))
+      validate(discussionEvent, agendaQuestion.id, agendaQuestion.plenaryId))
   }
 
   private def voteTypeDecoder(voteType: String): VoteType = {
@@ -70,7 +69,7 @@ object DiscussionEventDownloader extends LazyLogging {
   private def validate(
       node: Node,
       agendaQuestionId: AgendaQuestionId,
-      plenary: Plenary): Either[DomainValidation, DiscussionEvent] = {
+      plenaryId: PlenaryId): Either[DomainValidation, DiscussionEvent] = {
     for {
       timeFrom       <- node.validateTime("laikas_nuo", CustomFormatTimeOnly)
       eventTypeStr   <- node.validateNonEmpty("įvykio_tipas")
@@ -90,7 +89,7 @@ object DiscussionEventDownloader extends LazyLogging {
         registrationId.map(RegistrationId),
         voteId.map(VoteId),
         voteType.map(voteTypeDecoder),
-        plenary.id
+        plenaryId
       )
 
   }

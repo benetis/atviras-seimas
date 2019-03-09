@@ -27,8 +27,8 @@ lazy val coordinator = project
       "com.softwaremill.sttp" %% "core" % "1.5.2",
       "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
       "joda-time" % "joda-time"  % "2.7",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
-      "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.scalactic" %% "scalactic" % "3.0.5",
       "org.scalatest" %% "scalatest" % "3.0.5" % "test",
       "org.typelevel" %% "cats-core" % "1.5.0",
@@ -37,7 +37,9 @@ lazy val coordinator = project
       "io.getquill" %% "quill-jdbc" % "2.6.0",
       "io.getquill" %% "quill-core" % "2.6.0",
       "io.getquill" %% "quill-async" % "2.6.0",
-      "io.getquill" %% "quill-async-mysql" % "2.6.0"
+      "io.getquill" %% "quill-async-mysql" % "2.6.0",
+      "com.github.haifengl" %% "smile-scala" % "1.5.2",
+      "org.scalaz" %% "scalaz-zio" % "0.9"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")

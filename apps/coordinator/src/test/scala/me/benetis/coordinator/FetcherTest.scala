@@ -1,7 +1,7 @@
 package me.benetis.coordinator
 
 import me.benetis.coordinator.downloader.{
-  DownloaderCoordinator,
+  Coordinator,
   FactionDownloader,
   PlenaryDownloader,
   SessionDownloader,
