@@ -27,6 +27,8 @@ object DiscussionEventRepo {
         e =>
           query[DiscussionEvent]
             .insert(e)
+            .onConflictIgnore(_.uniqueId)
+
       )
     }
     ctx.run(q)

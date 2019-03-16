@@ -177,7 +177,7 @@ package object downloader extends LazyLogging {
         })
 
         print(".")
-        Thread.sleep(250)
+        Thread.sleep(201)
 
         list.collect {
           case Left(err) => logger.warn(err.errorMessage)

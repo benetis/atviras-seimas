@@ -22,7 +22,7 @@ object Coordinator {
         val plenaries = PlenaryRepo.list()
         PlenaryQuestionDownloader.fetchAndSave(plenaries)
       case FetchDiscussionEvents =>
-        val agendaQuestions = AgendaQuestionRepo.list()
+        val agendaQuestions = AgendaQuestionRepo.listBeforePlenary(PlenaryId(-500962))
         DiscussionEventDownloader.fetchAndSave(agendaQuestions)
     }
   }
