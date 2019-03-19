@@ -60,15 +60,18 @@ object DiscussionEventDownloader extends LazyLogging {
     }
   }
 
-  private def eventTypeDecoder(eventType: String): DiscussionEventType = {
-    eventType match {
-      case "Kalba"        => Speech
-      case "Registracija" => Registration
-      case "Balsavimas"   => Voting
-      case _ =>
-        logger.error(
-          s"Not supported status for discussion event type '$eventType'")
-        Speech
+  private def eventTypeDecoder(
+      eventType: Option[String]): Option[DiscussionEventType] = {
+    eventType.map { s =>
+      s match {
+        case "Kalba"        => Speech
+        case "Registracija" => Registration
+        case "Balsavimas"   => Voting
+        case _ =>
+          logger.error(
+            s"Not supported status for discussion event type '$eventType'")
+          Speech
+      }
     }
   }
 
@@ -117,7 +120,7 @@ object DiscussionEventDownloader extends LazyLogging {
       plenaryId: PlenaryId): Either[DomainValidation, DiscussionEvent] = {
     for {
       timeFrom       <- node.validateTimeOrEmpty("laikas_nuo", CustomFormatTimeOnly)
-      eventTypeStr   <- node.validateNonEmpty("įvykio_tipas")
+      eventTypeStr   <- Right(node.stringOrNone("įvykio_tipas"))
       personId       <- node.validateIntOrEmpty("asmens_id")
       personFullName <- Right(node.stringOrNone("asmuo"))
       registrationId <- node.validateIntOrEmpty("registracijos_id")
@@ -128,7 +131,7 @@ object DiscussionEventDownloader extends LazyLogging {
       DiscussionEvent(
         agendaQuestionId,
         uniqueIdForEvent(timeFrom,
-          personId.map(PersonId),
+                         personId.map(PersonId),
                          plenaryId,
                          agendaQuestionId,
                          voteId.map(VoteId),

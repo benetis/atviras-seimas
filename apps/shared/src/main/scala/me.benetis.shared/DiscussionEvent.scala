@@ -16,7 +16,7 @@ case class DiscussionEvent(
     agendaQuestionId: AgendaQuestionId,
     uniqueId: DiscussionEventUniqueId,
     timeFrom: Option[DiscussionEventTimeFrom],
-    eventType: DiscussionEventType,
+    eventType: Option[DiscussionEventType],
     personId: Option[PersonId],
     personFullName: Option[PersonFullName],
     registrationId: Option[RegistrationId],
