@@ -5,9 +5,9 @@ services:
     restart: always
     container_name: mysql
     volumes:
-      - data:/var/lib/mysql
+      - ./data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: root9198
       MYSQL_DATABASE: atviras-seimas
       MYSQL_USER: dev
       MYSQL_PASSWORD: root9198
