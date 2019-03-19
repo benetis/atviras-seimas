@@ -12,9 +12,11 @@ import me.benetis.shared._
 import scala.xml._
 
 object VoteDownloader extends LazyLogging {
-  def fetchAndSave() = {
-    fetchLogIfErrorAndSaveWithSleep(VoteRepo.insert,
-                                    () => fetch(VoteId(-27089)))
+  def fetchAndSave(voteIds: List[VoteId]) = {
+
+    voteIds.map(voteId => {
+      fetchLogIfErrorAndSaveWithSleep(VoteRepo.insert, () => fetch(voteId))
+    })
   }
 
   private def fetch(voteId: VoteId)

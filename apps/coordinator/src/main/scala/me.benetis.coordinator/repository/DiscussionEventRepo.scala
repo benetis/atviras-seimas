@@ -28,10 +28,23 @@ object DiscussionEventRepo {
           query[DiscussionEvent]
             .insert(e)
             .onConflictIgnore(_.uniqueId)
-
       )
     }
     ctx.run(q)
+  }
+
+  def distinctVoteIds(): List[VoteId] = {
+    val q = quote {
+      for {
+        p <- query[DiscussionEvent].map(_.voteId).filter(_.nonEmpty).distinct
+      } yield {
+        p
+      }
+    }
+
+    val res: List[Option[VoteId]] = ctx.run(q)
+
+    res.flatten
   }
 
 }

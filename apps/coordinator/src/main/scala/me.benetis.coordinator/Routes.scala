@@ -12,13 +12,16 @@ class Routes[F[_]: Sync] extends Http4sDsl[F] {
   val routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
 
-      case GET -> Root / "download" / "term-of-office" => downloader.Coordinator(FetchTermOfOffice)
+      case GET -> Root / "download" / "term-of-office" =>
+        downloader.Coordinator(FetchTermOfOffice)
         responseOk()
 
-      case GET -> Root / "download" / "sessions" => downloader.Coordinator(FetchSessions)
+      case GET -> Root / "download" / "sessions" =>
+        downloader.Coordinator(FetchSessions)
         responseOk()
 
-      case GET -> Root / "download" / "plenaries" => downloader.Coordinator(FetchPlenaries)
+      case GET -> Root / "download" / "plenaries" =>
+        downloader.Coordinator(FetchPlenaries)
         responseOk()
 
       case GET -> Root / "download" / "agenda-questions" =>
@@ -32,7 +35,9 @@ class Routes[F[_]: Sync] extends Http4sDsl[F] {
         downloader.Coordinator(FetchDiscussionEvents)
         responseOk()
 
-      case GET -> Root / "api" / "test" => Ok()
+      case GET -> Root / "download" / "votes" =>
+        downloader.Coordinator(FetchVotes)
+        responseOk()
     }
 
   def responseOk() =
