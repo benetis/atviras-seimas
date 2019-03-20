@@ -34,11 +34,13 @@ case class Vote(
     voteAgainst: VoteAgainst,
     voteAbstained: VoteAbstained,
     comment: VoteComment,
-    personId: PersonId,
-    name: PersonName,
-    surname: PersonSurname,
+    personId: ParliamentMemberId,
+    name: ParliamentMemberName,
+    surname: ParliamentMemberSurname,
     faction: Option[FactionAcronym],
     vote: SingleVote
 )
 
-case class VoteReduced(id: VoteId, singleVote: SingleVote, personId: PersonId)
+case class VoteReduced(id: VoteId,
+                       singleVote: SingleVote,
+                       personId: ParliamentMemberId)

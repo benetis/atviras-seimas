@@ -1,12 +1,7 @@
 package me.benetis.coordinator.downloader
 
 import cats.effect.IO
-import me.benetis.coordinator.repository.{
-  AgendaQuestionRepo,
-  DiscussionEventRepo,
-  PlenaryRepo,
-  SessionRepo
-}
+import me.benetis.coordinator.repository._
 import me.benetis.shared._
 
 object Coordinator {
@@ -33,6 +28,9 @@ object Coordinator {
       case FetchVotes =>
         val voteIdsToDownload = DiscussionEventRepo.distinctVoteIds()
         VoteDownloader.fetchAndSave(voteIdsToDownload)
+      case FetchParliamentMembers =>
+        val terms = TermOfOfficeRepo.list()
+        ParliamentMembersDownloader.fetchAndSave(terms)
     }
   }
 

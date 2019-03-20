@@ -18,10 +18,6 @@ object MDS {
    */
   def buildProximityMatrix(votesReduced: List[VoteReduced]): ProximityMatrix = {
 
-    // Optimisation #1: personIds are <80k
-    // Optimisation #2: voteIds start at -1000, but we negate - so we add 1200
-
-    //Todo: Since matrix is symmetric - copy half of triangle
     var matrix: Matrix = Array.ofDim[Double](votesReduced.size + 1200, 80000)
 
     votesReduced.foreach(voteReduced => {
@@ -34,4 +30,11 @@ object MDS {
 
     ProximityMatrix(matrix)
   }
+
+  //1. Scrapinam visus seimo narius, kada kuris buvo kurioje kadencijoje
+  //2. Pagal data skaiciuojam kuri kadencija
+  //3. Kiekvienam tos kadencijos seimo nariui priskiriam po id (0-150~)
+  //Limitacijos: tik vienoje kadencijoje MDS'as
+
+//  def personIndiceByOfficeTerm()
 }

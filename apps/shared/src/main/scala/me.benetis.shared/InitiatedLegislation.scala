@@ -7,9 +7,9 @@ case class InitiatedLegislationIndividual(count_individual: Int)
 case class InitiatedLegislationGroup(count_group: Int)
 
 case class InitiatedLegislation(
-    personId: PersonId,
-    personName: PersonName,
-    personSurname: PersonSurname,
+    personId: ParliamentMemberId,
+    personName: ParliamentMemberName,
+    personSurname: ParliamentMemberSurname,
     legislationIntervalFrom: InitiatedLegislationIntervalFrom,
     legislationIntervalTo: InitiatedLegislationIntervalTo,
     countTotal: InitiatedLegislationTotal,

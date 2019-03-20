@@ -39,6 +39,10 @@ class Routes[F[_]: Sync] extends Http4sDsl[F] {
         downloader.Coordinator(FetchVotes)
         responseCompleted()
 
+      case GET -> Root / "download" / "parliament-members" =>
+        downloader.Coordinator(FetchParliamentMembers)
+        responseCompleted()
+
       case GET -> Root / "compute" / "mds" =>
         computing.Coordinator(ComputeMDS)
         responseCompleted()

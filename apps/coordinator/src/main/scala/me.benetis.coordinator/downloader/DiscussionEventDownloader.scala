@@ -76,7 +76,7 @@ object DiscussionEventDownloader extends LazyLogging {
   }
 
   def uniqueIdForEvent(timeFrom: Option[SharedTimeOnly],
-                       personId: Option[PersonId],
+                       personId: Option[ParliamentMemberId],
                        plenaryId: PlenaryId,
                        agendaQuestionId: AgendaQuestionId,
                        voteId: Option[VoteId],
@@ -130,17 +130,19 @@ object DiscussionEventDownloader extends LazyLogging {
     } yield
       DiscussionEvent(
         agendaQuestionId,
-        uniqueIdForEvent(timeFrom,
-                         personId.map(PersonId),
-                         plenaryId,
-                         agendaQuestionId,
-                         voteId.map(VoteId),
-                         registrationId.map(RegistrationId),
-                         voteType.map(voteTypeDecoder)),
+        uniqueIdForEvent(
+          timeFrom,
+          personId.map(ParliamentMemberId),
+          plenaryId,
+          agendaQuestionId,
+          voteId.map(VoteId),
+          registrationId.map(RegistrationId),
+          voteType.map(voteTypeDecoder)
+        ),
         timeFrom.map(DiscussionEventTimeFrom),
         eventTypeDecoder(eventTypeStr),
-        personId.map(PersonId),
-        personFullName.map(PersonFullName),
+        personId.map(ParliamentMemberId),
+        personFullName.map(ParliamentMemberFullName),
         registrationId.map(RegistrationId),
         voteId.map(VoteId),
         voteType.map(voteTypeDecoder),

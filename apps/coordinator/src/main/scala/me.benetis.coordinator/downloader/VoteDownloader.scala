@@ -60,7 +60,7 @@ object VoteDownloader extends LazyLogging {
     }
   }
 
-  private def votePersonId(id: VoteId, i: PersonId): VotePersonId = {
+  private def votePersonId(id: VoteId, i: ParliamentMemberId): VotePersonId = {
     VotePersonId(s"${id.vote_id}/${i.person_id}")
   }
 
@@ -86,7 +86,7 @@ object VoteDownloader extends LazyLogging {
     } yield
       Vote(
         voteId,
-        votePersonId(voteId, PersonId(personId)),
+        votePersonId(voteId, ParliamentMemberId(personId)),
         VoteTime(voteTime),
         VoteTotal(voteTotal),
         VoteTotalMax(voteTotalMax),
@@ -94,9 +94,9 @@ object VoteDownloader extends LazyLogging {
         VoteAgainst(voteAgainst),
         VoteAbstained(voteAbstain),
         VoteComment(comment),
-        PersonId(personId),
-        PersonName(personName),
-        PersonSurname(personLastName),
+        ParliamentMemberId(personId),
+        ParliamentMemberName(personName),
+        ParliamentMemberSurname(personLastName),
         if (factionAcr.isEmpty) None else Some(FactionAcronym(factionAcr)),
         vote
       )

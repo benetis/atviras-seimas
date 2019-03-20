@@ -40,11 +40,7 @@ lazy val coordinator = project
       "io.getquill" %% "quill-async-mysql" % "2.6.0",
       "com.github.haifengl" %% "smile-scala" % "1.5.2",
       "org.scalaz" %% "scalaz-zio" % "0.9",
-      "org.scalanlp" %% "breeze" % "0.13.2",
-      "org.scalanlp" %% "breeze-natives" % "0.13.2",
-      "org.scalanlp" %% "breeze-viz" % "0.13.2",
     ),
-    resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/",
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
   ).dependsOn(sharedJVM)

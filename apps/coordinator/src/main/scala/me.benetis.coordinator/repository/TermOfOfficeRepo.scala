@@ -24,4 +24,16 @@ object TermOfOfficeRepo {
     ctx.run(q)
   }
 
+  def list(): List[TermOfOffice] = {
+    val q = quote {
+      for {
+        p <- query[TermOfOffice]
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q)
+  }
+
 }
