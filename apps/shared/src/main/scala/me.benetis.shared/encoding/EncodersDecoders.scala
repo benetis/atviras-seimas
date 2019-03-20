@@ -25,7 +25,8 @@ object EncodersDecoders extends LazyLogging {
     AgendaQuestionSpeakers.speakers.mkString("/")
   }
 
-  def AgendaQuestionSpeakersDeSerializer(str: String): AgendaQuestionSpeakers = {
+  def AgendaQuestionSpeakersDeSerializer(
+      str: String): AgendaQuestionSpeakers = {
     AgendaQuestionSpeakers(str.split("/").toVector)
   }
 
@@ -35,6 +36,15 @@ object EncodersDecoders extends LazyLogging {
       case SingleVoteFor     => 1
       case SingleVoteAgainst => 2
       case DidntVote         => 3
+    }
+  }
+
+  def voteDeserializer(singleVoteInt: Int): SingleVote = {
+    singleVoteInt match {
+      case 0 => SingleVoteAbstain
+      case 1 => SingleVoteFor
+      case 2 => SingleVoteAgainst
+      case 3 => DidntVote
     }
   }
 
@@ -49,8 +59,8 @@ object EncodersDecoders extends LazyLogging {
 
   def voteTypeSerialize(voteType: VoteType): Int = {
     voteType match {
-      case Open   => 0
-      case Closed => 1
+      case Open              => 0
+      case Closed            => 1
       case AgreedByConsensus => 2
       case AlternativeVoting => 3
     }

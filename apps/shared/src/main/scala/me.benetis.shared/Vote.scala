@@ -8,9 +8,9 @@ case object SingleVoteAgainst extends SingleVote
 case object SingleVoteAbstain extends SingleVote
 case object DidntVote         extends SingleVote
 
-sealed trait VoteType extends Embedded
-case object Open      extends VoteType
-case object Closed    extends VoteType
+sealed trait VoteType         extends Embedded
+case object Open              extends VoteType
+case object Closed            extends VoteType
 case object AgreedByConsensus extends VoteType
 case object AlternativeVoting extends VoteType
 
@@ -40,3 +40,5 @@ case class Vote(
     faction: Option[FactionAcronym],
     vote: SingleVote
 )
+
+case class VoteReduced(id: VoteId, singleVote: SingleVote, personId: PersonId)
