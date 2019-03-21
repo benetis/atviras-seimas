@@ -82,7 +82,9 @@ object ParliamentMembersDownloader extends LazyLogging {
         ParliamentMemberFactionName(factionName),
         ParliamentMemberElectedHow(electedHow),
         ParliamentMemberTermOfOfficeAmount(termOfOfficeAmount),
-        ParliamentMemberBiographyLink(biographyLink)
+        ParliamentMemberBiographyLink(biographyLink),
+        termOfOfficeId,
+        None
       )
     }
 

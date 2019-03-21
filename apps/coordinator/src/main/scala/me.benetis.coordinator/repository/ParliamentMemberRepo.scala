@@ -36,4 +36,33 @@ object ParliamentMemberRepo {
     ctx.run(q)
   }
 
+  def listByTermOfOffice(
+      termOfOfficeId: TermOfOfficeId): List[ParliamentMember] = {
+    val q = quote {
+      for {
+        p <- query[ParliamentMember].filter(
+          _.termOfOfficeId.term_of_office_id == lift(
+            termOfOfficeId.term_of_office_id))
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q)
+  }
+
+  def updateTermsSpecificIds() = {
+    val terms = TermOfOfficeRepo.list().map(_.id)
+
+    terms.foreach((t: TermOfOfficeId) => {
+      val members: List[ParliamentMember] = listByTermOfOffice(t)
+      members.zipWithIndex.map {
+        case (m, i) =>
+          m.copy(
+            termOfOfficeSpecificId =
+              Some(ParliamentMemberTermOfOfficeSpecificId(i)))
+      }
+    })
+  }
+
 }

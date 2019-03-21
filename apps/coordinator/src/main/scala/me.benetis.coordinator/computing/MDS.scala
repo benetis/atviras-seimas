@@ -39,10 +39,6 @@ object MDS extends LazyLogging {
   //3. Kiekvienam tos kadencijos seimo nariui priskiriam po id (0-150~)
   //Limitacijos: tik vienoje kadencijoje MDS'as
 
-  def personIndiceByOfficeTerm(termOfOffice: TermOfOffice): PersonIndice = {
-    Cache.RepoCache.parliameMembers
-  }
-
   def officeTermByDate(date: SharedDateOnly): TermOfOffice = {
     val res = Cache.RepoCache.termOfOffices.find(t => {
       t.dateTo match {

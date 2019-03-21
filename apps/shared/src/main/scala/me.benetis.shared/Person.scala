@@ -2,6 +2,10 @@ package me.benetis.shared
 
 import io.getquill.Embedded
 
+case class ParliamentMemberTermOfOfficeSpecificId(
+    term_of_office_specific_id: Int)
+    extends Embedded
+
 case class ParliamentMemberId(person_id: Int)                extends Embedded
 case class ParliamentMemberFullName(person_fullname: String) extends Embedded
 case class ParliamentMemberName(person_name: String)         extends Embedded
@@ -28,5 +32,7 @@ case class ParliamentMember(
     factionName: ParliamentMemberFactionName,
     electedHow: ParliamentMemberElectedHow,
     termOfOfficeAmount: ParliamentMemberTermOfOfficeAmount,
-    biographyLink: ParliamentMemberBiographyLink
+    biographyLink: ParliamentMemberBiographyLink,
+    termOfOfficeId: TermOfOfficeId,
+    termOfOfficeSpecificId: Option[ParliamentMemberTermOfOfficeSpecificId]
 ) extends Embedded
