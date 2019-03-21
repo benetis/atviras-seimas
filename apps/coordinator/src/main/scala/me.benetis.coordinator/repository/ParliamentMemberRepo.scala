@@ -5,6 +5,7 @@ import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 import me.benetis.shared.{ParliamentMember, Session}
 import me.benetis.shared._
 import me.benetis.shared.encoding.EncodersDecoders
+
 object ParliamentMemberRepo {
 
   private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")

@@ -1,6 +1,7 @@
 package me.benetis.coordinator.computing
+import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.computing.encoding.VoteEncoding
-import me.benetis.shared.VoteReduced
+import me.benetis.shared.{SharedDateOnly, TermOfOffice, VoteReduced}
 
 case class ProximityMatrix(value: Array[Array[Double]]) {
   override def toString: String = {
@@ -8,7 +9,9 @@ case class ProximityMatrix(value: Array[Array[Double]]) {
   }
 }
 
-object MDS {
+object MDS extends LazyLogging {
+
+  case class PersonIndice(indice: Int)
 
   type Matrix = Array[Array[Double]]
 
@@ -36,5 +39,25 @@ object MDS {
   //3. Kiekvienam tos kadencijos seimo nariui priskiriam po id (0-150~)
   //Limitacijos: tik vienoje kadencijoje MDS'as
 
-//  def personIndiceByOfficeTerm()
+  def personIndiceByOfficeTerm(termOfOffice: TermOfOffice): PersonIndice = {
+    Cache.RepoCache.parliameMembers
+  }
+
+  def officeTermByDate(date: SharedDateOnly): TermOfOffice = {
+    val res = Cache.RepoCache.termOfOffices.find(t => {
+      t.dateTo match {
+        case Some(termDate) =>
+          date > t.dateFrom.dateFrom && date <= termDate.dateTo
+        case None => date > t.dateFrom.dateFrom
+      }
+    })
+
+    res match {
+      case Some(x) => x
+      case None =>
+        logger.error("no dates match term office")
+        Cache.RepoCache.termOfOffices.head
+    }
+  }
+
 }

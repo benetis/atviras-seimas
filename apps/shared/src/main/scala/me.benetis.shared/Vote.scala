@@ -43,4 +43,5 @@ case class Vote(
 
 case class VoteReduced(id: VoteId,
                        singleVote: SingleVote,
-                       personId: ParliamentMemberId)
+                       personId: ParliamentMemberId,
+                       dateTime: VoteTime)

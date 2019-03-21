@@ -38,7 +38,7 @@ object VoteRepo {
       for {
         p <- query[Vote]
           .filter(_.id.vote_id == -1001)
-          .map(v => VoteReduced(v.id, v.vote, v.personId))
+          .map(v => VoteReduced(v.id, v.vote, v.personId, v.time))
       } yield {
         p
       }
