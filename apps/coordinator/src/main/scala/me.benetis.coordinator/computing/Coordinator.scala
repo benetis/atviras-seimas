@@ -8,7 +8,13 @@ object Coordinator extends LazyLogging {
     computingSettings match {
       case ComputeMDS =>
         logger.info("Start MDS")
-        MDS.buildProximityMatrix(TermOfOfficeId(8))
+        val result = MDS.buildProximityMatrix(TermOfOfficeId(8))
+
+        result match {
+          case Right(matrix) =>
+            logger.info(matrix.toString)
+          case Left(err) => logger.error(err.msg())
+        }
     }
   }
 }

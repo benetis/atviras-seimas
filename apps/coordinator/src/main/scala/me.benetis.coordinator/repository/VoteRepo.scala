@@ -38,14 +38,12 @@ object VoteRepo {
     val q = quote {
       for {
         p <- query[Vote]
-          .filter(_.id.vote_id == -1001)
-          .map(v => VoteReduced(v.id, v.vote, v.personId, v.time, None))
       } yield {
         p
       }
     }
 
-    ctx.run(q)
+    ctx.run(q).map(v => VoteReduced(v.id, v.vote, v.personId, v.time, None))
   }
 
   def listForTermOfOffice(termOfOfficeId: TermOfOfficeId)

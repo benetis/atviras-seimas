@@ -14,15 +14,15 @@ case object Closed            extends VoteType
 case object AgreedByConsensus extends VoteType
 case object AlternativeVoting extends VoteType
 
-case class VoteTime(time: SharedDateTime)       extends Embedded
-case class VoteTotal(vote_total: Int)           extends Embedded
-case class VoteTotalMax(vote_total_max: Int)    extends Embedded
-case class VoteFor(vote_for: Int)               extends Embedded
-case class VoteAgainst(vote_against: Int)       extends Embedded
-case class VoteAbstained(vote_abstained: Int)   extends Embedded
-case class VoteComment(comment: String)         extends Embedded
-case class VoteId(vote_id: Int)                 extends Embedded
-case class VoteTermSpecificId(vote_id: Int)     extends Embedded
+case class VoteTime(time: SharedDateTime)     extends Embedded
+case class VoteTotal(vote_total: Int)         extends Embedded
+case class VoteTotalMax(vote_total_max: Int)  extends Embedded
+case class VoteFor(vote_for: Int)             extends Embedded
+case class VoteAgainst(vote_against: Int)     extends Embedded
+case class VoteAbstained(vote_abstained: Int) extends Embedded
+case class VoteComment(comment: String)       extends Embedded
+case class VoteId(vote_id: Int)               extends Embedded
+case class VoteTermSpecificId(vote_term_specific_id: Int)
 case class VotePersonId(vote_person_id: String) extends Embedded
 
 case class Vote(
@@ -46,4 +46,4 @@ case class VoteReduced(id: VoteId,
                        singleVote: SingleVote,
                        personId: ParliamentMemberId,
                        dateTime: VoteTime,
-                       termSpecificId: Option[VoteTermSpecificId])
+                       termSpecificVoteId: Option[VoteTermSpecificId])
