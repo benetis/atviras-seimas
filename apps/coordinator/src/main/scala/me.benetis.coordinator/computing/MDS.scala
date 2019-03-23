@@ -1,6 +1,7 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.computing.encoding.VoteEncoding
+import me.benetis.coordinator.repository.ParliamentMemberRepo
 import me.benetis.shared.{SharedDateOnly, TermOfOffice, VoteReduced}
 
 case class ProximityMatrix(value: Array[Array[Double]]) {
@@ -19,9 +20,18 @@ object MDS extends LazyLogging {
    * Rows - votes
    * Columns - parliament members
    */
-  def buildProximityMatrix(votesReduced: List[VoteReduced]): ProximityMatrix = {
+  def buildProximityMatrix(termOfOffice: TermOfOffice, votesReduced: List[VoteReduced]): ProximityMatrix = {
 
-    var matrix: Matrix = Array.ofDim[Double](votesReduced.size + 1200, 80000)
+    ParliamentMemberRepo.updateTermsSpecificIds()
+
+    //MDS per term of office
+    //Columns are votes
+    //Rows are members
+
+    val columns = votesReduced.size
+    val rows =
+
+    var matrix: Matrix = Array.ofDim[Double]()
 
     votesReduced.foreach(voteReduced => {
       val encoded = VoteEncoding.singleVoteEncodedE1(voteReduced.singleVote)
@@ -33,11 +43,6 @@ object MDS extends LazyLogging {
 
     ProximityMatrix(matrix)
   }
-
-  //1. Scrapinam visus seimo narius, kada kuris buvo kurioje kadencijoje
-  //2. Pagal data skaiciuojam kuri kadencija
-  //3. Kiekvienam tos kadencijos seimo nariui priskiriam po id (0-150~)
-  //Limitacijos: tik vienoje kadencijoje MDS'as
 
   def officeTermByDate(date: SharedDateOnly): TermOfOffice = {
     val res = Cache.RepoCache.termOfOffices.find(t => {

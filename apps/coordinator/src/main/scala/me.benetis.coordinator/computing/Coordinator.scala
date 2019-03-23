@@ -8,7 +8,8 @@ object Coordinator extends LazyLogging {
     computingSettings match {
       case ComputeMDS =>
         val votes: List[VoteReduced] = VoteRepo.list()
-        logger.info(MDS.buildProximityMatrix(votes).toString)
+        logger.info("Start MDS")
+        MDS.buildProximityMatrix(votes)
     }
   }
 }
