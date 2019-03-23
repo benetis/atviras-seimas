@@ -2,6 +2,7 @@ package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.coordinator.repository.DiscussionEventRepo.ctx
+import me.benetis.coordinator.utils.{ComputingError, DBNotExpectedResult}
 import me.benetis.shared.encoding.EncodersDecoders
 import me.benetis.shared._
 import org.joda.time.DateTime
@@ -38,13 +39,37 @@ object VoteRepo {
       for {
         p <- query[Vote]
           .filter(_.id.vote_id == -1001)
-          .map(v => VoteReduced(v.id, v.vote, v.personId, v.time))
+          .map(v => VoteReduced(v.id, v.vote, v.personId, v.time, None))
       } yield {
         p
       }
     }
 
     ctx.run(q)
+  }
+
+  def listForTermOfOffice(termOfOfficeId: TermOfOfficeId)
+    : Either[ComputingError, List[VoteReduced]] = {
+
+    def isDateInRange(voteTime: VoteTime,
+                      termOfOffice: TermOfOffice): Boolean = {
+      termOfOffice.dateTo match {
+        case Some(dateTo) =>
+          voteTime.time.millis < dateTo.dateTo.millis && voteTime.time.millis > termOfOffice.dateFrom.dateFrom.millis
+        case None => //Current term
+          voteTime.time.millis > termOfOffice.dateFrom.dateFrom.millis
+      }
+    }
+
+    val term = TermOfOfficeRepo.byId(termOfOfficeId)
+
+    term match {
+      case Some(termValue) =>
+        Right(list().filter(vote => isDateInRange(vote.dateTime, termValue)))
+      case None =>
+        Left(DBNotExpectedResult(
+          s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"))
+    }
   }
 
 }

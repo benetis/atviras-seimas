@@ -54,7 +54,7 @@ object ParliamentMemberRepo extends LazyLogging {
 
   def updateTermsSpecificIds(): Unit = {
 
-    logger.info("Start specific ids")
+    logger.info("Start byId ids")
 
     val terms = TermOfOfficeRepo.list().map(_.id)
 
@@ -75,7 +75,7 @@ object ParliamentMemberRepo extends LazyLogging {
 
   private def updateSpecificIds(members: List[ParliamentMember]): Unit = {
 
-    //Unsafe as it requires specific id to be set, but works
+    //Unsafe as it requires byId id to be set, but works
 
     val q = quote {
       liftQuery(members).foreach { person =>

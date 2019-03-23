@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{TermOfOffice}
+import me.benetis.shared.{TermOfOffice, TermOfOfficeId}
 
 object TermOfOfficeRepo {
 
@@ -34,6 +34,19 @@ object TermOfOfficeRepo {
     }
 
     ctx.run(q)
+  }
+
+  def byId(termOfOfficeId: TermOfOfficeId): Option[TermOfOffice] = {
+    val q = quote {
+      for {
+        p <- query[TermOfOffice].filter(
+          _.id.term_of_office_id == lift(termOfOfficeId.term_of_office_id))
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q).headOption
   }
 
 }

@@ -22,6 +22,7 @@ case class VoteAgainst(vote_against: Int)       extends Embedded
 case class VoteAbstained(vote_abstained: Int)   extends Embedded
 case class VoteComment(comment: String)         extends Embedded
 case class VoteId(vote_id: Int)                 extends Embedded
+case class VoteTermSpecificId(vote_id: Int)     extends Embedded
 case class VotePersonId(vote_person_id: String) extends Embedded
 
 case class Vote(
@@ -44,4 +45,5 @@ case class Vote(
 case class VoteReduced(id: VoteId,
                        singleVote: SingleVote,
                        personId: ParliamentMemberId,
-                       dateTime: VoteTime)
+                       dateTime: VoteTime,
+                       termSpecificId: Option[VoteTermSpecificId])
