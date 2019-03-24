@@ -1,7 +1,7 @@
 package me.benetis.coordinator.repository
 import com.typesafe.scalalogging.LazyLogging
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.{Faction, MDSResults}
+import me.benetis.shared._
 import org.json4s.native.Serialization.write
 import org.json4s.DefaultFormats
 
@@ -12,43 +12,21 @@ object MDSRepo extends LazyLogging {
 
   implicit val formats = DefaultFormats
 
-//  private implicit val MDSInsertMeta = insertMeta[MDSResults]()
+  implicit val eigenEncoding =
+    MappedEncoding[EigenValues, String](write(_))
 
-  def insert(mds: MDSResults): Unit = {
+  implicit val mdsProportionEncoding =
+    MappedEncoding[MDSProportion, String](write(_))
 
-    val coordinatesV = write(mds.coordinates)
-    val eigenValuesV = write(mds.eigenValues)
-    val proportionV  = write(mds.proportion)
+  implicit val mdsCoordinatesEncoding =
+    MappedEncoding[MDSCoordinates, String](write(_))
 
-    logger.info(coordinatesV)
+  private implicit val MDSInsertMeta = insertMeta[MdsResult]()
 
-    val rawQuery = quote {
-      (coordinates: String,
-       eigenValues: String,
-       proportion: String,
-       term_office_id: Int) =>
-        infix"""
-                INSERT INTO `atviras-seimas`.mds_result
-                VALUES ($coordinates, $term_office_id, NOW(), $eigenValues, $proportion, NULL)"""
-          .as[Query[(String, String, String, Int, String)]]
-    }
+  def insert(mds: MdsResult): Unit = {
+    val q = quote { query[MdsResult].insert(lift(mds)).onConflictIgnore }
 
-    ctx.run(
-      rawQuery(lift(coordinatesV),
-               lift(eigenValuesV),
-               lift(proportionV),
-               lift(mds.termOfOfficeId.term_of_office_id)))
+    ctx.run(q)
   }
 
-//  def list(): Vector[MDSResults] = {
-//    val q = quote {
-//      for {
-//        p <- query[MDSResults]
-//      } yield {
-//        p
-//      }
-//    }
-//
-//    ctx.run(q).toVector
-//  }
 }

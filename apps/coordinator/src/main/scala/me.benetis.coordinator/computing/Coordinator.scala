@@ -2,7 +2,7 @@ package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{MDSRepo, VoteRepo}
 import me.benetis.coordinator.utils.ComputingError
-import me.benetis.shared.{MDSResults, TermOfOfficeId, VoteReduced}
+import me.benetis.shared._
 import smile.mds.MDS
 
 object Coordinator extends LazyLogging {
@@ -21,10 +21,10 @@ object Coordinator extends LazyLogging {
         result match {
           case Right(mds) =>
             MDSRepo.insert(
-              MDSResults(
-                mds.getEigenValues,
-                mds.getProportion,
-                mds.getCoordinates,
+              MdsResult(
+                EigenValues(mds.getEigenValues),
+                MDSProportion(mds.getProportion),
+                MDSCoordinates(mds.getCoordinates),
                 termOfOfficeId
               ))
 
