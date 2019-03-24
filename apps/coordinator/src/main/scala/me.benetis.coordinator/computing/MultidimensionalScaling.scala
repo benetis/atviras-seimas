@@ -88,7 +88,7 @@ object MultidimensionalScaling extends LazyLogging {
       }
 
       val pairDistance =
-        euclidianDistanceForMemberVotes(votesForMembers,
+        euclideanDistanceForMemberVotes(votesForMembers,
                                         pair._1,
                                         pair._2,
                                         VoteEncoding.singleVoteEncodedE3)
@@ -98,7 +98,7 @@ object MultidimensionalScaling extends LazyLogging {
         pairDistance.value
     })
   }
-  private def euclidianDistanceForMemberVotes(
+  private def euclideanDistanceForMemberVotes(
       votesForMembers: Map[ParliamentMemberId, List[VoteReduced]],
       member1: ParliamentMember,
       member2: ParliamentMember,
@@ -115,28 +115,6 @@ object MultidimensionalScaling extends LazyLogging {
       })
 
     EuclideanDistance(Math.sqrt(euclideanSquared))
-  }
-
-  private def addTermSpecificIdsToVote(
-      list: List[VoteReduced]): List[VoteReduced] = {
-    list.zipWithIndex.map {
-      case (vote, i) =>
-        vote.copy(termSpecificVoteId = Some(VoteTermSpecificId(i)))
-    }
-  }
-
-  private def getPersonIdForTerm(personId: ParliamentMemberId,
-                                 members: List[ParliamentMember])
-    : ParliamentMemberTermOfOfficeSpecificId = {
-    val p = members.find(_.personId == personId)
-
-    p.flatMap(_.termOfOfficeSpecificId) match {
-      case Some(specificId) => specificId
-      case None =>
-        logger.error("lists given should have specificIds added")
-        ParliamentMemberTermOfOfficeSpecificId(-1)
-    }
-
   }
 
 }
