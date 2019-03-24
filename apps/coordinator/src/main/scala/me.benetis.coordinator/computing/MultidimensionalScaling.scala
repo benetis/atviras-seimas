@@ -1,8 +1,12 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.computing.encoding.VoteEncoding
-import me.benetis.coordinator.repository.{ParliamentMemberRepo, VoteRepo}
-import me.benetis.coordinator.utils.ComputingError
+import me.benetis.coordinator.repository.{
+  ParliamentMemberRepo,
+  TermOfOfficeRepo,
+  VoteRepo
+}
+import me.benetis.coordinator.utils.{ComputingError, DBNotExpectedResult}
 import me.benetis.shared._
 import scala.collection.parallel.ParSeq
 import scala.collection.parallel.mutable.ParArray
@@ -43,28 +47,47 @@ object MultidimensionalScaling extends LazyLogging {
 
       logger.info("Start building proximity matrix")
 
-      var matrix: Matrix = Array.ofDim[Double](members.size, members.size)
+      val emptyMatrixElement              = -100.0
+      def isEmptyMatrixElement(x: Double) = x == emptyMatrixElement
+
+      var matrix: Matrix =
+        Array.fill(members.size, members.size)(emptyMatrixElement)
 
       //can be optimized due duplicates
       val cartesian: List[(ParliamentMember, ParliamentMember)] =
         members.flatMap(member => members.map(m => (member, m)))
 
       cartesian.foreach(pair => {
-        val pairDistanceEith =
-          euclidianDistanceForMemberVotes(termOfOfficeId,
-                                          pair._1,
-                                          pair._2,
-                                          VoteEncoding.singleVoteEncodedE3)
 
-        pairDistanceEith.map(pairDistance => {
-          if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
-            logger.error("Term of office specific ids must be assigned")
-          }
+        if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
+          logger.error("Term of office specific ids must be assigned")
+        }
 
+        val symmetricMatrixElement =
+          matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+            pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
+
+        if (!isEmptyMatrixElement(symmetricMatrixElement)) {
+          //Optimize in case its already calculated (since its symmetric)
           matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
             pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-            pairDistance.value
-        })
+            symmetricMatrixElement
+
+        } else {
+          val pairDistanceEith =
+            euclidianDistanceForMemberVotes(termOfOfficeId,
+                                            pair._1,
+                                            pair._2,
+                                            VoteEncoding.singleVoteEncodedE3)
+
+          pairDistanceEith.map(pairDistance => {
+
+            matrix(
+              pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+              pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+              pairDistance.value
+          })
+        }
       })
 
       logger.info("Proximity matrix ready")
@@ -80,21 +103,27 @@ object MultidimensionalScaling extends LazyLogging {
       encode: SingleVote => Double
   ): Either[ComputingError, EuclideanDistance] = {
 
-    val votesOfMember1 =
-      VoteRepo.listForTermOfOfficeAndPerson(termOfOfficeId, member1)
-    val votesOfMember2 =
-      VoteRepo.listForTermOfOfficeAndPerson(termOfOfficeId, member2)
+    val term = TermOfOfficeRepo.byId(termOfOfficeId)
 
-    votesOfMember1.flatMap(votes1 =>
-      votesOfMember2.map(votes2 => {
-        val euclideanSquared = votes1.par
-          .zip(votes2)
+    term match {
+      case Some(termValue) =>
+        val votesOfMember1 =
+          VoteRepo.byPersonIdAndTerm(member1.personId, termValue)
+        val votesOfMember2 =
+          VoteRepo.byPersonIdAndTerm(member2.personId, termValue)
+
+        val euclideanSquared = votesOfMember1.par
+          .zip(votesOfMember2)
+          .par
           .foldLeft(0.0)((prev, curr) => {
             prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
           })
 
-        EuclideanDistance(Math.sqrt(euclideanSquared))
-      }))
+        Right(EuclideanDistance(Math.sqrt(euclideanSquared)))
+      case None =>
+        Left(DBNotExpectedResult(
+          s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"))
+    }
   }
 
   private def addTermSpecificIdsToVote(
