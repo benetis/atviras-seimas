@@ -50,19 +50,21 @@ object MultidimensionalScaling extends LazyLogging {
         members.flatMap(member => members.map(m => (member, m)))
 
       cartesian.foreach(pair => {
-        val pairDistance =
-          euclidianDistanceForMemberVotes(votes.par,
+        val pairDistanceEith =
+          euclidianDistanceForMemberVotes(termOfOfficeId,
                                           pair._1,
                                           pair._2,
                                           VoteEncoding.singleVoteEncodedE3)
 
-        if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
-          logger.error("Term of office specific ids must be assigned")
-        }
+        pairDistanceEith.map(pairDistance => {
+          if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
+            logger.error("Term of office specific ids must be assigned")
+          }
 
-        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-          pairDistance.value
+          matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+            pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+            pairDistance.value
+        })
       })
 
       logger.info("Proximity matrix ready")
@@ -72,21 +74,27 @@ object MultidimensionalScaling extends LazyLogging {
   }
 
   private def euclidianDistanceForMemberVotes(
-      list: ParSeq[VoteReduced],
+      termOfOfficeId: TermOfOfficeId,
       member1: ParliamentMember,
       member2: ParliamentMember,
       encode: SingleVote => Double
-  ): EuclideanDistance = {
-    val votesOfMember1 = list.filter(_.personId == member1.personId)
-    val votesOfMember2 = list.filter(_.personId == member2.personId)
+  ): Either[ComputingError, EuclideanDistance] = {
 
-    val euclideanSquared = votesOfMember1
-      .zip(votesOfMember2)
-      .foldLeft(0.0)((prev, curr) => {
-        prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
-      })
+    val votesOfMember1 =
+      VoteRepo.listForTermOfOfficeAndPerson(termOfOfficeId, member1)
+    val votesOfMember2 =
+      VoteRepo.listForTermOfOfficeAndPerson(termOfOfficeId, member2)
 
-    EuclideanDistance(Math.sqrt(euclideanSquared))
+    votesOfMember1.flatMap(votes1 =>
+      votesOfMember2.map(votes2 => {
+        val euclideanSquared = votes1.par
+          .zip(votes2)
+          .foldLeft(0.0)((prev, curr) => {
+            prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
+          })
+
+        EuclideanDistance(Math.sqrt(euclideanSquared))
+      }))
   }
 
   private def addTermSpecificIdsToVote(
