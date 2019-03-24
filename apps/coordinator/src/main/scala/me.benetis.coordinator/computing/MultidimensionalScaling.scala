@@ -13,7 +13,11 @@ import scala.collection.parallel.mutable.ParArray
 import scalaz.zio.{Fiber, UIO}
 import smile.mds._
 
-case class ProximityMatrix(value: Array[Array[Double]])
+case class ProximityMatrix(value: Array[Array[Double]]) {
+  override def toString: String = {
+    value.map(row => row.mkString(" ")).mkString("\\n")
+  }
+}
 
 object MultidimensionalScaling extends LazyLogging {
   type Matrix = Array[Array[Double]]
@@ -28,6 +32,9 @@ object MultidimensionalScaling extends LazyLogging {
       logger.info("Matrix size")
       logger.info(matrix.value.length.toString)
       logger.info(matrix.value(0).length.toString)
+
+      logger.info("Matrix itself:")
+      logger.info(matrix.toString)
       mds(matrix.value, outputDimensions)
     })
   }
@@ -35,12 +42,12 @@ object MultidimensionalScaling extends LazyLogging {
   private def buildProximityMatrix(termOfOfficeId: TermOfOfficeId)
     : Either[ComputingError, ProximityMatrix] = {
 
-//    ParliamentMemberRepo.updateTermsSpecificIds()
-
     val termOpt = TermOfOfficeRepo.byId(termOfOfficeId)
 
     termOpt match {
       case Some(term) =>
+        ParliamentMemberRepo.updateTermsSpecificIds(term)
+
         val members = ParliamentMemberRepo.listByTermOfOffice(termOfOfficeId)
 
         logger.info("Start building proximity matrix")
@@ -84,27 +91,27 @@ object MultidimensionalScaling extends LazyLogging {
         logger.error("Term of office specific ids must be assigned")
       }
 
-      val symmetricMatrixElement =
-        matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
+//      val symmetricMatrixElement =
+//        matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+//          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
+//
+//      if (!isEmptyMatrixElement(symmetricMatrixElement)) {
+//        //Optimize in case its already calculated (since its symmetric)
+//        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+//          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+//          symmetricMatrixElement
+//
+//      } else {
+      val pairDistance =
+        euclidianDistanceForMemberVotes(votesForMembers,
+                                        pair._1,
+                                        pair._2,
+                                        VoteEncoding.singleVoteEncodedE3)
 
-      if (!isEmptyMatrixElement(symmetricMatrixElement)) {
-        //Optimize in case its already calculated (since its symmetric)
-        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-          symmetricMatrixElement
-
-      } else {
-        val pairDistance =
-          euclidianDistanceForMemberVotes(votesForMembers,
-                                          pair._1,
-                                          pair._2,
-                                          VoteEncoding.singleVoteEncodedE3)
-
-        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-          pairDistance.value
-      }
+      matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+        pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+        pairDistance.value
+//      }
     })
   }
   private def euclidianDistanceForMemberVotes(
@@ -114,11 +121,13 @@ object MultidimensionalScaling extends LazyLogging {
       encode: SingleVote => Double
   ): EuclideanDistance = {
 
+    def euclidean(a: Double, b: Double): Double = Math.abs(a - b)
+
     val euclideanSquared = votesForMembers(member1.personId)
       .zip(votesForMembers(member2.personId))
       .par
       .foldLeft(0.0)((prev, curr) => {
-        prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
+        prev + euclidean(encode(curr._1.singleVote), encode(curr._2.singleVote))
       })
 
     EuclideanDistance(Math.sqrt(euclideanSquared))

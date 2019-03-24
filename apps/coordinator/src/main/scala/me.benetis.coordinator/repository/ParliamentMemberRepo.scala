@@ -52,24 +52,19 @@ object ParliamentMemberRepo extends LazyLogging {
     ctx.run(q)
   }
 
-  def updateTermsSpecificIds(): Unit = {
+  def updateTermsSpecificIds(termOfOffice: TermOfOffice): Unit = {
 
-    logger.info("Start byId ids")
+    logger.info("Update members with term specific ids")
 
-    val terms = TermOfOfficeRepo.list().map(_.id)
+    val members: List[ParliamentMember] = listByTermOfOffice(termOfOffice.id)
+    val updated = members.zipWithIndex.map {
+      case (m, i) =>
+        m.copy(
+          termOfOfficeSpecificId =
+            Some(ParliamentMemberTermOfOfficeSpecificId(i)))
+    }
 
-    terms.foreach((t: TermOfOfficeId) => {
-      val members: List[ParliamentMember] = listByTermOfOffice(t)
-      val updated = members.zipWithIndex.map {
-        case (m, i) =>
-          m.copy(
-            termOfOfficeSpecificId =
-              Some(ParliamentMemberTermOfOfficeSpecificId(i)))
-      }
-
-      updateSpecificIds(updated)
-
-    })
+    updateSpecificIds(updated)
 
   }
 
