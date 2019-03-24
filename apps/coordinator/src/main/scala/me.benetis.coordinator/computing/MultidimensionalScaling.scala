@@ -24,8 +24,6 @@ object MultidimensionalScaling extends LazyLogging {
 
   case class EuclideanDistance(value: Double)
 
-  private val emptyMatrixElement = -100.0
-
   def calculate(termOfOfficeId: TermOfOfficeId): Either[ComputingError, MDS] = {
     buildProximityMatrix(termOfOfficeId).map(matrix => {
       val outputDimensions = 2
@@ -53,7 +51,7 @@ object MultidimensionalScaling extends LazyLogging {
         logger.info("Start building proximity matrix")
 
         var matrix: Matrix =
-          Array.fill(members.size, members.size)(emptyMatrixElement)
+          Array.ofDim(members.size, members.size)
 
         val votesForMembers: Map[ParliamentMemberId, List[VoteReduced]] =
           members
@@ -83,25 +81,12 @@ object MultidimensionalScaling extends LazyLogging {
       matrix: Matrix,
       cartesian: List[(ParliamentMember, ParliamentMember)]): Unit = {
 
-    def isEmptyMatrixElement(x: Double) = x == emptyMatrixElement
-
     cartesian.foreach(pair => {
 
       if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
         logger.error("Term of office specific ids must be assigned")
       }
 
-//      val symmetricMatrixElement =
-//        matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-//          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
-//
-//      if (!isEmptyMatrixElement(symmetricMatrixElement)) {
-//        //Optimize in case its already calculated (since its symmetric)
-//        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-//          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-//          symmetricMatrixElement
-//
-//      } else {
       val pairDistance =
         euclidianDistanceForMemberVotes(votesForMembers,
                                         pair._1,
@@ -111,7 +96,6 @@ object MultidimensionalScaling extends LazyLogging {
       matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
         pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
         pairDistance.value
-//      }
     })
   }
   private def euclidianDistanceForMemberVotes(
