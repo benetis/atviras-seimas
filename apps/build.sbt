@@ -40,6 +40,7 @@ lazy val coordinator = project
       "io.getquill" %% "quill-async-mysql" % "2.6.0",
       "com.github.haifengl" %% "smile-scala" % "1.5.2",
       "org.scalaz" %% "scalaz-zio" % "0.9",
+      "org.json4s" %% "json4s-native" % "3.6.5"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")

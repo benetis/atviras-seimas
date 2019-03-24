@@ -1,5 +1,6 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
+import me.benetis.coordinator.computing.MultidimensionalScaling.Matrix
 import me.benetis.coordinator.computing.encoding.VoteEncoding
 import me.benetis.coordinator.repository.{
   ParliamentMemberRepo,

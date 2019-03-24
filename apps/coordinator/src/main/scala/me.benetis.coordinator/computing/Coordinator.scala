@@ -1,29 +1,33 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
-import me.benetis.coordinator.repository.VoteRepo
+import me.benetis.coordinator.repository.{MDSRepo, VoteRepo}
 import me.benetis.coordinator.utils.ComputingError
-import me.benetis.shared.{TermOfOfficeId, VoteReduced}
+import me.benetis.shared.{MDSResults, TermOfOfficeId, VoteReduced}
 import smile.mds.MDS
 
 object Coordinator extends LazyLogging {
   def apply(computingSettings: ComputingSettings) = {
     computingSettings match {
       case ComputeMDS =>
-        logger.info("Start MultidimensionalScaling")
+        val termOfOfficeId = TermOfOfficeId(8)
+
+        logger.info(s"Started MDS with $termOfOfficeId")
+
         val result: Either[ComputingError, MDS] =
-          MultidimensionalScaling.calculate(TermOfOfficeId(8))
+          MultidimensionalScaling.calculate(termOfOfficeId)
 
-        logger.info("MDS finished")
-
-        def toString(matrix: Array[Array[Double]]): String = {
-          matrix.map(row => row.mkString(" ")).mkString("\\n")
-        }
+        logger.info("MDS calculations finished")
 
         result match {
           case Right(mds) =>
-            logger.info(mds.getEigenValues.mkString(" "))
-            logger.info("Coordinates of MDS")
-            logger.info(toString(mds.getCoordinates))
+            MDSRepo.insert(
+              MDSResults(
+                mds.getEigenValues,
+                mds.getProportion,
+                mds.getCoordinates,
+                termOfOfficeId
+              ))
+
           case Left(err) => logger.error(err.msg())
         }
     }
