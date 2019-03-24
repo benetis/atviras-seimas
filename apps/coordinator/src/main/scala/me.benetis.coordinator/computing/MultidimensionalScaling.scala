@@ -16,10 +16,11 @@ import smile.mds._
 case class ProximityMatrix(value: Array[Array[Double]])
 
 object MultidimensionalScaling extends LazyLogging {
-
   type Matrix = Array[Array[Double]]
 
   case class EuclideanDistance(value: Double)
+
+  private val emptyMatrixElement = -100.0
 
   def calculate(termOfOfficeId: TermOfOfficeId): Either[ComputingError, MDS] = {
     buildProximityMatrix(termOfOfficeId).map(matrix => {
@@ -36,94 +37,91 @@ object MultidimensionalScaling extends LazyLogging {
 
 //    ParliamentMemberRepo.updateTermsSpecificIds()
 
-    val votesEith: Either[ComputingError, List[VoteReduced]] =
-      VoteRepo
-        .listForTermOfOffice(termOfOfficeId)
-        .map(addTermSpecificIdsToVote)
+    val termOpt = TermOfOfficeRepo.byId(termOfOfficeId)
 
-    val members = ParliamentMemberRepo.listByTermOfOffice(termOfOfficeId)
+    termOpt match {
+      case Some(term) =>
+        val members = ParliamentMemberRepo.listByTermOfOffice(termOfOfficeId)
 
-    votesEith.map((votes: List[VoteReduced]) => {
+        logger.info("Start building proximity matrix")
 
-      logger.info("Start building proximity matrix")
+        var matrix: Matrix =
+          Array.fill(members.size, members.size)(emptyMatrixElement)
 
-      val emptyMatrixElement              = -100.0
-      def isEmptyMatrixElement(x: Double) = x == emptyMatrixElement
+        val votesForMembers: Map[ParliamentMemberId, List[VoteReduced]] =
+          members
+            .map(member => {
+              member.personId -> VoteRepo
+                .byPersonIdAndTerm(member.personId, term)
+            })
+            .toMap
 
-      var matrix: Matrix =
-        Array.fill(members.size, members.size)(emptyMatrixElement)
+        val cartesian: List[(ParliamentMember, ParliamentMember)] =
+          members.flatMap(member => members.map(m => (member, m)))
 
-      //can be optimized due duplicates
-      val cartesian: List[(ParliamentMember, ParliamentMember)] =
-        members.flatMap(member => members.map(m => (member, m)))
+        fillProximityMatrix(term, votesForMembers, matrix, cartesian)
 
-      cartesian.foreach(pair => {
+        logger.info("Proximity matrix ready")
 
-        if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
-          logger.error("Term of office specific ids must be assigned")
-        }
-
-        val symmetricMatrixElement =
-          matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-            pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
-
-        if (!isEmptyMatrixElement(symmetricMatrixElement)) {
-          //Optimize in case its already calculated (since its symmetric)
-          matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-            pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-            symmetricMatrixElement
-
-        } else {
-          val pairDistanceEith =
-            euclidianDistanceForMemberVotes(termOfOfficeId,
-                                            pair._1,
-                                            pair._2,
-                                            VoteEncoding.singleVoteEncodedE3)
-
-          pairDistanceEith.map(pairDistance => {
-
-            matrix(
-              pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-              pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-              pairDistance.value
-          })
-        }
-      })
-
-      logger.info("Proximity matrix ready")
-
-      ProximityMatrix(matrix)
-    })
-  }
-
-  private def euclidianDistanceForMemberVotes(
-      termOfOfficeId: TermOfOfficeId,
-      member1: ParliamentMember,
-      member2: ParliamentMember,
-      encode: SingleVote => Double
-  ): Either[ComputingError, EuclideanDistance] = {
-
-    val term = TermOfOfficeRepo.byId(termOfOfficeId)
-
-    term match {
-      case Some(termValue) =>
-        val votesOfMember1 =
-          VoteRepo.byPersonIdAndTerm(member1.personId, termValue)
-        val votesOfMember2 =
-          VoteRepo.byPersonIdAndTerm(member2.personId, termValue)
-
-        val euclideanSquared = votesOfMember1.par
-          .zip(votesOfMember2)
-          .par
-          .foldLeft(0.0)((prev, curr) => {
-            prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
-          })
-
-        Right(EuclideanDistance(Math.sqrt(euclideanSquared)))
+        Right(ProximityMatrix(matrix))
       case None =>
         Left(DBNotExpectedResult(
           s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"))
     }
+  }
+
+  private def fillProximityMatrix(
+      termOfOffice: TermOfOffice,
+      votesForMembers: Map[ParliamentMemberId, List[VoteReduced]],
+      matrix: Matrix,
+      cartesian: List[(ParliamentMember, ParliamentMember)]): Unit = {
+
+    def isEmptyMatrixElement(x: Double) = x == emptyMatrixElement
+
+    cartesian.foreach(pair => {
+
+      if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
+        logger.error("Term of office specific ids must be assigned")
+      }
+
+      val symmetricMatrixElement =
+        matrix(pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id)
+
+      if (!isEmptyMatrixElement(symmetricMatrixElement)) {
+        //Optimize in case its already calculated (since its symmetric)
+        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+          symmetricMatrixElement
+
+      } else {
+        val pairDistance =
+          euclidianDistanceForMemberVotes(votesForMembers,
+                                          pair._1,
+                                          pair._2,
+                                          VoteEncoding.singleVoteEncodedE3)
+
+        matrix(pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
+          pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
+          pairDistance.value
+      }
+    })
+  }
+  private def euclidianDistanceForMemberVotes(
+      votesForMembers: Map[ParliamentMemberId, List[VoteReduced]],
+      member1: ParliamentMember,
+      member2: ParliamentMember,
+      encode: SingleVote => Double
+  ): EuclideanDistance = {
+
+    val euclideanSquared = votesForMembers(member1.personId)
+      .zip(votesForMembers(member2.personId))
+      .par
+      .foldLeft(0.0)((prev, curr) => {
+        prev + (encode(curr._1.singleVote) - encode(curr._2.singleVote))
+      })
+
+    EuclideanDistance(Math.sqrt(euclideanSquared))
   }
 
   private def addTermSpecificIdsToVote(

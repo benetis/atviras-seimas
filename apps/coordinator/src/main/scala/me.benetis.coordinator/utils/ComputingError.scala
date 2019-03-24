@@ -8,3 +8,8 @@ case class DBNotExpectedResult(moreInfo: String) extends ComputingError {
   override def msg() =
     s"Database returned something that was not expected. '$moreInfo'"
 }
+case class CustomError(error: String) extends ComputingError {
+  override def msg() =
+    s"Custom error: '$error'"
+
+}
