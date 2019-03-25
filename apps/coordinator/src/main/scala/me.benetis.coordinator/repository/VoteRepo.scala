@@ -5,7 +5,6 @@ import me.benetis.coordinator.repository.DiscussionEventRepo.ctx
 import me.benetis.coordinator.utils.{ComputingError, DBNotExpectedResult}
 import me.benetis.shared.encoding.EncodersDecoders
 import me.benetis.shared._
-import org.joda.time.DateTime
 
 object VoteRepo {
 

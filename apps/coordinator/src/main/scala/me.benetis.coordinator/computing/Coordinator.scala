@@ -3,6 +3,7 @@ import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{MDSRepo, VoteRepo}
 import me.benetis.coordinator.utils.ComputingError
 import me.benetis.shared._
+import org.joda.time.DateTime
 import smile.mds.MDS
 
 object Coordinator extends LazyLogging {
@@ -25,6 +26,7 @@ object Coordinator extends LazyLogging {
                 EigenValues(mds.getEigenValues),
                 MDSProportion(mds.getProportion),
                 MDSCoordinates(mds.getCoordinates),
+                SharedDateTime(DateTime.now().getMillis),
                 termOfOfficeId
               ))
 

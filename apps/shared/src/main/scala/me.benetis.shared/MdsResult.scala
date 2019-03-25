@@ -9,5 +9,6 @@ case class MdsResult(
     eigenValues: EigenValues,
     proportion: MDSProportion,
     coordinates: MDSCoordinates,
+    createdAt: SharedDateTime,
     termOfOfficeId: TermOfOfficeId
 ) extends Embedded
