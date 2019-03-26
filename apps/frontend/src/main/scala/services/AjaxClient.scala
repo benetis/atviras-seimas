@@ -1,21 +1,24 @@
 package services
 import org.scalajs.dom.ext.Ajax
 import scala.concurrent.Future
-import upickle.default._
 import scala.concurrent.ExecutionContext.Implicits.global
+import boopickle.Default._
+import java.nio.ByteBuffer
+import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
 
-object AjaxClient extends autowire.Client[String, Reader, Writer] {
-  override def doCall(req: Request): Future[String] = {
-    val url  = "/api/" + req.path.mkString("/")
-    val data = write(req.args)
+object AjaxClient extends autowire.Client[ByteBuffer, Pickler, Pickler] {
+  override def doCall(req: Request): Future[ByteBuffer] = {
     Ajax
       .post(
-        url = url,
-        data = data
+        url = "/api/" + req.path.mkString("/"),
+        data = Pickle.intoBytes(req.args),
+        responseType = "arraybuffer",
+        headers = Map("Content-Type" -> "application/octet-stream")
       )
-      .map(_.responseText)
+      .map(r => TypedArrayBuffer.wrap(r.response.asInstanceOf[ArrayBuffer]))
   }
 
-  def read[Result: Reader](p: String)  = upickle.default.read[Result](p)
-  def write[Result: Writer](r: Result) = upickle.default.write(r)
+  override def read[Result: Pickler](p: ByteBuffer) =
+    Unpickle[Result].fromBytes(p)
+  override def write[Result: Pickler](r: Result) = Pickle.intoBytes(r)
 }

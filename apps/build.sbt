@@ -41,7 +41,7 @@ lazy val coordinator = project
       "com.github.haifengl" %% "smile-scala" % "1.5.2",
       "org.scalaz" %% "scalaz-zio" % "0.9",
       "org.json4s" %% "json4s-native" % "3.6.5",
-      "com.lihaoyi" %% "upickle" % "0.7.1",
+      "io.suzaku" %% "boopickle" % "1.3.0",
       "com.lihaoyi" %% "autowire" % "0.2.6"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
@@ -83,7 +83,7 @@ lazy val frontend = project
       "org.typelevel" %%% "cats-effect" % "1.0.0",
       "io.suzaku" %%% "diode" % "1.1.4",
       "io.suzaku" %%% "diode-react" % "1.1.4.131",
-      "com.lihaoyi" %%% "upickle" % "0.7.1",
+      "io.suzaku" %%% "boopickle" % "1.3.0",
       "com.lihaoyi" %%% "autowire" % "0.2.6"
     ),
     npmDependencies in Compile ++= Seq(
@@ -112,7 +112,8 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
   )
   .settings(
     libraryDependencies ++= Seq(
-      "io.getquill" %%% "quill-core" % "2.6.0"
+      "io.getquill" %%% "quill-core" % "2.6.0",
+      "io.suzaku" %%% "boopickle" % "1.3.0",
     )
   )
   .jvmSettings(

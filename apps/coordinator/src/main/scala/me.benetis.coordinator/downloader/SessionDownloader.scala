@@ -34,7 +34,7 @@ object SessionDownloader extends LazyLogging {
 
     termsOfOfficeWithSessions.flatMap((termNode: Node) => {
       val id =
-        termNode.validateInt("kadencijos_id").map(TermOfOfficeId)
+        termNode.validateInt("kadencijos_id").map(TermOfOfficeId(_))
 
       val sessions = termNode \\ "SeimoSesija"
 
