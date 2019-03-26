@@ -3,7 +3,11 @@ package services
 import diode.ActionResult.ModelUpdate
 import diode._
 import diode.react.ReactConnector
-import me.benetis.shared.DiscussionLength
+import me.benetis.shared.api.ApiForFrontend
+import me.benetis.shared.{DiscussionLength, TermOfOfficeId}
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import autowire._
 
 case class RootModel(counter: Int, discussionLength: Option[DiscussionLength])
 
@@ -11,7 +15,7 @@ case class Increase(amount: Int) extends Action
 case class Decrease(amount: Int) extends Action
 case object Reset                extends Action
 
-case object LoadDiscussionLength extends Action
+case class LoadMdsResult(termOfOfficeId: TermOfOfficeId) extends Action
 case class DiscussionLengthLoaded(discussionLength: DiscussionLength)
     extends Action
 
@@ -27,17 +31,17 @@ object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
     }
   }
 
-//  val vizHandler = new ActionHandler(zoomTo(_.discussionLength)) {
-//    override def handle = {
-////      case LoadDiscussionLength =>
-////        effectOnly(
-////          Effect(
-////            AjaxClient[ApiForFrontend]
-////              .getDiscussionLengths()
-////              .call()
-////              .map(_.mkString(" "))
-//    }
-//  }
+  val vizHandler = new ActionHandler(zoomTo(_.discussionLength)) {
+    override def handle = {
+      case LoadMdsResult(termOfOfficeId) =>
+        effectOnly(
+          Effect(
+            AjaxClient[ApiForFrontend]
+              .fetchMdsResults(termOfOfficeId)
+              .call())
+        )
+    }
+  }
 
   val actionHandler = composeHandlers(counterHandler)
 }

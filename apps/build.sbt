@@ -70,6 +70,7 @@ lazy val frontend = project
     webpackResources := webpackResourcesBlob.value,
     webpackConfigFile in fullOptJS := webpackProdConfigFilePath.value,
     webpackConfigFile in fastOptJS := webpackDevConfigFilePath.value,
+    webpackDevServerPort := 9000,
     scalaJSUseMainModuleInitializer := true,
     webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly(),
     webpackBundlingMode in fullOptJS := BundlingMode.Application,
