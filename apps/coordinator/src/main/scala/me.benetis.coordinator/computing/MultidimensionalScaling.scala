@@ -32,8 +32,6 @@ object MultidimensionalScaling extends LazyLogging {
       logger.info(matrix.value.length.toString)
       logger.info(matrix.value(0).length.toString)
 
-      logger.info("Matrix itself:")
-      logger.info(matrix.toString)
       mds(matrix.value, outputDimensions)
     })
   }
