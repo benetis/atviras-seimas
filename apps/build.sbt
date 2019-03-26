@@ -40,7 +40,9 @@ lazy val coordinator = project
       "io.getquill" %% "quill-async-mysql" % "2.6.0",
       "com.github.haifengl" %% "smile-scala" % "1.5.2",
       "org.scalaz" %% "scalaz-zio" % "0.9",
-      "org.json4s" %% "json4s-native" % "3.6.5"
+      "org.json4s" %% "json4s-native" % "3.6.5",
+      "com.lihaoyi" %% "upickle" % "0.7.1",
+      "com.lihaoyi" %% "autowire" % "0.2.6"
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
@@ -79,7 +81,9 @@ lazy val frontend = project
       "com.github.japgolly.scalacss" %%% "ext-react" % "0.5.4",
       "org.typelevel" %%% "cats-effect" % "1.0.0",
       "io.suzaku" %%% "diode" % "1.1.4",
-      "io.suzaku" %%% "diode-react" % "1.1.4.131"
+      "io.suzaku" %%% "diode-react" % "1.1.4.131",
+      "com.lihaoyi" %%% "upickle" % "0.7.1",
+      "com.lihaoyi" %%% "autowire" % "0.2.6"
     ),
     npmDependencies in Compile ++= Seq(
       "react" -> "16.5.1",

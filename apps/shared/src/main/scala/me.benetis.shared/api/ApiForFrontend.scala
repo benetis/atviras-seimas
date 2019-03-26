@@ -1,5 +1,6 @@
 package me.benetis.shared.api
+import me.benetis.shared.{MdsResult, TermOfOfficeId}
 
 trait ApiForFrontend {
-  def getDiscussionLengths(): String
+  def fetchMdsResults(termOfOfficeId: TermOfOfficeId): MdsResult
 }
