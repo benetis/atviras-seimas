@@ -7,8 +7,9 @@ import akka.stream.ActorMaterializer
 import me.benetis.coordinator.api.AutowireServer
 import me.benetis.shared.api.ApiForFrontend
 import scala.io.StdIn
-
 import AutowireServer._
+import akka.http.scaladsl.server.ExceptionHandler
+import akka.http.scaladsl.model.StatusCodes._
 
 object Server {
   def main(args: Array[String]) {
@@ -29,6 +30,20 @@ object Server {
         path("api" / Segments) { segments =>
           post(AutowireServer.dispatch(segments))
         }
+
+    implicit def myExceptionHandler: ExceptionHandler =
+      ExceptionHandler {
+        case e: Throwable =>
+          extractUri { uri =>
+            println(s"Request to $uri could not be handled normally")
+            println(e.getMessage)
+            println(e.printStackTrace())
+
+            complete(
+              HttpResponse(InternalServerError,
+                           entity = "Some random exception"))
+          }
+      }
 
 //    case GET -> Root / "download" / "term-of-office" =>
 //    downloader.Coordinator(FetchTermOfOffice)

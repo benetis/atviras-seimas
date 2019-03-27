@@ -24,13 +24,13 @@ object MDSRepo extends LazyLogging {
     MappedEncoding[MDSCoordinates, String](write(_))
 
   implicit val eigenDecoding =
-    MappedEncoding[String, EigenValues](read(_))
+    MappedEncoding[String, EigenValues](read[EigenValues](_))
 
   implicit val mdsProportionDecoding =
-    MappedEncoding[String, MDSProportion](read(_))
+    MappedEncoding[String, MDSProportion](read[MDSProportion](_))
 
   implicit val mdsCoordinatesDecoding =
-    MappedEncoding[String, MDSCoordinates](read(_))
+    MappedEncoding[String, MDSCoordinates](read[MDSCoordinates](_))
 
   private implicit val MDSInsertMeta = insertMeta[MdsResult]()
 
