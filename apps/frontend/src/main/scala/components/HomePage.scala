@@ -32,6 +32,15 @@ object HomePage {
           ^.onClick --> {
             p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
           }
+        ),
+        "Mds data:",
+        p.proxy.value.fold(<.div("Empty MDS"))(
+          result =>
+            <.div(
+              result.coordinates.value
+                .map(row => row.mkString(" "))
+                .mkString("\\n")
+          )
         )
       )
     }
