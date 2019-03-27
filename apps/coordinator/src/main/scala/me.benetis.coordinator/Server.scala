@@ -2,6 +2,7 @@ package me.benetis.coordinator
 
 import cats.effect._
 import cats.implicits._
+import me.benetis.coordinator.api.AutowireServer
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
