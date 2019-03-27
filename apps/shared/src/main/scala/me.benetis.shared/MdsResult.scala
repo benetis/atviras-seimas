@@ -16,4 +16,5 @@ case class MdsResult(
 
 object MdsResult {
   implicit val pickler: Pickler[MdsResult] = generatePickler[MdsResult]
+
 }

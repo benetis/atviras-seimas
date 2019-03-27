@@ -21,10 +21,8 @@ lazy val coordinator = project
   .settings(
     name := "coordinator",
     libraryDependencies ++= Seq(
-      "org.http4s"      %% "http4s-blaze-server" % "0.20.0-M4",
-      "org.http4s"      %% "http4s-circe"        % "0.20.0-M4",
-      "org.http4s"      %% "http4s-dsl"          % "0.20.0-M4",
-      "org.http4s"      %% "http4s-boopickle"          % "0.20.0-M4",
+      "com.typesafe.akka" %% "akka-http"   % "10.1.8",
+"com.typesafe.akka" %% "akka-stream" % "2.5.19",
       "com.softwaremill.sttp" %% "core" % "1.5.2",
       "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
       "joda-time" % "joda-time"  % "2.7",

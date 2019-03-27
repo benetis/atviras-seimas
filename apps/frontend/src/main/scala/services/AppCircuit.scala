@@ -7,6 +7,7 @@ import me.benetis.shared.api.ApiForFrontend
 import me.benetis.shared.{DiscussionLength, MdsResult, TermOfOfficeId}
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
+import boopickle.Default._
 
 case class RootModel(counter: Int, mdsResult: Option[MdsResult])
 
@@ -15,7 +16,7 @@ case class Decrease(amount: Int) extends Action
 case object Reset                extends Action
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId) extends Action
-case class MdsResultLoaded(mdsResult: MdsResult)         extends Action
+case class MdsResultLoaded(mdsResult: Option[MdsResult]) extends Action
 
 object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   def initialModel = RootModel(0, None)
@@ -41,7 +42,7 @@ object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
           )
         )
       case MdsResultLoaded(mdsResult) =>
-        updated(Some(mdsResult))
+        updated(mdsResult)
     }
   }
 
