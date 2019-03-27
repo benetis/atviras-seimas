@@ -87,7 +87,8 @@ lazy val frontend = project
     ),
     npmDependencies in Compile ++= Seq(
       "react" -> "16.5.1",
-      "react-dom" -> "16.5.1"
+      "react-dom" -> "16.5.1",
+      "victory" -> "32.1.0"
     ),
     npmDevDependencies in Compile ++= Seq(
       "css-loader"                  -> "0.28.9",
