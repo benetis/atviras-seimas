@@ -1,7 +1,7 @@
 package components
 
 import diode.react.ModelProxy
-import facades.VictoryChart
+import facades.{VictoryChart, VictoryScatter}
 import japgolly.scalajs.react._
 import me.benetis.shared.{MdsResult, SessionId, TermOfOfficeId}
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
@@ -27,9 +27,12 @@ object HomePage {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    val chart = VictoryChart.component(
-      VictoryChart.props(js.Dynamic.literal())
-    )
+    val chart =
+      VictoryChart.component(VictoryChart.props(js.Dynamic.literal()))(
+        VictoryScatter.component[Double](
+          VictoryScatter.props[Double](1, js.Array(1.0))
+        )
+      )
 
     //        <VictoryChart
 //        theme={VictoryTheme.material}
@@ -43,7 +46,7 @@ object HomePage {
 //          { x: 2, y: 3 },
 //          { x: 3, y: 5 },
 
-    def render(p: Props) = {
+    def render(p: Props, s: Unit) = {
       <.div(
         <.div("inside render"),
         <.button(
