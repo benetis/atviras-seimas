@@ -10,6 +10,7 @@ import scala.io.StdIn
 import AutowireServer._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.model.StatusCodes._
+import me.benetis.coordinator.computing.ComputeMDS
 
 object Server {
   def main(args: Array[String]) {
@@ -20,11 +21,12 @@ object Server {
     implicit val executionContext = system.dispatcher
 
     val route =
-      path("hello") {
+      path("compute" / "mds") {
         get {
+          computing.Coordinator(ComputeMDS)
           complete(
             HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                       "<h1>Say hello to akka-http</h1>"))
+                       "<h1>Computed MDS</h1>"))
         }
       } ~
         path("api" / Segments) { segments =>
@@ -76,9 +78,6 @@ object Server {
 //    downloader.Coordinator(FetchParliamentMembers)
 //    responseCompleted()
 //
-//    case GET -> Root / "compute" / "mds" =>
-//    computing.Coordinator(ComputeMDS)
-//    responseCompleted()
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 

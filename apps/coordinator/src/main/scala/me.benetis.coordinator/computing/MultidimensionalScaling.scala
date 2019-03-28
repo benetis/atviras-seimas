@@ -14,6 +14,7 @@ import me.benetis.coordinator.utils.{
   DBNotExpectedResult,
   LibraryNotBehavingAsExpected
 }
+import me.benetis.shared.Common.Point
 import me.benetis.shared._
 import org.joda.time.DateTime
 import scala.collection.parallel.ParSeq
@@ -67,7 +68,7 @@ object MultidimensionalScaling extends LazyLogging {
 
     //Matrix returned by smile is pairs in array [[x, y], [x, y],...]
 
-    Try(matrix.map(pairArray => (pairArray(0), pairArray(1)))).toEither.left
+    Try(matrix.map(pairArray => Point(pairArray(0), pairArray(1)))).toEither.left
       .map(t => LibraryNotBehavingAsExpected(t.getMessage))
       .right
       .map(MDSCoordinates(_))

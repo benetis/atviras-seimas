@@ -1,7 +1,7 @@
 package me.benetis.shared
 import io.getquill.Embedded
-
 import boopickle.Default._
+import me.benetis.shared.Common.Point
 
 case class EigenValues(value: Array[Double]) extends Embedded
 
@@ -19,8 +19,8 @@ object MDSCoordinates {
   implicit val pickler: Pickler[MDSCoordinates] =
     generatePickler[MDSCoordinates]
 }
-case class MDSProportion(value: Array[Double])            extends Embedded
-case class MDSCoordinates(value: Array[(Double, Double)]) extends Embedded
+case class MDSProportion(value: Array[Double]) extends Embedded
+case class MDSCoordinates(value: Array[Point]) extends Embedded
 
 case class MdsResult(
     eigenValues: EigenValues,
