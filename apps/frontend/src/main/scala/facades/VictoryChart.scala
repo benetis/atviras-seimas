@@ -21,7 +21,8 @@ object VictoryChart {
     p
   }
 
-  def component = JsComponent[Props, Children.Varargs, Null](RawComponent)
+  def component =
+    JsComponent[Props, Children.Varargs, Null](RawComponent)
 }
 
 object VictoryScatter {
@@ -30,17 +31,19 @@ object VictoryScatter {
   object RawComponent extends js.Object
 
   @js.native
-  trait Props[T] extends js.Object {
-    var size: Int         = js.native
-    var data: js.Array[T] = js.native
+  trait Props extends js.Object {
+    var size: Int                  = js.native
+    var data: js.Array[js.Dynamic] = js.native
   }
 
-  def props[T](size: Int, data: js.Array[T]): Props[T] = {
-    val p = (new js.Object).asInstanceOf[Props[T]]
+  def props(size: Int,
+            data: js.Array[js.Dynamic]): Props = {
+    val p = (new js.Object).asInstanceOf[Props]
     p.size = size
     p.data = data
     p
   }
 
-  def component[T] = JsComponent[Props[T], Children.None, Null](RawComponent)
+  def component =
+    JsComponent[Props, Children.None, Null](RawComponent)
 }

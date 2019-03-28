@@ -3,13 +3,18 @@ package components
 import diode.react.ModelProxy
 import facades.{VictoryChart, VictoryScatter}
 import japgolly.scalajs.react._
-import me.benetis.shared.{MdsResult, SessionId, TermOfOfficeId}
+import me.benetis.shared.{
+  MdsResult,
+  SessionId,
+  TermOfOfficeId
+}
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
 import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
 import scala.scalajs.js
 import js.JSConverters._
+import me.benetis.shared.Common.Point
 
 object HomePage {
 
@@ -46,18 +51,27 @@ object HomePage {
         <.button(
           "MDS",
           ^.onClick --> {
-            p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
+            p.proxy.dispatchCB(
+              LoadMdsResult(TermOfOfficeId(8)))
           }
         ),
         <.p("Mds data:"),
         p.proxy.value.fold(<.div("Empty MDS"))(
           (result: MdsResult) =>
             <.div(
-              VictoryChart.component(VictoryChart.props(js.Dynamic.literal()))(
-                VictoryScatter.component[Double](
-                  VictoryScatter.props[Double](
+              VictoryChart.component(
+                VictoryChart.props(js.Dynamic.literal()))(
+                VictoryScatter.component(
+                  VictoryScatter.props(
                     3,
-                    result.eigenValues.value.toJSArray
+                    result.coordinates.value
+                      .map(p => {
+                        val x: js.Dynamic =
+                          js.Dynamic.literal("x" -> p.x,
+                                             "y" -> p.y)
+                        x
+                      })
+                      .toJSArray
                   )
                 )
               )
