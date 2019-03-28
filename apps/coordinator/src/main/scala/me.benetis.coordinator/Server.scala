@@ -11,9 +11,17 @@ import AutowireServer._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.model.StatusCodes._
 import me.benetis.coordinator.computing.ComputeMDS
+import me.benetis.shared.{
+  FetchFactions,
+  FetchParliamentMembers
+}
 
 object Server {
   def main(args: Array[String]) {
+
+    val downloaded = complete(
+      HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                 "<h1>Downloaded</h1>"))
 
     implicit val system       = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
@@ -28,6 +36,16 @@ object Server {
             HttpEntity(ContentTypes.`text/html(UTF-8)`,
                        "<h1>Computed MDS</h1>"))
         }
+      } ~ path("download" / "parliament-members") {
+        get {
+          downloader.Coordinator(FetchParliamentMembers)
+          downloaded
+        }
+      } ~ path("download" / "faction") {
+        get {
+          downloader.Coordinator(FetchFactions)
+          downloaded
+        }
       } ~
         path("api" / Segments) { segments =>
           post(AutowireServer.dispatch(segments))
@@ -37,13 +55,15 @@ object Server {
       ExceptionHandler {
         case e: Throwable =>
           extractUri { uri =>
-            println(s"Request to $uri could not be handled normally")
+            println(
+              s"Request to $uri could not be handled normally")
             println(e.getMessage)
             println(e.printStackTrace())
 
             complete(
-              HttpResponse(InternalServerError,
-                           entity = "Some random exception"))
+              HttpResponse(
+                InternalServerError,
+                entity = "Some random exception"))
           }
       }
 
@@ -73,15 +93,12 @@ object Server {
 //    case GET -> Root / "download" / "votes" =>
 //    downloader.Coordinator(FetchVotes)
 //    responseCompleted()
-//
-//    case GET -> Root / "download" / "parliament-members" =>
-//    downloader.Coordinator(FetchParliamentMembers)
-//    responseCompleted()
-//
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture =
+      Http().bindAndHandle(route, "localhost", 8080)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(
+      s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port

@@ -34,13 +34,17 @@ object VictoryScatter {
   trait Props extends js.Object {
     var size: Int                  = js.native
     var data: js.Array[js.Dynamic] = js.native
+    var style: js.Dynamic          = js.native
   }
 
   def props(size: Int,
-            data: js.Array[js.Dynamic]): Props = {
+            data: js.Array[js.Dynamic],
+//            style: js.Dynamic
+  ): Props = {
     val p = (new js.Object).asInstanceOf[Props]
     p.size = size
     p.data = data
+//    p.style = style
     p
   }
 

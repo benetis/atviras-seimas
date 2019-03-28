@@ -4,6 +4,7 @@ import diode.react.ModelProxy
 import facades.{VictoryChart, VictoryScatter}
 import japgolly.scalajs.react._
 import me.benetis.shared.{
+  MdsPoint,
   MdsResult,
   SessionId,
   TermOfOfficeId
@@ -14,7 +15,6 @@ import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
 import scala.scalajs.js
 import js.JSConverters._
-import me.benetis.shared.Common.Point
 
 object HomePage {
 
@@ -33,17 +33,11 @@ object HomePage {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    //        <VictoryChart
-//        theme={VictoryTheme.material}
-//        domain={{ x: [0, 5], y: [0, 7] }}
-//          >
-//          <VictoryScatter
-//          style={{ data: { fill: "#c43a31" } }}
-//            size={7}
-//            data={[
-//          { x: 1, y: 2 },
-//          { x: 2, y: 3 },
-//          { x: 3, y: 5 },
+    val fill: js.Function1[MdsPoint, String] =
+      (point: MdsPoint) =>
+        if (point.factionName.faction_name == "Lietuvos socialdemokratų partija")
+          "#ff0000"
+        else "#00ff00"
 
     def render(p: Props, s: Unit) = {
       <.div(
@@ -63,19 +57,25 @@ object HomePage {
                 VictoryChart.props(js.Dynamic.literal()))(
                 VictoryScatter.component(
                   VictoryScatter.props(
-                    3,
-                    result.coordinates.value
-                      .map(p => {
+                    size = 3,
+                    data = result.coordinates.value
+                      .map((p: MdsPoint) => {
                         val x: js.Dynamic =
                           js.Dynamic.literal("x" -> p.x,
                                              "y" -> p.y)
                         x
                       })
-                      .toJSArray
+                      .toJSArray,
+//                    style = js.Dynamic.literal(
+//                      "data" -> js.Dynamic.literal(
+//                        "fill" -> fill
+//                      )
+//                    )
                   )
                 )
-              )
-          )
+              ),
+              s"Total points: ${result.coordinates.value.length}"
+          ),
         )
       )
     }

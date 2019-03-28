@@ -24,10 +24,14 @@ object Coordinator {
       case FetchDiscussionEvents =>
         val agendaQuestions =
           AgendaQuestionRepo.list()
-        DiscussionEventDownloader.fetchAndSave(agendaQuestions)
+        DiscussionEventDownloader.fetchAndSave(
+          agendaQuestions)
       case FetchVotes =>
-        val voteIdsToDownload = DiscussionEventRepo.distinctVoteIds()
+        val voteIdsToDownload =
+          DiscussionEventRepo.distinctVoteIds()
         VoteDownloader.fetchAndSave(voteIdsToDownload)
+      case FetchFactions =>
+        FactionDownloader.fetchAndSave()
       case FetchParliamentMembers =>
         val terms = TermOfOfficeRepo.list()
         ParliamentMembersDownloader.fetchAndSave(terms)

@@ -9,18 +9,21 @@ import me.benetis.shared.encoding.EncodersDecoders
 
 object ParliamentMemberRepo extends LazyLogging {
 
-  private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")
+  private lazy val ctx =
+    new MysqlJdbcContext(SnakeCase, "ctx")
 
   import ctx._
 
-  private implicit val parliamentMemberIm = insertMeta[ParliamentMember]()
+  private implicit val parliamentMemberIm =
+    insertMeta[ParliamentMember]()
 
   def insert(sessions: Seq[ParliamentMember]): Unit = {
     val q = quote {
       liftQuery(sessions).foreach(
         e =>
           query[ParliamentMember]
-            .insert(e))
+            .insert(e)
+            .onConflictIgnore(_.uniqueId))
     }
     ctx.run(q)
   }
@@ -37,8 +40,8 @@ object ParliamentMemberRepo extends LazyLogging {
     ctx.run(q)
   }
 
-  def listByTermOfOffice(
-      termOfOfficeId: TermOfOfficeId): List[ParliamentMember] = {
+  def listByTermOfOffice(termOfOfficeId: TermOfOfficeId)
+    : List[ParliamentMember] = {
     val q = quote {
       for {
         p <- query[ParliamentMember].filter(
@@ -52,11 +55,13 @@ object ParliamentMemberRepo extends LazyLogging {
     ctx.run(q)
   }
 
-  def updateTermsSpecificIds(termOfOffice: TermOfOffice): Unit = {
+  def updateTermsSpecificIds(
+      termOfOffice: TermOfOffice): Unit = {
 
     logger.info("Update members with term specific ids")
 
-    val members: List[ParliamentMember] = listByTermOfOffice(termOfOffice.id)
+    val members: List[ParliamentMember] =
+      listByTermOfOffice(termOfOffice.id)
     val updated = members.zipWithIndex.map {
       case (m, i) =>
         m.copy(
@@ -68,14 +73,16 @@ object ParliamentMemberRepo extends LazyLogging {
 
   }
 
-  private def updateSpecificIds(members: List[ParliamentMember]): Unit = {
+  private def updateSpecificIds(
+      members: List[ParliamentMember]): Unit = {
 
     //Unsafe as it requires byId id to be set, but works
 
     val q = quote {
       liftQuery(members).foreach { person =>
         query[ParliamentMember]
-          .filter(p => p.personId.person_id == person.personId.person_id)
+          .filter(p =>
+            p.personId.person_id == person.personId.person_id)
           .update(p =>
             p.termOfOfficeSpecificId
               .map(_.term_of_office_specific_id) -> person.termOfOfficeSpecificId
