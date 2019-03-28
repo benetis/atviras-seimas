@@ -19,8 +19,8 @@ object MDSCoordinates {
   implicit val pickler: Pickler[MDSCoordinates] =
     generatePickler[MDSCoordinates]
 }
-case class MDSProportion(value: Array[Double])         extends Embedded
-case class MDSCoordinates(value: Array[Array[Double]]) extends Embedded
+case class MDSProportion(value: Array[Double])            extends Embedded
+case class MDSCoordinates(value: Array[(Double, Double)]) extends Embedded
 
 case class MdsResult(
     eigenValues: EigenValues,

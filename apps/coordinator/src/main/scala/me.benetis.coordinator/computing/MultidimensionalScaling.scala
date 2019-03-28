@@ -1,16 +1,24 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
+import me.benetis.coordinator.computing.Coordinator.logger
 import me.benetis.coordinator.computing.MultidimensionalScaling.Matrix
 import me.benetis.coordinator.computing.encoding.VoteEncoding
 import me.benetis.coordinator.repository.{
+  MDSRepo,
   ParliamentMemberRepo,
   TermOfOfficeRepo,
   VoteRepo
 }
-import me.benetis.coordinator.utils.{ComputingError, DBNotExpectedResult}
+import me.benetis.coordinator.utils.{
+  ComputingError,
+  DBNotExpectedResult,
+  LibraryNotBehavingAsExpected
+}
 import me.benetis.shared._
+import org.joda.time.DateTime
 import scala.collection.parallel.ParSeq
 import scala.collection.parallel.mutable.ParArray
+import scala.util.Try
 import scalaz.zio.{Fiber, UIO}
 import smile.mds._
 
@@ -25,15 +33,44 @@ object MultidimensionalScaling extends LazyLogging {
 
   case class EuclideanDistance(value: Double)
 
-  def calculate(termOfOfficeId: TermOfOfficeId): Either[ComputingError, MDS] = {
-    buildProximityMatrix(termOfOfficeId).map(matrix => {
+  def calculate(
+      termOfOfficeId: TermOfOfficeId): Either[ComputingError, MdsResult] = {
+    logger.info(s"Started MDS with $termOfOfficeId")
+
+    buildProximityMatrix(termOfOfficeId).flatMap(matrix => {
       val outputDimensions = 2
       logger.info("Matrix size")
       logger.info(matrix.value.length.toString)
       logger.info(matrix.value(0).length.toString)
 
-      mds(matrix.value, outputDimensions)
+      val result = mds(matrix.value, outputDimensions)
+
+      logger.info("MDS calculations finished")
+
+      val coords: Either[ComputingError, MDSCoordinates] =
+        coordinatesMatrixToPairs(result.getCoordinates)
+
+      coords.map(coords => {
+        MdsResult(
+          EigenValues(result.getEigenValues),
+          MDSProportion(result.getProportion),
+          coords,
+          SharedDateTime(DateTime.now().getMillis),
+          termOfOfficeId
+        )
+      })
     })
+  }
+
+  private def coordinatesMatrixToPairs(
+      matrix: Array[Array[Double]]): Either[ComputingError, MDSCoordinates] = {
+
+    //Matrix returned by smile is pairs in array [[x, y], [x, y],...]
+
+    Try(matrix.map(pairArray => (pairArray(0), pairArray(1)))).toEither.left
+      .map(t => LibraryNotBehavingAsExpected(t.getMessage))
+      .right
+      .map(MDSCoordinates(_))
   }
 
   private def buildProximityMatrix(termOfOfficeId: TermOfOfficeId)

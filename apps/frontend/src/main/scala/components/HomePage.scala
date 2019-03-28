@@ -9,6 +9,7 @@ import scalacss.internal.mutable.GlobalRegistry
 import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
 import scala.scalajs.js
+import js.JSConverters._
 
 object HomePage {
 
@@ -26,13 +27,6 @@ object HomePage {
     .build
 
   class Backend($ : BackendScope[Props, Unit]) {
-
-    val chart =
-      VictoryChart.component(VictoryChart.props(js.Dynamic.literal()))(
-        VictoryScatter.component[Double](
-          VictoryScatter.props[Double](1, js.Array(1.0))
-        )
-      )
 
     //        <VictoryChart
 //        theme={VictoryTheme.material}
@@ -57,14 +51,18 @@ object HomePage {
         ),
         <.p("Mds data:"),
         p.proxy.value.fold(<.div("Empty MDS"))(
-          result =>
+          (result: MdsResult) =>
             <.div(
-              result.coordinates.value
-                .map(row => row.mkString(" "))
-                .mkString("\\n")
+              VictoryChart.component(VictoryChart.props(js.Dynamic.literal()))(
+                VictoryScatter.component[Double](
+                  VictoryScatter.props[Double](
+                    3,
+                    result.eigenValues.value.toJSArray
+                  )
+                )
+              )
           )
-        ),
-        chart
+        )
       )
     }
   }
