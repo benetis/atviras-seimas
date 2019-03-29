@@ -4,21 +4,35 @@ import diode.ActionResult.ModelUpdate
 import diode._
 import diode.react.ReactConnector
 import me.benetis.shared.api.ApiForFrontend
-import me.benetis.shared.{DiscussionLength, MdsResult, TermOfOfficeId}
+import me.benetis.shared.{
+  DiscussionLength,
+  MdsPointWithAdditionalInfo,
+  MdsResult,
+  TermOfOfficeId
+}
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
 import boopickle.Default._
 
-case class RootModel(counter: Int, mdsResult: Option[MdsResult])
+case class RootModel(
+    counter: Int,
+    mdsResult: Option[
+      MdsResult[MdsPointWithAdditionalInfo]])
 
 case class Increase(amount: Int) extends Action
 case class Decrease(amount: Int) extends Action
 case object Reset                extends Action
 
-case class LoadMdsResult(termOfOfficeId: TermOfOfficeId) extends Action
-case class MdsResultLoaded(mdsResult: Option[MdsResult]) extends Action
+case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
+    extends Action
+case class MdsResultLoaded(
+    mdsResult: Option[
+      MdsResult[MdsPointWithAdditionalInfo]])
+    extends Action
 
-object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
+object AppCircuit
+    extends Circuit[RootModel]
+    with ReactConnector[RootModel] {
   def initialModel = RootModel(0, None)
 
   val counterHandler = new ActionHandler(zoomTo(_.counter)) {
@@ -46,5 +60,6 @@ object AppCircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
     }
   }
 
-  val actionHandler = composeHandlers(counterHandler, vizHandler)
+  val actionHandler =
+    composeHandlers(counterHandler, vizHandler)
 }

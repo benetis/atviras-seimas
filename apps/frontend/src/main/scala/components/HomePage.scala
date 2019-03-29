@@ -5,6 +5,7 @@ import facades._
 import japgolly.scalajs.react._
 import me.benetis.shared.{
   MdsPoint,
+  MdsPointWithAdditionalInfo,
   MdsResult,
   SessionId,
   TermOfOfficeId
@@ -24,7 +25,9 @@ object HomePage {
   GlobalRegistry.register(new Style)
   val style = GlobalRegistry[Style].get
 
-  case class Props(proxy: ModelProxy[Option[MdsResult]])
+  case class Props(
+      proxy: ModelProxy[
+        Option[MdsResult[MdsPointWithAdditionalInfo]]])
 
   private val component = ScalaComponent
     .builder[Props]("Home page")
@@ -56,7 +59,7 @@ object HomePage {
         ),
         <.p("Mds data:"),
         p.proxy.value.fold(<.div("Empty MDS"))(
-          (result: MdsResult) =>
+          (result: MdsResult[MdsPointWithAdditionalInfo]) =>
             <.div(
               <.div(result.coordinates.value.head.toString),
               VictoryChart.component(
@@ -65,7 +68,7 @@ object HomePage {
                   VictoryScatter.props(
                     size = 3,
                     data = result.coordinates.value
-                      .map((p: MdsPoint) => {
+                      .map((p: MdsPointWithAdditionalInfo) => {
                         val x: js.Dynamic =
                           js.Dynamic.literal(
                             "x"            -> p.x,

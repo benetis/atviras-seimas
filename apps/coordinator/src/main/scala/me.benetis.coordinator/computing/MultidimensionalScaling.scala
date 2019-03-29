@@ -37,8 +37,9 @@ object MultidimensionalScaling extends LazyLogging {
 
   case class EuclideanDistance(value: Double)
 
-  def calculate(termOfOfficeId: TermOfOfficeId)
-    : Either[ComputingError, MdsResult] = {
+  def calculate(termOfOfficeId: TermOfOfficeId): Either[
+    ComputingError,
+    MdsResult[MdsPointOnlyXAndY]] = {
     logger.info(s"Started MDS with $termOfOfficeId")
 
     buildProximityMatrix(termOfOfficeId).flatMap(matrix => {
@@ -48,7 +49,9 @@ object MultidimensionalScaling extends LazyLogging {
 
       logger.info("MDS calculations finished")
 
-      val coords: Either[ComputingError, MDSCoordinates] =
+      val coords
+        : Either[ComputingError,
+                 MDSCoordinates[MdsPointOnlyXAndY]] =
         coordinatesMatrixToMdsPoints(result.getCoordinates,
                                      termOfOfficeId)
 
@@ -67,54 +70,30 @@ object MultidimensionalScaling extends LazyLogging {
   private def coordinatesMatrixToMdsPoints(
       matrix: Array[Array[Double]],
       termOfOfficeId: TermOfOfficeId)
-    : Either[ComputingError, MDSCoordinates] = {
-
-    val members = ParliamentMemberRepo.listByTermOfOffice(
-      termOfOfficeId)
+    : Either[ComputingError,
+             MDSCoordinates[MdsPointOnlyXAndY]] = {
 
     matrix.zipWithIndex
       .map {
         case (pairArray: Array[Double], id: Int) =>
           val specificId =
             ParliamentMemberTermOfOfficeSpecificId(id)
-
-          val memberOpt = members.find(m => {
-            m.termOfOfficeSpecificId match {
-              case Some(specId) => specId == specificId
-              case None         => false
-            }
-          })
-
-          val memberEith = memberOpt match {
-            case Some(m) => Right(m)
-            case None =>
-              Left(
-                DBNotExpectedResult(
-                  "specific id should be set"))
-          }
-
-          memberEith.flatMap(m => {
-            //Matrix returned by smile is pairs in array [[x, y], [x, y],...]
-            Try {
-              val x = pairArray(0)
-              val y = pairArray(1)
-              (x, y)
-            }.toEither.left
-              .map(t =>
-                LibraryNotBehavingAsExpected(t.getMessage))
-              .right
-              .map(pair => {
-                MdsPoint(
-                  pair._1,
-                  pair._2,
-                  specificId,
-                  m.factionName,
-                  m.personId,
-                  m.name,
-                  m.surname
-                )
-              })
-          })
+          //Matrix returned by smile is pairs in array [[x, y], [x, y],...]
+          Try {
+            val x = pairArray(0)
+            val y = pairArray(1)
+            (x, y)
+          }.toEither.left
+            .map(t =>
+              LibraryNotBehavingAsExpected(t.getMessage))
+            .right
+            .map(pair => {
+              MdsPointOnlyXAndY(
+                pair._1,
+                pair._2,
+                specificId
+              )
+            })
       }
       .toVector
       .sequence

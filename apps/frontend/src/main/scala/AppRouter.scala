@@ -4,7 +4,10 @@ import japgolly.scalajs.react.component.Scala.Unmounted
 import japgolly.scalajs.react.extra.OnUnmount
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
-import me.benetis.shared.MdsResult
+import me.benetis.shared.{
+  MdsPointWithAdditionalInfo,
+  MdsResult
+}
 import org.scalajs.dom.html.Div
 import services.{AppCircuit, RootModel}
 
@@ -15,23 +18,27 @@ object AppRouter {
 
   val baseUrl = BaseUrl.fromWindowOrigin
 
-  val config = RouterConfigDsl[Page].buildConfig { dsl: RouterConfigDsl[Page] =>
-    import dsl._
+  val config = RouterConfigDsl[Page].buildConfig {
+    dsl: RouterConfigDsl[Page] =>
+      import dsl._
 
-    val circuit = AppCircuit.connect(_.mdsResult)
+      val circuit = AppCircuit.connect(_.mdsResult)
 
-    (trimSlashes
-      | staticRoute(root, Home) ~> renderR(ctl =>
-        circuit((p: ModelProxy[Option[MdsResult]]) =>
-          HomePage(HomePage.Props(p)))))
-      .notFound(redirectToPage(Home)(Redirect.Replace))
-      .renderWith(layout)
+      (trimSlashes
+        | staticRoute(root, Home) ~> renderR(ctl =>
+          circuit((p: ModelProxy[Option[
+            MdsResult[MdsPointWithAdditionalInfo]]]) =>
+            HomePage(HomePage.Props(p)))))
+        .notFound(redirectToPage(Home)(Redirect.Replace))
+        .renderWith(layout)
   }
 
-  val router: Unmounted[Unit, Resolution[Page], OnUnmount.Backend] =
+  val router
+    : Unmounted[Unit, Resolution[Page], OnUnmount.Backend] =
     Router(baseUrl, config)()
 
-  def layout(c: RouterCtl[Page], r: Resolution[Page]): VdomTagOf[Div] = {
+  def layout(c: RouterCtl[Page],
+             r: Resolution[Page]): VdomTagOf[Div] = {
     <.div(
       "Page",
       r.render()

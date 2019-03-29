@@ -5,8 +5,9 @@ import boopickle.Default._
 case class EigenValues(value: Array[Double])
     extends Embedded
 
-/* Data class used for visualization */
-case class MdsPoint(
+sealed trait MdsPoint
+
+case class MdsPointWithAdditionalInfo(
     x: Double,
     y: Double,
     id: ParliamentMemberTermOfOfficeSpecificId,
@@ -15,10 +16,25 @@ case class MdsPoint(
     parliamentMemberName: ParliamentMemberName,
     parliamentMemberSurname: ParliamentMemberSurname
 ) extends Embedded
+    with MdsPoint
 
-object MdsPoint {
-  implicit val pickler: Pickler[MdsPoint] =
-    generatePickler[MdsPoint]
+/* Data class used for visualization */
+case class MdsPointOnlyXAndY(
+    x: Double,
+    y: Double,
+    id: ParliamentMemberTermOfOfficeSpecificId,
+) extends Embedded
+    with MdsPoint
+
+object MdsPointOnlyXAndY {
+  implicit val pickler: Pickler[MdsPointOnlyXAndY] =
+    generatePickler[MdsPointOnlyXAndY]
+}
+
+object MdsPointWithAdditionalInfo {
+  implicit val pickler
+    : Pickler[MdsPointWithAdditionalInfo] =
+    generatePickler[MdsPointWithAdditionalInfo]
 }
 
 object EigenValues {
@@ -34,24 +50,24 @@ object MDSProportion {
 }
 
 object MDSCoordinates {
-  implicit val pickler: Pickler[MDSCoordinates] =
-    generatePickler[MDSCoordinates]
+  implicit val pickler: Pickler[MDSCoordinates[MdsPoint]] =
+    generatePickler[MDSCoordinates[MdsPoint]]
 }
 case class MDSProportion(value: Array[Double])
     extends Embedded
-case class MDSCoordinates(value: Vector[MdsPoint])
+case class MDSCoordinates[T <: MdsPoint](value: Vector[T])
     extends Embedded
 
-case class MdsResult(
+case class MdsResult[T <: MdsPoint](
     eigenValues: EigenValues,
     proportion: MDSProportion,
-    coordinates: MDSCoordinates,
+    coordinates: MDSCoordinates[T],
     createdAt: SharedDateTime,
     termOfOfficeId: TermOfOfficeId
 ) extends Embedded
 
 object MdsResult {
-  implicit val pickler: Pickler[MdsResult] =
-    generatePickler[MdsResult]
+  implicit val pickler: Pickler[MdsResult[MdsPoint]] =
+    compositePickler[MdsResult[MdsPoint]]
 
 }

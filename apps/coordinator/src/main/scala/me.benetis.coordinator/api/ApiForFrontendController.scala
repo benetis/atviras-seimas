@@ -4,14 +4,92 @@ import me.benetis.coordinator.repository.{
   MDSRepo,
   ParliamentMemberRepo
 }
-import me.benetis.shared.{MdsResult, TermOfOfficeId}
+import me.benetis.coordinator.utils.{
+  ComputingError,
+  DBNotExpectedResult
+}
+import me.benetis.shared.{
+  MDSCoordinates,
+  MdsPointOnlyXAndY,
+  MdsPointWithAdditionalInfo,
+  MdsResult,
+  ParliamentMember,
+  TermOfOfficeId
+}
 import me.benetis.shared.api.ApiForFrontend
+import cats.instances.vector._
+import cats.syntax.traverse._
+import cats.instances.either._
 
 object ApiForFrontendController
     extends ApiForFrontend
     with LazyLogging {
   override def fetchMdsResults(
-      termOfOfficeId: TermOfOfficeId): Option[MdsResult] = {
-    MDSRepo.byTermOfOffice(termOfOfficeId)
+      termOfOfficeId: TermOfOfficeId)
+    : Option[MdsResult[MdsPointWithAdditionalInfo]] = {
+
+    val mdsResultOpt =
+      MDSRepo.byTermOfOffice(termOfOfficeId)
+
+    val members = ParliamentMemberRepo.listByTermOfOffice(
+      termOfOfficeId)
+
+    /* we can't map because we change the type */
+    mdsResultOpt match {
+      case Some(mds) =>
+        val updatedCoords = mds.coordinates.value
+          .map(p => addAdditionalInfoToMds(p, members))
+          .sequence
+          .map(MDSCoordinates(_))
+
+        updatedCoords match {
+          case Right(coords) =>
+            Some(
+              MdsResult[MdsPointWithAdditionalInfo](
+                mds.eigenValues,
+                mds.proportion,
+                coords,
+                mds.createdAt,
+                mds.termOfOfficeId
+              ))
+          case Left(err) =>
+            logger.error(err.msg())
+            None
+        }
+
+      case None => None
+    }
+  }
+
+  private def addAdditionalInfoToMds(
+      mdsPointOnly: MdsPointOnlyXAndY,
+      termMembers: List[ParliamentMember])
+    : Either[ComputingError, MdsPointWithAdditionalInfo] = {
+
+    val memberOpt = termMembers.find { m =>
+      m.termOfOfficeSpecificId match {
+        case Some(specId) => specId == mdsPointOnly.id
+        case None         => false
+      }
+    }
+
+    val memberEith = memberOpt match {
+      case Some(m) => Right(m)
+      case None =>
+        Left(
+          DBNotExpectedResult("specific id should be set"))
+    }
+
+    memberEith.map { m =>
+      MdsPointWithAdditionalInfo(
+        mdsPointOnly.x,
+        mdsPointOnly.y,
+        mdsPointOnly.id,
+        m.factionName,
+        m.personId,
+        m.name,
+        m.surname
+      )
+    }
   }
 }
