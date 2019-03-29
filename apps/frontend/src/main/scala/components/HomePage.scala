@@ -25,6 +25,8 @@ object HomePage {
   GlobalRegistry.register(new Style)
   val style = GlobalRegistry[Style].get
 
+  case class PointColor(value: String)
+
   case class Props(
       proxy: ModelProxy[
         Option[MdsResult[MdsPointWithAdditionalInfo]]])
@@ -38,14 +40,10 @@ object HomePage {
   class Backend($ : BackendScope[Props, Unit]) {
 
     val fill: js.Function1[js.Dynamic, String] =
-      (point: js.Dynamic) => {
-        dom.console.log(point)
-        if (point.faction_name
-              .asInstanceOf[String] == "Lietuvos socialdemokratų partija")
-          "#ff0000"
-        else
-          "#00ff00"
-      }
+      (point: js.Dynamic) =>
+        factionColor(
+          point.faction_name
+            .asInstanceOf[String]).value
 
     def render(p: Props, s: Unit) = {
       <.div(
@@ -61,7 +59,6 @@ object HomePage {
         p.proxy.value.fold(<.div("Empty MDS"))(
           (result: MdsResult[MdsPointWithAdditionalInfo]) =>
             <.div(
-              <.div(result.coordinates.value.head.toString),
               VictoryChart.component(
                 VictoryChart.props(js.Dynamic.literal()))(
                 VictoryScatter.component(
@@ -94,6 +91,21 @@ object HomePage {
   }
 
   def apply(props: Props) = component(props)
+
+  def factionColor(name: String): PointColor = {
+    dom.console.log(name)
+    name match {
+      case "Lietuvos socialdemokratų partija" =>
+        PointColor("#ff0000")
+      case "Lietuvos valstiečių ir žaliųjų sąjunga" =>
+        PointColor("#00ff00")
+      case "Tėvynės sąjunga - Lietuvos krikščionys demokratai" =>
+        PointColor("#0000ff")
+      case "Lietuvos Respublikos liberalų sąjūdis" =>
+        PointColor("#ffff00")
+      case _ => PointColor("#000000")
+    }
+  }
 
   class Style extends StyleSheet.Inline {
 
