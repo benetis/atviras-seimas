@@ -6,7 +6,8 @@ import org.json4s.native.Serialization.{write, read}
 import org.json4s.DefaultFormats
 
 object MDSRepo extends LazyLogging {
-  private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")
+  private lazy val ctx =
+    new MysqlJdbcContext(SnakeCase, "ctx")
 
   import ctx._
 
@@ -24,23 +25,35 @@ object MDSRepo extends LazyLogging {
     MappedEncoding[MDSCoordinates, String](write(_))
 
   implicit val eigenDecoding =
-    MappedEncoding[String, EigenValues](read[EigenValues](_))
+    MappedEncoding[String, EigenValues](
+      read[EigenValues](_))
 
   implicit val mdsProportionDecoding =
-    MappedEncoding[String, MDSProportion](read[MDSProportion](_))
+    MappedEncoding[String, MDSProportion](
+      read[MDSProportion](_))
 
   implicit val mdsCoordinatesDecoding =
-    MappedEncoding[String, MDSCoordinates](read[MDSCoordinates](_))
+    MappedEncoding[String, MDSCoordinates](
+      (coords: String) => {
 
-  private implicit val MDSInsertMeta = insertMeta[MdsResult]()
+        logger.info(coords)
+
+        read[MDSCoordinates](coords)
+      })
+
+  private implicit val MDSInsertMeta =
+    insertMeta[MdsResult]()
 
   def insert(mds: MdsResult): Unit = {
-    val q = quote { query[MdsResult].insert(lift(mds)).onConflictIgnore }
+    val q = quote {
+      query[MdsResult].insert(lift(mds)).onConflictIgnore
+    }
 
     ctx.run(q)
   }
 
-  def byTermOfOffice(termOfOfficeId: TermOfOfficeId): Option[MdsResult] = {
+  def byTermOfOffice(
+      termOfOfficeId: TermOfOfficeId): Option[MdsResult] = {
     val q = quote {
       for {
         p <- query[MdsResult]

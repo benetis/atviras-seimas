@@ -28,17 +28,17 @@ object VictoryChart {
     JsComponent[Props, Children.Varargs, Null](RawComponent)
 }
 
-//@js.native
-//trait VictoryStyleObject extends js.Object {
-//  val fill: js.Function2[Any, Boolean, String] = js.native
-//}
-//
-//@js.native
-//trait VictoryStyleInterface extends js.Object {
-////  var parent: VictoryStyleObject = js.native
-//  val data: js.UndefOr[VictoryStyleObject] = js.undefined
-////  var labels: VictoryStyleObject = js.native
-//}
+@js.native
+trait VictoryStyleObject extends js.Object {
+  val fill: js.Function1[Any, String] = js.native
+}
+
+@js.native
+trait VictoryStyleInterface extends js.Object {
+//  var parent: VictoryStyleObject = js.native
+  val data: js.UndefOr[VictoryStyleObject] = js.undefined
+//  var labels: VictoryStyleObject = js.native
+}
 
 object VictoryScatter {
   @JSImport("victory", "VictoryScatter")

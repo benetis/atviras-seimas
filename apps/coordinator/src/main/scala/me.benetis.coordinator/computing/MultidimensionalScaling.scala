@@ -24,7 +24,6 @@ import smile.mds._
 
 import cats.instances.vector._
 import cats.syntax.traverse._
-import cats.syntax.either._
 import cats.instances.either._
 
 case class ProximityMatrix(value: Array[Array[Double]]) {

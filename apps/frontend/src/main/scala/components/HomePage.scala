@@ -1,7 +1,7 @@
 package components
 
 import diode.react.ModelProxy
-import facades.{VictoryChart, VictoryScatter}
+import facades._
 import japgolly.scalajs.react._
 import me.benetis.shared.{
   MdsPoint,
@@ -15,6 +15,7 @@ import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
 import scala.scalajs.js
 import js.JSConverters._
+import org.scalajs.dom
 
 object HomePage {
 
@@ -33,11 +34,15 @@ object HomePage {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    val fill: js.Function1[MdsPoint, String] =
-      (point: MdsPoint) =>
-        if (point.factionName.faction_name == "Lietuvos socialdemokratų partija")
+    val fill: js.Function1[js.Dynamic, String] =
+      (point: js.Dynamic) => {
+        dom.console.log(point)
+        if (point.faction_name
+              .asInstanceOf[String] == "Lietuvos socialdemokratų partija")
           "#ff0000"
-        else "#00ff00"
+        else
+          "#00ff00"
+      }
 
     def render(p: Props, s: Unit) = {
       <.div(
@@ -53,6 +58,7 @@ object HomePage {
         p.proxy.value.fold(<.div("Empty MDS"))(
           (result: MdsResult) =>
             <.div(
+              <.div(result.coordinates.value.head.toString),
               VictoryChart.component(
                 VictoryChart.props(js.Dynamic.literal()))(
                 VictoryScatter.component(
@@ -61,13 +67,19 @@ object HomePage {
                     data = result.coordinates.value
                       .map((p: MdsPoint) => {
                         val x: js.Dynamic =
-                          js.Dynamic.literal("x" -> p.x,
-                                             "y" -> p.y)
+                          js.Dynamic.literal(
+                            "x"            -> p.x,
+                            "y"            -> p.y,
+                            "faction_name" -> p.factionName.faction_name)
                         x
                       })
                       .toJSArray,
-                    js.Dynamic.literal("data" -> js.Dynamic
-                      .literal("fill" -> "#ff0000"))
+                    js.Dynamic
+                      .literal(
+                        "data" -> js.Dynamic
+                          .literal("fill" -> fill)
+                          .asInstanceOf[VictoryStyleObject]
+                      )
                   )
                 )
               ),
