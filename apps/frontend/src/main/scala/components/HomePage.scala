@@ -66,11 +66,8 @@ object HomePage {
                         x
                       })
                       .toJSArray,
-//                    style = js.Dynamic.literal(
-//                      "data" -> js.Dynamic.literal(
-//                        "fill" -> fill
-//                      )
-//                    )
+                    js.Dynamic.literal("data" -> js.Dynamic
+                      .literal("fill" -> "#ff0000"))
                   )
                 )
               ),
