@@ -62,7 +62,7 @@ object MDSRepo extends LazyLogging {
             _.termOfOfficeId.term_of_office_id == lift(
               termOfOfficeId.term_of_office_id)
           )
-          .sortBy(_.createdAt)
+          .sortBy(_.createdAt)(Ord.desc)
       } yield {
         p
       }

@@ -167,7 +167,7 @@ object MultidimensionalScaling extends LazyLogging {
           votesForMembers,
           pair._1,
           pair._2,
-          VoteEncoding.singleVoteEncodedE3)
+          VoteEncoding.singleVoteEncodedE1)
 
       matrix(
         pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
