@@ -16,6 +16,7 @@ import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
 import scala.scalajs.js
 import js.JSConverters._
+import model.FactionColors
 import org.scalajs.dom
 
 object HomePage {
@@ -24,8 +25,6 @@ object HomePage {
 
   GlobalRegistry.register(new Style)
   val style = GlobalRegistry[Style].get
-
-  case class PointColor(value: String)
 
   case class Props(
       proxy: ModelProxy[
@@ -41,9 +40,11 @@ object HomePage {
 
     val fill: js.Function1[js.Dynamic, String] =
       (point: js.Dynamic) =>
-        factionColor(
-          point.faction_name
-            .asInstanceOf[String]).value
+        FactionColors
+          .factionColor(
+            point.faction_name
+              .asInstanceOf[String])
+          .value
 
     def render(p: Props, s: Unit) = {
       <.div(
@@ -83,7 +84,8 @@ object HomePage {
                   )
                 )
               ),
-              s"Total points: ${result.coordinates.value.length}"
+              s"Total points: ${result.coordinates.value.length}",
+              FactionLegend(FactionLegend.Props())
           ),
         )
       )
@@ -91,21 +93,6 @@ object HomePage {
   }
 
   def apply(props: Props) = component(props)
-
-  def factionColor(name: String): PointColor = {
-    dom.console.log(name)
-    name match {
-      case "Lietuvos socialdemokratų partija" =>
-        PointColor("#ff0000")
-      case "Lietuvos valstiečių ir žaliųjų sąjunga" =>
-        PointColor("#00ff00")
-      case "Tėvynės sąjunga - Lietuvos krikščionys demokratai" =>
-        PointColor("#0000ff")
-      case "Lietuvos Respublikos liberalų sąjūdis" =>
-        PointColor("#ffff00")
-      case _ => PointColor("#000000")
-    }
-  }
 
   class Style extends StyleSheet.Inline {
 
