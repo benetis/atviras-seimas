@@ -7,10 +7,11 @@ object App {
   @JSExport
   def main(args: Array[String]): Unit = {
 
-    import styles.CssSettings._
+    import globalStyles.CssSettings._
 
     AppRouter.router.renderIntoDOM(
-      dom.document.getElementById("root-container"))
+      dom.document.getElementById("root-container")
+    )
 
     GlobalRegistry.addToDocumentOnRegistration()
   }

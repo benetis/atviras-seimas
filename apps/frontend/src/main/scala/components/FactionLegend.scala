@@ -1,10 +1,8 @@
 package components
 
 import diode.react.ModelProxy
-import facades._
 import japgolly.scalajs.react._
 import me.benetis.shared.{
-  MdsPoint,
   MdsPointWithAdditionalInfo,
   MdsResult,
   SessionId,
@@ -21,10 +19,10 @@ import org.scalajs.dom
 
 object FactionLegend {
 
-  import styles.CssSettings._
+  import globalStyles.CssSettings._
 
   GlobalRegistry.register(new Style)
-  val style = GlobalRegistry[Style].get
+  val styles = GlobalRegistry[Style].get
 
   case class Props()
 
@@ -36,19 +34,24 @@ object FactionLegend {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    def render(p: Props, s: Unit) = {
+    def render(
+      p: Props,
+      s: Unit
+    ) = {
 
       <.ul(
         FactionColors.map.keys
-          .map(k =>
-            <.li(
-              style.legendItem,
-              k,
-              <.span(
-                ^.backgroundColor := s"${FactionColors.map(k).value}",
-                style.legendColor()
+          .map(
+            k =>
+              <.li(
+                styles.legendItem,
+                k,
+                <.span(
+                  ^.backgroundColor := s"${FactionColors.map(k).value}",
+                  styles.legendColor()
+                )
               )
-          ))
+          )
           .toTagMod
       )
     }

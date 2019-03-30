@@ -65,7 +65,7 @@ lazy val frontend = project
   .settings(
     version in webpack := "4.28.3",
     version in startWebpackDevServer := "3.1.2",
-    webpackDevServerExtraArgs := Seq("--watch-content-base", "--inline"),
+    webpackDevServerExtraArgs := Seq("--watch-content-base"),
     webpackResources := webpackResourcesBlob.value,
     webpackConfigFile in fullOptJS := webpackProdConfigFilePath.value,
     webpackConfigFile in fastOptJS := webpackDevConfigFilePath.value,

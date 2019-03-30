@@ -1,10 +1,8 @@
 package components
 
 import diode.react.ModelProxy
-import facades._
 import japgolly.scalajs.react._
 import me.benetis.shared.{
-  MdsPoint,
   MdsPointWithAdditionalInfo,
   MdsResult,
   SessionId,
@@ -21,74 +19,57 @@ import org.scalajs.dom
 
 object HomePage {
 
-  import styles.CssSettings._
+  import globalStyles.CssSettings._
 
   GlobalRegistry.register(new Style)
-  val style = GlobalRegistry[Style].get
+  val styles = GlobalRegistry[Style].get
 
   case class Props(
-      proxy: ModelProxy[
-        Option[MdsResult[MdsPointWithAdditionalInfo]]])
+    proxy: ModelProxy[
+      Option[MdsResult[MdsPointWithAdditionalInfo]]
+    ])
 
   private val component = ScalaComponent
     .builder[Props]("Home page")
     .stateless
     .renderBackend[Backend]
+    .componentDidMount(
+      builder =>
+        builder.backend.onComponentMount(builder.props)
+    )
     .build
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    val fill: js.Function1[js.Dynamic, String] =
-      (point: js.Dynamic) =>
-        FactionColors
-          .factionColor(
-            point.faction_name
-              .asInstanceOf[String])
-          .value
+    val mdsPoint: MdsPointWithAdditionalInfo => TagMod =
+      point => {
+        <.div()
+      }
 
-    def render(p: Props, s: Unit) = {
+    def onComponentMount(p: Props): Callback = {
+      p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
+    }
+
+    def render(
+      p: Props,
+      s: Unit
+    ) = {
       <.div(
         <.div("inside render"),
-        <.button(
-          "MDS",
-          ^.onClick --> {
-            p.proxy.dispatchCB(
-              LoadMdsResult(TermOfOfficeId(8)))
-          }
-        ),
         <.p("Mds data:"),
         p.proxy.value.fold(<.div("Empty MDS"))(
           (result: MdsResult[MdsPointWithAdditionalInfo]) =>
             <.div(
-              VictoryChart.component(
-                VictoryChart.props(js.Dynamic.literal()))(
-                VictoryScatter.component(
-                  VictoryScatter.props(
-                    size = 3,
-                    data = result.coordinates.value
-                      .map((p: MdsPointWithAdditionalInfo) => {
-                        val x: js.Dynamic =
-                          js.Dynamic.literal(
-                            "x"            -> p.x,
-                            "y"            -> p.y,
-                            "faction_name" -> p.factionName.faction_name)
-                        x
-                      })
-                      .toJSArray,
-                    js.Dynamic
-                      .literal(
-                        "data" -> js.Dynamic
-                          .literal("fill" -> fill)
-                          .asInstanceOf[VictoryStyleObject]
-                      ),
-                    dataComponent =
-                      Some(ScatterPlotPoint.component().raw)
+              ScatterPlot(
+                ScatterPlot
+                  .Props[MdsPointWithAdditionalInfo](
+                    data = result.coordinates.value,
+                    pointToTagMod = mdsPoint,
+                    domain =
+                      ScatterPlot.Domain(-50, 50, -50, 50)
                   )
-                )
-              ),
-              s"Total points: ${result.coordinates.value.length}",
-              FactionLegend(FactionLegend.Props())
-          ),
+              )
+            )
         )
       )
     }

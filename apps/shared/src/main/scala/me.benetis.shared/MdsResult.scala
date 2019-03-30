@@ -1,11 +1,10 @@
 package me.benetis.shared
 import io.getquill.Embedded
 import boopickle.Default._
+import me.benetis.shared.common.Charts.ScatterPoint
 
 case class EigenValues(value: Array[Double])
     extends Embedded
-
-sealed trait MdsPoint
 
 case class MdsPointWithAdditionalInfo(
     x: Double,
@@ -16,7 +15,7 @@ case class MdsPointWithAdditionalInfo(
     parliamentMemberName: ParliamentMemberName,
     parliamentMemberSurname: ParliamentMemberSurname
 ) extends Embedded
-    with MdsPoint
+    with ScatterPoint
 
 /* Data class used for visualization */
 case class MdsPointOnlyXAndY(
@@ -24,7 +23,7 @@ case class MdsPointOnlyXAndY(
     y: Double,
     id: ParliamentMemberTermOfOfficeSpecificId,
 ) extends Embedded
-    with MdsPoint
+    with ScatterPoint
 
 object MdsPointOnlyXAndY {
   implicit val pickler: Pickler[MdsPointOnlyXAndY] =
@@ -50,15 +49,18 @@ object MDSProportion {
 }
 
 object MDSCoordinates {
-  implicit val pickler: Pickler[MDSCoordinates[MdsPoint]] =
-    generatePickler[MDSCoordinates[MdsPoint]]
+  implicit val pickler
+    : Pickler[MDSCoordinates[MdsPointWithAdditionalInfo]] =
+    generatePickler[
+      MDSCoordinates[MdsPointWithAdditionalInfo]]
 }
 case class MDSProportion(value: Array[Double])
     extends Embedded
-case class MDSCoordinates[T <: MdsPoint](value: Vector[T])
+case class MDSCoordinates[T <: ScatterPoint](
+    value: Vector[T])
     extends Embedded
 
-case class MdsResult[T <: MdsPoint](
+case class MdsResult[T <: ScatterPoint](
     eigenValues: EigenValues,
     proportion: MDSProportion,
     coordinates: MDSCoordinates[T],
@@ -67,7 +69,7 @@ case class MdsResult[T <: MdsPoint](
 ) extends Embedded
 
 object MdsResult {
-  implicit val pickler: Pickler[MdsResult[MdsPoint]] =
-    compositePickler[MdsResult[MdsPoint]]
+  implicit val pickler: Pickler[MdsResult[ScatterPoint]] =
+    compositePickler[MdsResult[ScatterPoint]]
 
 }
