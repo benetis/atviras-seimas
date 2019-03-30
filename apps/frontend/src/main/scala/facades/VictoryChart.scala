@@ -1,11 +1,14 @@
 package facades
+import components.ScatterPlotPoint
 import japgolly.scalajs.react.CtorType.Props
 import scala.scalajs.js
+import japgolly.scalajs.react.raw.React.Element
 import scala.scalajs.js.annotation.{
   JSImport,
   ScalaJSDefined
 }
 import japgolly.scalajs.react._
+import japgolly.scalajs.react.raw.React.ComponentElement
 import japgolly.scalajs.react.vdom.VdomNode
 
 object VictoryChart {
@@ -50,15 +53,19 @@ object VictoryScatter {
     var size: Int                  = js.native
     var data: js.Array[js.Dynamic] = js.native
     var style: js.Object           = js.native
+    var dataComponent: Element     = js.native
   }
 
-  def props(size: Int,
-            data: js.Array[js.Dynamic],
-            style: js.Object): Props = {
+  def props(
+      size: Int,
+      data: js.Array[js.Dynamic],
+      style: js.Object,
+      dataComponent: Option[Element] = None): Props = {
     val p = (new js.Object).asInstanceOf[Props]
     p.size = size
     p.data = data
     p.style = style
+    dataComponent.foreach(p.dataComponent = _)
     p
   }
 

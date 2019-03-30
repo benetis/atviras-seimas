@@ -80,7 +80,9 @@ object HomePage {
                         "data" -> js.Dynamic
                           .literal("fill" -> fill)
                           .asInstanceOf[VictoryStyleObject]
-                      )
+                      ),
+                    dataComponent =
+                      Some(ScatterPlotPoint.component().raw)
                   )
                 )
               ),
