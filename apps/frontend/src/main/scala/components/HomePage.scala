@@ -16,6 +16,8 @@ import scala.scalajs.js
 import js.JSConverters._
 import model.FactionColors
 import org.scalajs.dom
+import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
+import me.benetis.shared.common.Charts.ScatterPlotPointPosition
 
 object HomePage {
 
@@ -41,9 +43,17 @@ object HomePage {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
-    val mdsPoint: MdsPointWithAdditionalInfo => TagMod =
-      point => {
-        <.div()
+    val mdsPoint: (
+      MdsPointWithAdditionalInfo,
+      ScatterPlotPointPosition
+    ) => TagMod =
+      (point, position) => {
+        >.circle(
+          ^^.cx := position.x,
+          ^^.cy := position.y,
+          ^^.r := 1,
+          styles.fill
+        )
       }
 
     def onComponentMount(p: Props): Callback = {
@@ -65,8 +75,8 @@ object HomePage {
                   .Props[MdsPointWithAdditionalInfo](
                     data = result.coordinates.value,
                     pointToTagMod = mdsPoint,
-                    domain =
-                      ScatterPlot.Domain(-50, 50, -50, 50)
+                    domain = ScatterPlot
+                      .Domain(-100, 100, -100, 100)
                   )
               )
             )
@@ -81,8 +91,8 @@ object HomePage {
 
     import dsl._
 
-    val test = style(
-      backgroundColor.red
+    val fill = style(
+      svgFill := "black"
     )
 
   }

@@ -6,7 +6,10 @@ import japgolly.scalajs.react.vdom.HtmlTagOf
 import japgolly.scalajs.react.vdom.PackageBase.VdomAttr
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
-import me.benetis.shared.common.Charts.ScatterPoint
+import me.benetis.shared.common.Charts.{
+  ScatterPlotPointPosition,
+  ScatterPoint
+}
 import org.scalajs.dom
 import org.scalajs.dom.svg.Line
 import scalacss.internal.mutable.GlobalRegistry
@@ -55,10 +58,63 @@ class ScatterPlot[T <: ScatterPoint] {
           ^^.height := svgHeight,
           ^^.width := svgWidth,
           ^^.viewBox := s"0 0 100 100",
-          quarterSplittingLines().toTagMod
-        ),
-        p.data.map(p.pointToTagMod).toTagMod
+          quarterSplittingLines().toTagMod,
+          p.data
+            .map(
+              data =>
+                >.g(
+                  p.pointToTagMod(
+                    data,
+                    pointToPointPosition(data, p.domain)
+                  )
+                )
+            )
+            .toTagMod
+        )
       )
+    }
+
+    private def pointToPointPosition(
+      point: T,
+      domain: ScatterPlot.Domain
+    ): ScatterPlotPointPosition = {
+
+      val ratioX: Double = (Math.abs(domain.fromForX) + Math
+        .abs(
+          domain.toForX
+        )) / 100.0
+      val ratioY: Double = (Math.abs(domain.fromForX) + Math
+        .abs(
+          domain.toForX
+        )) / 100.0
+
+      def center(
+        scatterPlotPointPosition: ScatterPlotPointPosition
+      ): ScatterPlotPointPosition = {
+        ScatterPlotPointPosition(
+          if (point.x < 0)
+            Math.abs(point.x) + 50
+          else
+            point.x + 50,
+          if (point.y < 0)
+            Math.abs(point.y) * 2 + 50
+          else
+            point.y + 50
+        )
+      }
+
+      def scale(
+        scatterPlotPointPosition: ScatterPlotPointPosition
+      ): ScatterPlotPointPosition = {
+
+        ScatterPlotPointPosition(
+          scatterPlotPointPosition.x / ratioX,
+          scatterPlotPointPosition.y / ratioY
+        )
+      }
+
+      val transform = scale _ andThen center
+      transform(ScatterPlotPointPosition(point.x, point.y))
     }
 
     private def quarterSplittingLines(
@@ -111,7 +167,7 @@ object ScatterPlot {
 
   case class Props[T](
     data: Vector[T],
-    pointToTagMod: T => TagMod,
+    pointToTagMod: (T, ScatterPlotPointPosition) => TagMod,
     domain: Domain)
 
   def apply[T <: ScatterPoint](props: Props[T]) =

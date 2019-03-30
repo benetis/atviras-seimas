@@ -6,4 +6,8 @@ object Charts {
     val y: Double
   }
 
+  case class ScatterPlotPointPosition(
+    x: Double,
+    y: Double)
+
 }
