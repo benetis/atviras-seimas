@@ -54,7 +54,11 @@ object HomePage {
             ^^.cx := position.x,
             ^^.cy := position.y,
             ^^.r := 1,
-            styles.fill
+            ^^.fill := FactionColors
+              .factionColor(
+                point.factionName
+              )
+              .value
           ),
           >.text(
             ^^.x := position.x - 3,

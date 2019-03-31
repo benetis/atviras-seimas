@@ -1,5 +1,9 @@
 package model
 
+import me.benetis.shared.{
+  FactionName,
+  ParliamentMemberFactionName
+}
 import org.scalajs.dom
 
 object FactionColors {
@@ -22,7 +26,12 @@ object FactionColors {
       FactionColor("#a045bc")
   )
 
-  def factionColor(name: String): FactionColor = {
-    map.getOrElse(name, FactionColor("#000000"))
+  def factionColor(
+    factionName: ParliamentMemberFactionName
+  ): FactionColor = {
+    map.getOrElse(
+      factionName.faction_name,
+      FactionColor("#000000")
+    )
   }
 }
