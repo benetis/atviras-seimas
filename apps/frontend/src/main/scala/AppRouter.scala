@@ -1,4 +1,5 @@
 import components.HomePage
+import components.styleguide.StyleguidePage
 import diode.react.ModelProxy
 import japgolly.scalajs.react.component.Scala.Unmounted
 import japgolly.scalajs.react.extra.OnUnmount
@@ -12,7 +13,8 @@ import org.scalajs.dom.html.Div
 import services.{AppCircuit, RootModel}
 
 sealed trait Page
-case object Home extends Page
+case object Home       extends Page
+case object Styleguide extends Page
 
 object AppRouter {
 
@@ -25,10 +27,20 @@ object AppRouter {
       val circuit = AppCircuit.connect(_.mdsResult)
 
       (trimSlashes
-        | staticRoute(root, Home) ~> renderR(ctl =>
-          circuit((p: ModelProxy[Option[
-            MdsResult[MdsPointWithAdditionalInfo]]]) =>
-            HomePage(HomePage.Props(p)))))
+        | staticRoute(root, Home) ~> renderR(
+          ctl =>
+            circuit(
+              (p: ModelProxy[Option[
+                MdsResult[MdsPointWithAdditionalInfo]
+              ]]) => HomePage(HomePage.Props(p))
+            )
+        )
+        | staticRoute("#styleguide", Styleguide) ~> renderR(
+          ctl =>
+            circuit(
+              (_) => StyleguidePage()
+            )
+        ))
         .notFound(redirectToPage(Home)(Redirect.Replace))
         .renderWith(layout)
   }
@@ -37,8 +49,10 @@ object AppRouter {
     : Unmounted[Unit, Resolution[Page], OnUnmount.Backend] =
     Router(baseUrl, config)()
 
-  def layout(c: RouterCtl[Page],
-             r: Resolution[Page]): VdomTagOf[Div] = {
+  def layout(
+    c: RouterCtl[Page],
+    r: Resolution[Page]
+  ): VdomTagOf[Div] = {
     <.div(
       "Page",
       r.render()

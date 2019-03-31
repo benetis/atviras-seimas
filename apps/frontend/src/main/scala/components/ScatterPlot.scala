@@ -133,6 +133,8 @@ class ScatterPlot[T <: ScatterPoint] {
       display.inlineFlex,
       minHeight(100 px),
       minWidth(100 px),
+      flexWrap.wrap,
+      flexDirection.column,
       border :=! "1px solid black"
     )
 
