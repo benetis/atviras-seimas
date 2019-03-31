@@ -58,7 +58,7 @@ object HomePage {
           >.text(
             ^^.x := position.x - 3,
             ^^.y := position.y - 2,
-            s"${point.x},${point.y}",
+            s"",
             styles.pointText
           )
         )
@@ -84,7 +84,7 @@ object HomePage {
                     data = result.coordinates.value,
                     pointToTagMod = mdsPoint,
                     domain = ScatterPlot
-                      .Domain(-100, 100, -100, 100)
+                      .Domain(-30, 30, -50, 50)
                   )
               )
             )

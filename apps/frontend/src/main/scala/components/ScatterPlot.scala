@@ -137,7 +137,7 @@ class ScatterPlot[T <: ScatterPoint] {
     )
 
     val lineStyle = style(
-      svgStroke(red),
+      svgStroke(gray),
       svgStrokeWidth := "0.5"
     )
   }
