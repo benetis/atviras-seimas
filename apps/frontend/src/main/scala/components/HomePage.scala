@@ -48,11 +48,19 @@ object HomePage {
       ScatterPlotPointPosition
     ) => TagMod =
       (point, position) => {
-        >.circle(
-          ^^.cx := position.x,
-          ^^.cy := position.y,
-          ^^.r := 1,
-          styles.fill
+        >.g(
+          >.circle(
+            ^^.cx := position.x,
+            ^^.cy := position.y,
+            ^^.r := 1,
+            styles.fill
+          ),
+          >.text(
+            ^^.x := position.x - 3,
+            ^^.y := position.y - 2,
+            s"${point.x},${point.y}",
+            styles.pointText
+          )
         )
       }
 
@@ -93,6 +101,10 @@ object HomePage {
 
     val fill = style(
       svgFill := "black"
+    )
+
+    val pointText = style(
+      fontSize(0.2 em)
     )
 
   }

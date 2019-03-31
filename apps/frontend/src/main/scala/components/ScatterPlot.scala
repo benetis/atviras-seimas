@@ -79,41 +79,24 @@ class ScatterPlot[T <: ScatterPoint] {
       domain: ScatterPlot.Domain
     ): ScatterPlotPointPosition = {
 
-      val ratioX: Double = (Math.abs(domain.fromForX) + Math
-        .abs(
-          domain.toForX
-        )) / 100.0
-      val ratioY: Double = (Math.abs(domain.fromForX) + Math
-        .abs(
-          domain.toForX
-        )) / 100.0
-
-      def center(
+      def invertY(
         scatterPlotPointPosition: ScatterPlotPointPosition
       ): ScatterPlotPointPosition = {
         ScatterPlotPointPosition(
-          if (point.x < 0)
-            Math.abs(point.x) + 50
-          else
-            point.x + 50,
-          if (point.y < 0)
-            Math.abs(point.y) * 2 + 50
-          else
-            point.y + 50
+          scatterPlotPointPosition.x,
+          -scatterPlotPointPosition.y
         )
       }
 
-      def scale(
+      def moveToCenter(
         scatterPlotPointPosition: ScatterPlotPointPosition
-      ): ScatterPlotPointPosition = {
-
+      ): ScatterPlotPointPosition =
         ScatterPlotPointPosition(
-          scatterPlotPointPosition.x / ratioX,
-          scatterPlotPointPosition.y / ratioY
+          scatterPlotPointPosition.x + 50,
+          scatterPlotPointPosition.y + 50
         )
-      }
 
-      val transform = scale _ andThen center
+      val transform = invertY _ andThen moveToCenter
       transform(ScatterPlotPointPosition(point.x, point.y))
     }
 
