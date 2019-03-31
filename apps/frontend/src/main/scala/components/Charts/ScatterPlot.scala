@@ -8,7 +8,7 @@ import me.benetis.shared.common.Charts.{
   ScatterPlotPointPosition,
   ScatterPoint
 }
-import org.scalajs.dom.svg.Line
+import org.scalajs.dom.svg.{G, Line}
 import scala.language.existentials
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
@@ -21,10 +21,15 @@ class ScatterPlot[T <: ScatterPoint] {
   case object ThirdQuarter  extends Quarter
   case object FourthQuarter extends Quarter
 
-  protected case class DomainPoint(
+  private case class DomainPoint(
     x: Double,
-    y: Double)
+    y: Double,
+    axis: Axis)
       extends ScatterPoint
+
+  private sealed trait Axis
+  private case object XAxis extends Axis
+  private case object YAxis extends Axis
 
   import globalStyles.CssSettings._
 
@@ -124,24 +129,100 @@ class ScatterPlot[T <: ScatterPoint] {
           .abs(domain.toForY)
       )
 
-//      def axisPoints(domainSize: Int, perHalfOfAxis: Int, domainFrom: Double): Vector[ScatterPlotPointPosition] = {
-//
-//      }
+      val domainPoint: (
+        DomainPoint,
+        ScatterPlotPointPosition
+      ) => TagMod = (
+        point: DomainPoint,
+        position: ScatterPlotPointPosition
+      ) => {
 
-      val xAxisPoints: Vector[
-        (DomainPoint, ScatterPlotPointPosition)
-      ] = {
+        val pointText = point.axis match {
+          case XAxis =>
+            s"${point.x}"
+          case YAxis =>
+            s"${point.y}"
+        }
+
+        def emptyIfBothZero(pointText: String) = {
+          if (point.x == 0.0 && point.y == 0)
+            ""
+          else
+            pointText
+        }
+
+        val textXPosition = point.axis match {
+          case XAxis =>
+            position.x - 1.5
+          case YAxis =>
+            position.x + 1.5
+        }
+
+        val textYPosition = point.axis match {
+          case XAxis =>
+            position.y - 1.5
+          case YAxis =>
+            position.y + 0.8
+        }
+
+        >.g(
+          >.circle(
+            ^^.r := 0.5,
+            ^^.cx := position.x,
+            ^^.cy := position.y
+          ),
+          >.text(
+            ^^.x := textXPosition,
+            ^^.y := textYPosition,
+            emptyIfBothZero(pointText),
+            styles.pointText
+          )
+        )
+      }
+      def axisPoints(
+        axis: Axis
+      ): Vector[(DomainPoint, ScatterPlotPointPosition)] = {
+
+        val (
+          domainSize,
+          perHalfOfAxis,
+          domainFrom
+        ) = axis match {
+          case XAxis =>
+            (
+              domainXSize,
+              domain.perHalfOfXAxis,
+              domain.fromForX
+            )
+          case YAxis =>
+            (
+              domainYSize,
+              domain.perHalfOfYAxis,
+              domain.fromForY
+            )
+        }
 
         val bothQuarters      = 2
-        val totalDomainPoints = bothQuarters * domain.perHalfOfXAxis
-
-        //60 / 10 = 6 (stepas)
-        val step = domainXSize.value / totalDomainPoints
+        val totalDomainPoints = bothQuarters * perHalfOfAxis
+        val step              = domainSize.value / totalDomainPoints
 
         val domainPoints = (1 until totalDomainPoints)
           .map(
             i =>
-              DomainPoint(domain.fromForX + (step * i), 0)
+              axis match {
+                case XAxis =>
+                  DomainPoint(
+                    domainFrom + (step * i),
+                    0,
+                    XAxis
+                  )
+                case YAxis =>
+                  DomainPoint(
+                    0,
+                    domainFrom + (step * i),
+                    YAxis
+                  )
+              }
           )
           .toVector
 
@@ -166,27 +247,21 @@ class ScatterPlot[T <: ScatterPoint] {
         styles.lineStyle
       )
 
-      val xAxisLinePoints = xAxisPoints.map {
+      val xAxisLinePoints = axisPoints(XAxis).map {
         case (point, position) =>
-          >.g(
-            >.circle(
-              ^^.r := 0.5,
-              ^^.cx := position.x,
-              ^^.cy := position.y
-            ),
-            >.text(
-              ^^.x := position.x - 3,
-              ^^.y := position.y - 2,
-              s"${point.x},${point.y}",
-              styles.pointText
-            )
-          )
+          domainPoint(point, position)
+      }
+
+      val yAxisLinePoints = axisPoints(YAxis).map {
+        case (point, position) =>
+          domainPoint(point, position)
       }
 
       >.g(
         yAxisLine,
         xAxisLine,
-        xAxisLinePoints.toTagMod
+        xAxisLinePoints.toTagMod,
+        yAxisLinePoints.toTagMod
       )
     }
   }
@@ -211,7 +286,8 @@ class ScatterPlot[T <: ScatterPoint] {
     )
 
     val pointText = style(
-      fontSize(0.2 em)
+      fontSize(0.2 em),
+      svgFill := "gray"
     )
   }
 }
