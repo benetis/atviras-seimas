@@ -79,25 +79,28 @@ class ScatterPlot[T <: ScatterPoint] {
       domain: ScatterPlot.Domain
     ): ScatterPlotPointPosition = {
 
-      def invertY(
-        scatterPlotPointPosition: ScatterPlotPointPosition
-      ): ScatterPlotPointPosition = {
-        ScatterPlotPointPosition(
-          scatterPlotPointPosition.x,
-          -scatterPlotPointPosition.y
-        )
-      }
+      /* Matrix transformations for point
+         https://ncase.me/matrix/
+       */
 
-      def moveToCenter(
-        scatterPlotPointPosition: ScatterPlotPointPosition
-      ): ScatterPlotPointPosition =
-        ScatterPlotPointPosition(
-          scatterPlotPointPosition.x + 50,
-          scatterPlotPointPosition.y + 50
-        )
+      def ratio(
+        from: Double,
+        to: Double
+      ): Double =
+        100.0 / (Math.abs(from) + Math.abs(to))
 
-      val transform = invertY _ andThen moveToCenter
-      transform(ScatterPlotPointPosition(point.x, point.y))
+      val ratioX: Double =
+        ratio(domain.fromForX, domain.toForX)
+      val ratioY: Double =
+        ratio(domain.fromForY, domain.toForY)
+
+      val x = (ratioX * point.x) + 50
+      val y = (ratioY * -point.y) + 50
+
+      ScatterPlotPointPosition(
+        x,
+        y
+      )
     }
 
     private def quarterSplittingLines(
