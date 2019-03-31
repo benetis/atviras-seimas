@@ -1,6 +1,6 @@
 package components.styleguide
 
-import components.ScatterPlot
+import components.Charts.ScatterPlot
 import japgolly.scalajs.react.vdom.html_<^.<
 import japgolly.scalajs.react.{BackendScope, ScalaComponent}
 import scalacss.internal.mutable.GlobalRegistry

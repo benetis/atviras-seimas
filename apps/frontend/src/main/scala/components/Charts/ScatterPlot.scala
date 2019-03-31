@@ -1,20 +1,17 @@
-package components
+package components.Charts
 
-import components.ScatterPlot.Props
+import components.Charts.ScatterPlot.Props
 import japgolly.scalajs.react._
-import japgolly.scalajs.react.vdom.HtmlTagOf
-import japgolly.scalajs.react.vdom.PackageBase.VdomAttr
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
 import me.benetis.shared.common.Charts.{
   ScatterPlotPointPosition,
   ScatterPoint
 }
-import org.scalajs.dom
 import org.scalajs.dom.svg.Line
-import scalacss.internal.mutable.GlobalRegistry
 import scala.language.existentials
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
+import scalacss.internal.mutable.GlobalRegistry
 
 class ScatterPlot[T <: ScatterPoint] {
 
@@ -23,6 +20,11 @@ class ScatterPlot[T <: ScatterPoint] {
   case object SecondQuarter extends Quarter
   case object ThirdQuarter  extends Quarter
   case object FourthQuarter extends Quarter
+
+  protected case class DomainPoint(
+    x: Double,
+    y: Double)
+      extends ScatterPoint
 
   import globalStyles.CssSettings._
 
@@ -58,7 +60,7 @@ class ScatterPlot[T <: ScatterPoint] {
           ^^.height := svgHeight,
           ^^.width := svgWidth,
           ^^.viewBox := s"0 0 100 100",
-          quarterSplittingLines().toTagMod,
+          quarterSplittingLines(p.domain),
           p.data
             .map(
               data =>
@@ -75,7 +77,7 @@ class ScatterPlot[T <: ScatterPoint] {
     }
 
     private def pointToPointPosition(
-      point: T,
+      point: ScatterPoint,
       domain: ScatterPlot.Domain
     ): ScatterPlotPointPosition = {
 
@@ -104,22 +106,72 @@ class ScatterPlot[T <: ScatterPoint] {
     }
 
     private def quarterSplittingLines(
-    ): Vector[VdomTagOf[Line]] = {
-      Vector(
-        >.line(
-          ^^.x1 := 50,
-          ^^.y1 := 0,
-          ^^.x2 := 50,
-          ^^.y2 := 100,
-          styles.lineStyle
-        ),
-        >.line(
-          ^^.x1 := 0,
-          ^^.y1 := 50,
-          ^^.x2 := 100,
-          ^^.y2 := 50,
-          styles.lineStyle
+      domain: ScatterPlot.Domain
+    ): TagMod = {
+
+      sealed trait DomainSize { val value: Double }
+      case class DomainXSize(value: Double)
+          extends DomainSize
+      case class DomainYSize(value: Double)
+          extends DomainSize
+
+      val domainXSize = DomainXSize(
+        Math.abs(domain.fromForX) + Math
+          .abs(domain.toForX)
+      )
+      val domainYSize = DomainYSize(
+        Math.abs(domain.fromForY) + Math
+          .abs(domain.toForY)
+      )
+
+      val xAxisPoints: Vector[ScatterPlotPointPosition] = {
+
+        val bothQuarters = 2
+
+        val step =
+          Math.round(
+            domainXSize.value / domain.perHalfOfXAxis
+          )
+
+        (0 to domain.perHalfOfXAxis * bothQuarters)
+          .map(
+            i =>
+              pointToPointPosition(
+                DomainPoint(i * step, 0),
+                domain
+              )
+          )
+          .toVector
+      }
+
+      val yAxisLine = >.line(
+        ^^.x1 := 50,
+        ^^.y1 := 0,
+        ^^.x2 := 50,
+        ^^.y2 := 100,
+        styles.lineStyle
+      )
+
+      val xAxisLine = >.line(
+        ^^.x1 := 0,
+        ^^.y1 := 50,
+        ^^.x2 := 100,
+        ^^.y2 := 50,
+        styles.lineStyle
+      )
+
+      val xAxisLinePoints = xAxisPoints.map(point => {
+        >.circle(
+          ^^.r := 0.5,
+          ^^.cx := point.x,
+          ^^.cy := point.y
         )
+      })
+
+      >.g(
+        yAxisLine,
+        xAxisLine,
+        xAxisLinePoints.toTagMod
       )
     }
   }
@@ -151,7 +203,9 @@ object ScatterPlot {
     fromForX: Double,
     toForX: Double,
     fromForY: Double,
-    toForY: Double)
+    toForY: Double,
+    perHalfOfXAxis: Int = 5,
+    perHalfOfYAxis: Int = 5)
 
   case class Props[T](
     data: Vector[T],

@@ -1,5 +1,6 @@
 package components
 
+import components.Charts.ScatterPlot
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import me.benetis.shared.{
