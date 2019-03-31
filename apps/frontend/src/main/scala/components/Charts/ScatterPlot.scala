@@ -124,24 +124,30 @@ class ScatterPlot[T <: ScatterPoint] {
           .abs(domain.toForY)
       )
 
-      val xAxisPoints: Vector[ScatterPlotPointPosition] = {
+//      def axisPoints(domainSize: Int, perHalfOfAxis: Int, domainFrom: Double): Vector[ScatterPlotPointPosition] = {
+//
+//      }
 
-        val bothQuarters = 2
+      val xAxisPoints: Vector[
+        (DomainPoint, ScatterPlotPointPosition)
+      ] = {
 
-        val step =
-          Math.round(
-            domainXSize.value / domain.perHalfOfXAxis
-          )
+        val bothQuarters      = 2
+        val totalDomainPoints = bothQuarters * domain.perHalfOfXAxis
 
-        (0 to domain.perHalfOfXAxis * bothQuarters)
+        //60 / 10 = 6 (stepas)
+        val step = domainXSize.value / totalDomainPoints
+
+        val domainPoints = (1 until totalDomainPoints)
           .map(
             i =>
-              pointToPointPosition(
-                DomainPoint(i * step, 0),
-                domain
-              )
+              DomainPoint(domain.fromForX + (step * i), 0)
           )
           .toVector
+
+        domainPoints.zip(
+          domainPoints.map(pointToPointPosition(_, domain))
+        )
       }
 
       val yAxisLine = >.line(
@@ -160,13 +166,22 @@ class ScatterPlot[T <: ScatterPoint] {
         styles.lineStyle
       )
 
-      val xAxisLinePoints = xAxisPoints.map(point => {
-        >.circle(
-          ^^.r := 0.5,
-          ^^.cx := point.x,
-          ^^.cy := point.y
-        )
-      })
+      val xAxisLinePoints = xAxisPoints.map {
+        case (point, position) =>
+          >.g(
+            >.circle(
+              ^^.r := 0.5,
+              ^^.cx := position.x,
+              ^^.cy := position.y
+            ),
+            >.text(
+              ^^.x := position.x - 3,
+              ^^.y := position.y - 2,
+              s"${point.x},${point.y}",
+              styles.pointText
+            )
+          )
+      }
 
       >.g(
         yAxisLine,
@@ -193,6 +208,10 @@ class ScatterPlot[T <: ScatterPoint] {
     val lineStyle = style(
       svgStroke(gray),
       svgStrokeWidth := "0.5"
+    )
+
+    val pointText = style(
+      fontSize(0.2 em)
     )
   }
 }
