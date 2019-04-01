@@ -11,7 +11,7 @@ const extractSassAndCss = new ExtractTextPlugin({
 
 const config = {
   entry: {
-    loadScss: path.resolve(__dirname, '../../../../src/main/loadCssDeps.js')
+    loadScss: path.resolve(__dirname, '../../../../src/main/loadCssDeps.js'),
   },
   module: {
     rules: [
@@ -40,10 +40,7 @@ const config = {
       }]
   },
   plugins: [
-    extractSassAndCss,
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../../../../public/index.html')
-    })
+    extractSassAndCss
   ],
 };
 

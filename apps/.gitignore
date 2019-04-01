@@ -4,6 +4,7 @@
 data/*
 dist/*
 target/
+docker/client/build/
 lib_managed/
 src_managed/
 project/boot/
