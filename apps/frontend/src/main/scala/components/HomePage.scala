@@ -63,12 +63,6 @@ object HomePage {
               s"${point.parliamentMemberName.person_name} ${point.parliamentMemberSurname.person_surname}"
             )
           )
-//          >.text(
-//            ^^.x := position.x - 3,
-//            ^^.y := position.y - 2,
-//            s"",
-//            styles.pointText
-//          )
         )
       }
 
