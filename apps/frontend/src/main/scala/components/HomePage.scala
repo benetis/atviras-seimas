@@ -58,14 +58,17 @@ object HomePage {
               .factionColor(
                 point.factionName
               )
-              .value
-          ),
-          >.text(
-            ^^.x := position.x - 3,
-            ^^.y := position.y - 2,
-            s"",
-            styles.pointText
+              .value,
+            >.title(
+              s"${point.parliamentMemberName.person_name} ${point.parliamentMemberSurname.person_surname}"
+            )
           )
+//          >.text(
+//            ^^.x := position.x - 3,
+//            ^^.y := position.y - 2,
+//            s"",
+//            styles.pointText
+//          )
         )
       }
 
@@ -91,7 +94,8 @@ object HomePage {
                     domain = ScatterPlot
                       .Domain(-30, 30, -50, 50)
                   )
-              )
+              ),
+              FactionLegend(FactionLegend.Props())
             )
         )
       )
