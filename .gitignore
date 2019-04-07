@@ -1,0 +1,9 @@
+db-backup/*
+docs/*.acn
+docs/*.aux
+docs/*.ist
+docs/*.log
+docs/*.log
+docs/*.synctex.gz
+docs/*.toc
+docs/*.glo

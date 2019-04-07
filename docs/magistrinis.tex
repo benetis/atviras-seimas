@@ -1,0 +1,157 @@
+\documentclass[a4paper,12pt]{article}
+    \usepackage[acronym,toc]{glossaries}
+    \usepackage{graphicx} % For figures later
+    \usepackage[utf8]{inputenc}
+    \usepackage{mathptmx}
+    \usepackage{titling}
+    \usepackage{comment}
+    \graphicspath{ {../images/} }
+    \usepackage{caption}
+    % SQL tables
+    \usepackage{listings}
+    \usepackage{float}
+    \usepackage{enumerate}% http://ctan.org/pkg/enumerate
+    \usepackage[titletoc]{appendix}
+    \usepackage{array}
+    \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    
+    
+    \makeglossaries
+    
+    \newglossaryentry{mysql}
+    {
+        name=MySQL,
+        description={ is an open-source relational database management system }
+    } 
+    \newglossaryentry{docker}
+    {
+        name=Docker,
+        description={  Docker provides an additional layer of abstraction and automation of operating-system-level virtualization on Windows, Linux and MacOS }
+    }  
+    \newglossaryentry{scala}
+    {
+        name=Scala,
+        description={ Scala is a general-purpose programming language providing support for functional programming and a strong static type system }
+    }   
+    
+    % TODO check this list
+    \newacronym{api}{API}{Application programming interface}
+    \newacronym{auc}{AUC}{ Area under the curve }
+    \newacronym{roc}{ROC}{ Receiver operating characteristic }
+    \newacronym{hdd}{HDD}{ Hard disk drive }
+    \newacronym{csv}{CSV}{ Comma-separated values}
+    \newacronym{ip}{IP}{ Internet protocol address }
+    \newacronym{tfidf}{TFIDF}{ Term Frequency Inverse Document Frequency }
+    \newacronym{io}{IO}{ Input/Output }
+    
+    \begin{document}
+    
+    % \title{\large Analysis for\\ \huge Detecting and analysing computer generated comments}
+    % \author{Author: Žygimantas Benetis\\Supervisor: Prof. Dr. Tomas Krilavičius}
+    % \maketitle
+    
+    \pagenumbering{roman}
+    
+    \begin{center}
+        \section*{Abstract}
+    \end{center}
+        
+        \addcontentsline{toc}{section}{\numberline{}\kern-1.5emAbstract}%
+        Abstract
+    \clearpage
+    
+    \tableofcontents
+    
+    \clearpage
+    
+    \printglossary[type=\acronymtype]
+    
+    \clearpage
+    
+    \printglossary
+    
+    \clearpage
+    
+    \pagenumbering{arabic}
+    
+    \section{Introduction}
+    
+    Introduction text
+
+    
+    \clearpage
+    
+    \section{Analysis}
+    
+    \subsection{Problem analysis}
+    
+    
+    
+   	\subsection{Literature analysis}
+ 	\subsection{Lithuania's parliament open data analysis }
+ 	\subsection{Method analysis}
+	\subsubsection{MDS}
+	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
+    
+    Due missing labels of this dataset we are forced to look into unsupervised machine learning methods. \textit{k-means} clusterization \cite{clusterization} is one such method and it fits well with our features. This is due \acrshort{tfidf} which transforms text into vectors be used with \textit{k-means}.
+    For distance between comments we can use cosine similarity \cite{cosine_similarity} due its nature of performing better when comparing texts. To compare we can try with Euclidian and Manhattan distances too.
+    \subsection{Visualizations}
+
+    
+    \clearpage
+    
+    \section{Software design}
+    \subsection{Components of system}
+  	\subsubsection{Data flow diagram}
+		Data flow diagram
+		%        \begin{figure}[H]	
+		%    	\centering
+		%    	\includegraphics[width=10.5cm]{images/data_flow_diagram.png}
+		%    	\caption{Data flow from database to \textit{k-means}}
+		%    	\label{fig:data_flow_pipeline}
+		%    \end{figure}
+		
+		%    \vspace{1cm}
+    
+    \subsection{Tools}
+    \subsubsection{Programming language: {\textit Scala}}
+    \subsubsection{Database: {\textit MySQL}}
+    \subsection{Downloader}
+    \subsection{Coordinator}
+    \subsection{API server}
+    \subsection{Repository}
+    \subsection{User interface (Frontend)}
+    
+    \section{Description of experimental research}
+    
+    \subsection{Data}
+    \subsubsection{Data semantics}
+    \subsubsection{Data statistics}
+   	\subsection{Experiments}
+   	\subsubsection{MDS}
+   	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
+   	
+   	\subsection{Results}
+    
+   
+    \clearpage
+    
+    \begin{thebibliography}{9}
+    	
+        \bibitem{political_abuse} 
+        J. Ratkiewicz, M. D. Conover, M. Meiss, B. Goncalves, A. Flammini, F. Menczer
+        \textit{Detecting and Tracking Political Abuse in Social Media}. 
+        In proceedings of the Fifth International AAAI Conference on Weblogs and Social Media, 2011.    
+    
+    \end{thebibliography}
+        
+    \clearpage
+    
+    \pagenumbering{roman}
+      
+	\appendix
+	\section{Appendix}
+    
+    \end{document}
