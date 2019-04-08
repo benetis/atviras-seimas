@@ -55,6 +55,11 @@ object GeneralStatsPage {
           p.ctl.link(Home)(
             globalStyles.s.navButton,
             "← Pradinis puslapis"
+          ),
+          <.div(
+            styles.activeTabContainer,
+            <.button(styles.tab, "MDS"),
+            <.button(styles.tab, "Klasterizacija")
           )
         ),
         <.p("Mds data:"),
@@ -71,13 +76,39 @@ object GeneralStatsPage {
 
     val statsNavigation = style(
       marginTop(35 px),
-      marginBottom(25 px)
+      marginBottom(5 px),
+      display.flex,
+      flexWrap.wrap,
+      flexDirection.column,
+      alignItems.center
     )
 
     val statsContainer = style(
       display.flex,
       flexDirection.column,
       alignItems.center
+    )
+
+    val activeTabContainer = style(
+      marginTop(5 px),
+      marginBottom(5 px)
+    )
+
+    val tab = style(
+      textDecoration := "none",
+      backgroundColor(globalStyles.s.parrotPink),
+      color.white,
+      display.inlineBlock,
+      textAlign.center,
+      padding(10 px, 15 px),
+      borderRadius(5 px),
+      fontWeight.bold,
+      border.none,
+      &.hover - (
+        color(globalStyles.s.parrotPink),
+        backgroundColor(white)
+      ),
+      marginLeft(5 px)
     )
 
   }
