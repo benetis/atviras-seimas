@@ -16,20 +16,23 @@ package object globalStyles {
 
     import dsl._
 
+    val emptyStyle = style()
+
     val englishLavender = c"#b5838d"
     val apricot         = c"#ffcdb2"
+    val apricot2        = c"#ffd3bf"
     val peach           = c"#ffb4a2"
     val parrotPink      = c"#e5989b"
     val oldLavender     = c"#6d6875"
 
     val pageContainer = style(
       height(100 %%),
-      backgroundColor(apricot)
+      backgroundColor(oldLavender)
     )
 
     val navButton = style(
       textDecoration := "none",
-      backgroundColor(englishLavender),
+      backgroundColor(parrotPink),
       color.white,
       display.inlineBlock,
       textAlign.center,
@@ -37,7 +40,7 @@ package object globalStyles {
       borderRadius(40 px),
       fontWeight.bold,
       &.hover - (
-        color(englishLavender),
+        color(parrotPink),
         backgroundColor(white)
       )
     )

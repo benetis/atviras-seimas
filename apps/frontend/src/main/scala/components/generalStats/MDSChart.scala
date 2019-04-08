@@ -63,7 +63,6 @@ object MDSChart {
       p.mdsResult.fold(<.div("Empty MDS"))(
         (result: MdsResult[MdsPointWithAdditionalInfo]) =>
           <.div(
-            <.p("MDS"),
             ScatterPlot(
               ScatterPlot
                 .Props[MdsPointWithAdditionalInfo](

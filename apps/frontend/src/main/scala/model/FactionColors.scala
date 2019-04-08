@@ -11,19 +11,20 @@ object FactionColors {
 
   val map: Map[String, FactionColor] = Map(
     "Lietuvos socialdemokratų partija" ->
-      FactionColor("#ff0000"),
+      FactionColor("#e57575"),
     "Lietuvos valstiečių ir žaliųjų sąjunga" ->
-      FactionColor("#00ff00"),
+      FactionColor("#85e575"),
     "Tėvynės sąjunga - Lietuvos krikščionys demokratai" ->
-      FactionColor("#0000ff"),
+      FactionColor("#758de5"),
     "Lietuvos Respublikos liberalų sąjūdis" ->
-      FactionColor("#f2b51a"),
+      FactionColor("#e5894b"),
     "Partija Tvarka ir teisingumas" ->
-      FactionColor("#e8f442"),
+      FactionColor("#e0e01f"),
     "Darbo partija" ->
       FactionColor("#4591bc"),
     "Lietuvos lenkų rinkimų akcija-Krikščioniškų šeimų sąjunga" ->
-      FactionColor("#a045bc")
+      FactionColor("#7e5491"),
+    "Kitos frakcijos" -> FactionColor("#b5838d")
   )
 
   def factionColor(
@@ -31,7 +32,7 @@ object FactionColors {
   ): FactionColor = {
     map.getOrElse(
       factionName.faction_name,
-      FactionColor("#000000")
+      FactionColor("#b5838d")
     )
   }
 }

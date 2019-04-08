@@ -60,6 +60,7 @@ class ScatterPlot[T <: ScatterPoint] {
     ) = {
       <.div(
         styles.scatterContainer,
+        p.backgroundTagMod,
         >.svg(
           ^^.height := svgHeight,
           ^^.width := svgWidth,
@@ -275,8 +276,7 @@ class ScatterPlot[T <: ScatterPoint] {
       minHeight(100 px),
       minWidth(100 px),
       flexWrap.wrap,
-      flexDirection.column,
-      border :=! "1px solid black"
+      flexDirection.column
     )
 
     val lineStyle = style(
@@ -288,6 +288,8 @@ class ScatterPlot[T <: ScatterPoint] {
       fontSize(0.2 em),
       svgFill := "gray"
     )
+
+    val backgroundStyles = style()
   }
 }
 
@@ -304,6 +306,8 @@ object ScatterPlot {
   case class Props[T](
     data: Vector[T],
     pointToTagMod: (T, ScatterPlotPointPosition) => TagMod,
+    backgroundTagMod: TagMod =
+      new ScatterPlot().styles.backgroundStyles,
     domain: Domain)
 
   def apply[T <: ScatterPoint](props: Props[T]) =

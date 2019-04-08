@@ -111,7 +111,6 @@ object GeneralStatsPage {
         p.proxy.value.generalStats.selectedGeneralStatsChart match {
           case SelectedMdsChart =>
             <.div(
-              <.p("Mds data:"),
               MDSChart.apply(
                 MDSChart.Props(
                   p.proxy.value.generalStats.mdsResult
@@ -149,8 +148,8 @@ object GeneralStatsPage {
     )
 
     val activeTabContainer = style(
-      marginTop(5 px),
-      marginBottom(5 px)
+      marginTop(10 px),
+      marginBottom(10 px)
     )
 
     val tab = style(

@@ -40,7 +40,7 @@ object FactionLegend {
     ) = {
 
       <.ul(
-        FactionColors.map.keys
+        FactionColors.map.keys.toVector.sorted
           .map(
             k =>
               <.li(
