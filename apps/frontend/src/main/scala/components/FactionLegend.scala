@@ -44,8 +44,11 @@ object FactionLegend {
         FactionColors.map.keys.toVector.sorted
           .map(
             k =>
-              <.li(
+              <.label(
+                //https://codepen.io/spacemonkey/pen/vmZROv
+                ^.`for` := k,
                 styles.legendItem,
+                <.input(^.`type` := "checkbox", ^.id := k),
                 <.span(
                   ^.backgroundColor := s"${FactionColors.map(k).value}",
                   styles.legendColor()
@@ -72,7 +75,12 @@ object FactionLegend {
       display.flex,
       alignItems.center,
       height(25 px),
-      paddingLeft(60 px)
+      paddingLeft(30 px),
+      borderRadius(5 px),
+      &.hover - (
+        cursor.pointer,
+        boxShadow := "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);"
+      )
     )
 
     val legendColor = style(
