@@ -35,6 +35,27 @@
         name=Scala,
         description={ Scala is a general-purpose programming language providing support for functional programming and a strong static type system }
     }   
+	 \newglossaryentry{seimas}
+	{
+		name=Seimas,
+		description={ The Seimas of the Republic of Lithuania, or simply the Seimas is the unicameral parliament of Lithuania. The Seimas constitutes the legislative branch of government in Lithuania, enacting laws and amendments to the Constitution, passing the budget, confirming the Prime Minister and the Government and controlling their activities }
+	} 
+   \newglossaryentry{lrs_open}
+	{
+		name=LRS open data,
+		description={ Open data of Lietuvos Respublikos Seimas}
+	}   
+   \newglossaryentry{k-means}
+	{
+		name=k means,
+		description={ }
+	} 
+   \newglossaryentry{mds}
+	{
+		name=mds,
+		description={ }
+	}     
+
     
     % TODO check this list
     \newacronym{api}{API}{Application programming interface}
@@ -78,19 +99,45 @@
     
     \section{Introduction}
     
-    Introduction text
+    In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. By this election each citizen delegates specifics of legislation process to their representatives so they don't have to actively participate in the process.
+	
+	However, a problem arises once citizen wants to validate what his representative has been doing. Single term of office NEEDS-CITATION involves thousands of complicated laws and votes. To analyze everything becomes almost an impossible task for a single citizen who is out of the loop. 
+	
+	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 
     
     \clearpage
     
     \section{Analysis}
-    
-    \subsection{Problem analysis}
-    
-    
-    
+   
    	\subsection{Literature analysis}
  	\subsection{Lithuania's parliament open data analysis }
+ 	 
+ 	\subsection{Problem analysis}
+ 	
+ 	Problem can be divided into two pieces:
+ 	\begin{itemize}
+ 		\item Research part, including \gls{mds} and \gls{k-means} classification
+ 		\item Software development
+ 	\end{itemize}
+ 	
+ 	If we consider what is the output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say we have a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Our goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
+ 	
+ 	With \gls{mds} XX
+ 	
+ 	With \gls{k-means} XX
+ 
+ 	
+ 	
+ 	%
+ 	% Problemos analizė – nagrinėjamoji problema turi būti atskleista moksliniais ar profesiniais terminais, mokslinėmis hipotezėmis ar techninėmis specifikacijomis. Problemos aktualumas turi būti pagrįstas literatūros ir savarankiška analitine apžvalga. Šioje dalyje:
+ 	% • Pateikiamos teorinės nuostatos, kurios paaiškina darbe nagrinėjamą problemą;
+ 	% • Įvertinamas pasirinktos problemos teorinio ištyrimo laipsnis;
+ 	% • Remiantis literatūros šaltiniais, įvertinami skirtingi atskirų autorių problemos traktavimo variantai ir vyraujantys požiūriai;
+ 	% • Įvertinami siūlomi literatūroje teoriniai problemos %sprendimo būdai (metodai);
+ 	% • Pagrindžiama pasirinktos problemos tyrimo logika bei metodai.
+ 	% Teorinė dalis neturi būti aprašomojo (referato) pobūdžio. Darbo autorius privalo pateikti ir pagrįsti savo asmeninę nuomonę, diskutuoti su kitų tyrinėtojų teiginiais apie sprendžiamą problemą.
+ 	
  	\subsection{Method analysis}
 	\subsubsection{MDS}
 	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
