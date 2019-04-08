@@ -24,9 +24,7 @@ object HomePage {
   val styles = GlobalRegistry[Style].get
 
   case class Props(
-    proxy: ModelProxy[
-      Option[MdsResult[MdsPointWithAdditionalInfo]]
-    ],
+    proxy: ModelProxy[RootModel],
     ctl: RouterCtl[utils.Pages.Page])
 
   private val component = ScalaComponent

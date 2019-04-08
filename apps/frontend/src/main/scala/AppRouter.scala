@@ -22,25 +22,25 @@ object AppRouter {
     dsl: RouterConfigDsl[Page] =>
       import dsl._
 
-      val circuit = AppCircuit.connect(_.mdsResult)
+      val circuit = AppCircuit.connect(r => r)
 
       (trimSlashes
         | staticRoute(root, Home) ~> renderR(
           ctl =>
             circuit(
-              (p: ModelProxy[Option[
-                MdsResult[MdsPointWithAdditionalInfo]
-              ]]) => HomePage(HomePage.Props(p, ctl))
+              (p: ModelProxy[RootModel]) =>
+                HomePage(
+                  HomePage.Props(p, ctl)
+                )
             )
         )
         | staticRoute("#general-stats", GeneralStats) ~> renderR(
           (ctl: RouterCtl[Page]) =>
             circuit(
-              (p: ModelProxy[Option[
-                MdsResult[MdsPointWithAdditionalInfo]
-              ]]) =>
+              (p: ModelProxy[RootModel]) =>
                 GeneralStatsPage(
-                  GeneralStatsPage.Props(p, ctl)
+                  GeneralStatsPage
+                    .Props(p, ctl)
                 )
             )
         )

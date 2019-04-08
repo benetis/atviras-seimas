@@ -9,9 +9,17 @@ import me.benetis.shared.{
   MdsResult,
   TermOfOfficeId
 }
+import org.scalajs.dom
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
-import services.LoadMdsResult
+import services.{
+  GeneralStatsSelectedChart,
+  LoadMdsResult,
+  RootModel,
+  SelectedClustering,
+  SelectedMdsChart,
+  SetSelectedGeneralStatsTab
+}
 import utils.Pages.{GeneralStats, Home}
 
 object GeneralStatsPage {
@@ -22,9 +30,7 @@ object GeneralStatsPage {
   val styles = GlobalRegistry[Style].get
 
   case class Props(
-    proxy: ModelProxy[
-      Option[MdsResult[MdsPointWithAdditionalInfo]]
-    ],
+    proxy: ModelProxy[RootModel],
     ctl: RouterCtl[utils.Pages.Page])
 
   private val component = ScalaComponent
@@ -43,10 +49,51 @@ object GeneralStatsPage {
       p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
     }
 
+    def tabButton(text: String)(isActive: Boolean) =
+      <.button(
+        styles.tab,
+        text,
+        if (isActive) styles.activeTab
+        else <.span()
+      )
+
+    def tabButtons(p: Props): TagMod = {
+
+      val selectedChart =
+        p.proxy.value.generalStats.selectedGeneralStatsChart
+
+      val isMds        = selectedChart == SelectedMdsChart
+      val isClustering = selectedChart == SelectedClustering
+
+      <.div(
+        <.button(
+          styles.tab,
+          ^.onClick --> p.proxy
+            .dispatchCB(
+              SetSelectedGeneralStatsTab(SelectedMdsChart)
+            ),
+          "MDS",
+          if (isMds) styles.activeTab
+          else <.span()
+        ),
+        <.button(
+          styles.tab,
+          ^.onClick --> p.proxy
+            .dispatchCB(
+              SetSelectedGeneralStatsTab(SelectedClustering)
+            ),
+          "Klasterizacija",
+          if (isClustering) styles.activeTab
+          else <.span()
+        )
+      )
+    }
+
     def render(
       p: Props,
       s: Unit
     ) = {
+
       <.div(
         globalStyles.s.pageContainer,
         styles.statsContainer,
@@ -58,12 +105,24 @@ object GeneralStatsPage {
           ),
           <.div(
             styles.activeTabContainer,
-            <.button(styles.tab, "MDS"),
-            <.button(styles.tab, "Klasterizacija")
+            tabButtons(p)
           )
         ),
-        <.p("Mds data:"),
-        MDSChart.apply(MDSChart.Props(p.proxy.value))
+        p.proxy.value.generalStats.selectedGeneralStatsChart match {
+          case SelectedMdsChart =>
+            <.div(
+              <.p("Mds data:"),
+              MDSChart.apply(
+                MDSChart.Props(
+                  p.proxy.value.generalStats.mdsResult
+                )
+              )
+            )
+          case SelectedClustering =>
+            <.div(
+              <.p("Clustering")
+            )
+        }
       )
     }
   }
@@ -109,6 +168,12 @@ object GeneralStatsPage {
         backgroundColor(white)
       ),
       marginLeft(5 px)
+    )
+
+    val activeTab = style(
+      &.hover - (transform := "scale(1.05)"),
+      color(globalStyles.s.parrotPink),
+      backgroundColor(white)
     )
 
   }

@@ -60,7 +60,6 @@ class ScatterPlot[T <: ScatterPoint] {
     ) = {
       <.div(
         styles.scatterContainer,
-        "scatter plot",
         >.svg(
           ^^.height := svgHeight,
           ^^.width := svgWidth,

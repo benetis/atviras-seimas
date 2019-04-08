@@ -13,38 +13,38 @@ import me.benetis.shared.{
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
 import boopickle.Default._
+import org.scalajs.dom
 
-case class RootModel(
-    counter: Int,
-    mdsResult: Option[
-      MdsResult[MdsPointWithAdditionalInfo]])
+sealed trait GeneralStatsSelectedChart
+case object SelectedMdsChart
+    extends GeneralStatsSelectedChart
+case object SelectedClustering
+    extends GeneralStatsSelectedChart
 
-case class Increase(amount: Int) extends Action
-case class Decrease(amount: Int) extends Action
-case object Reset                extends Action
+case class RootModel(generalStats: GeneralStatisticsModel)
+
+case class GeneralStatisticsModel(
+  selectedGeneralStatsChart: GeneralStatsSelectedChart,
+  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
     extends Action
 case class MdsResultLoaded(
-    mdsResult: Option[
-      MdsResult[MdsPointWithAdditionalInfo]])
+  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]])
+    extends Action
+case class SetSelectedGeneralStatsTab(
+  chart: GeneralStatsSelectedChart)
     extends Action
 
 object AppCircuit
     extends Circuit[RootModel]
     with ReactConnector[RootModel] {
-  def initialModel = RootModel(0, None)
+  def initialModel =
+    RootModel(
+      GeneralStatisticsModel(SelectedMdsChart, None)
+    )
 
-  val counterHandler = new ActionHandler(zoomTo(_.counter)) {
-    override def handle = {
-      case Increase(a) => updated(value + a)
-      case Decrease(a) => updated(value - a)
-      case Reset       => updated(0)
-
-    }
-  }
-
-  val vizHandler = new ActionHandler(zoomTo(_.mdsResult)) {
+  val vizHandler = new ActionHandler(zoomTo(_.generalStats)) {
     override def handle = {
       case LoadMdsResult(termOfOfficeId) =>
         effectOnly(
@@ -56,10 +56,16 @@ object AppCircuit
           )
         )
       case MdsResultLoaded(mdsResult) =>
-        updated(mdsResult)
+        updated(value.copy(mdsResult = mdsResult))
+      case SetSelectedGeneralStatsTab(tab) =>
+        updated(
+          value.copy(
+            selectedGeneralStatsChart = tab
+          )
+        )
     }
   }
 
   val actionHandler =
-    composeHandlers(counterHandler, vizHandler)
+    composeHandlers(vizHandler)
 }
