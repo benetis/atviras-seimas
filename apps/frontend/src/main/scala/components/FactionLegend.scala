@@ -40,16 +40,17 @@ object FactionLegend {
     ) = {
 
       <.ul(
+        styles.container,
         FactionColors.map.keys.toVector.sorted
           .map(
             k =>
               <.li(
                 styles.legendItem,
-                k,
                 <.span(
                   ^.backgroundColor := s"${FactionColors.map(k).value}",
                   styles.legendColor()
-                )
+                ),
+                k
               )
           )
           .toTagMod
@@ -63,14 +64,19 @@ object FactionLegend {
 
     import dsl._
 
+    val container = style(
+      paddingTop(25 px)
+    )
+
     val legendItem = style(
       display.flex,
       alignItems.center,
-      height(25 px)
+      height(25 px),
+      paddingLeft(60 px)
     )
 
     val legendColor = style(
-      marginLeft(5 px),
+      marginRight(5 px),
       width(15 px),
       height(15 px),
       borderRadius(50 %%)

@@ -63,6 +63,10 @@ object MDSChart {
       p.mdsResult.fold(<.div("Empty MDS"))(
         (result: MdsResult[MdsPointWithAdditionalInfo]) =>
           <.div(
+            <.h2(
+              styles.title,
+              "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
+            ),
             ScatterPlot(
               ScatterPlot
                 .Props[MdsPointWithAdditionalInfo](
@@ -72,7 +76,11 @@ object MDSChart {
                     .Domain(-30, 30, -50, 50)
                 )
             ),
-            FactionLegend(FactionLegend.Props())
+            FactionLegend(FactionLegend.Props()),
+            <.div(
+              styles.dataFromTo,
+              "Duomenys nuo 2016.11.01 iki 2019.03.28"
+            )
           )
       )
     }
@@ -82,6 +90,18 @@ object MDSChart {
 
   class Style extends StyleSheet.Inline {
     import dsl._
+
+    val dataFromTo = style(
+      marginTop(10 px),
+      textAlign.center,
+      color(globalStyles.s.fontColorOnDark2)
+    )
+
+    val title = style(
+      textAlign.center,
+      marginTop(5 px),
+      marginBottom(10 px)
+    )
 
     val fill = style(
       svgFill := "black"
