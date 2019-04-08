@@ -1,29 +1,15 @@
 package components.styleguide
 
-import components.Charts.ScatterPlot
-import japgolly.scalajs.react.vdom.html_<^.<
-import japgolly.scalajs.react.{BackendScope, ScalaComponent}
-import scalacss.internal.mutable.GlobalRegistry
-import diode.react.ModelProxy
-import japgolly.scalajs.react._
-import me.benetis.shared.{
-  MdsPointWithAdditionalInfo,
-  MdsResult,
-  SessionId,
-  TermOfOfficeId
-}
-import scalacss.ScalaCssReact.scalacssStyleaToTagMod
-import scalacss.internal.mutable.GlobalRegistry
-import japgolly.scalajs.react.vdom.html_<^._
-import scala.scalajs.js
-import js.JSConverters._
-import model.FactionColors
-import org.scalajs.dom
+import components.charts.ScatterPlot
+import japgolly.scalajs.react.vdom.html_<^.{<, _}
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
+import japgolly.scalajs.react.{BackendScope, ScalaComponent}
 import me.benetis.shared.common.Charts.{
   ScatterPlotPointPosition,
   ScatterPoint
 }
+import scalacss.ScalaCssReact.scalacssStyleaToTagMod
+import scalacss.internal.mutable.GlobalRegistry
 
 object StyleguidePage {
 

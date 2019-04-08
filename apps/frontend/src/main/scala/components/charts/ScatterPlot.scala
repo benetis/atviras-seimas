@@ -1,6 +1,6 @@
-package components.Charts
+package components.charts
 
-import components.Charts.ScatterPlot.Props
+import components.charts.ScatterPlot.Props
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}

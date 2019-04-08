@@ -1,4 +1,5 @@
 import components.HomePage
+import components.generalStats.GeneralStatsPage
 import components.styleguide.StyleguidePage
 import diode.react.ModelProxy
 import japgolly.scalajs.react.component.Scala.Unmounted
@@ -12,11 +13,8 @@ import me.benetis.shared.{
 import org.scalajs.dom.html.Div
 import services.{AppCircuit, RootModel}
 
-sealed trait Page
-case object Home       extends Page
-case object Styleguide extends Page
-
 object AppRouter {
+  import utils.Pages._
 
   val baseUrl = BaseUrl.fromWindowOrigin
 
@@ -32,7 +30,18 @@ object AppRouter {
             circuit(
               (p: ModelProxy[Option[
                 MdsResult[MdsPointWithAdditionalInfo]
-              ]]) => HomePage(HomePage.Props(p))
+              ]]) => HomePage(HomePage.Props(p, ctl))
+            )
+        )
+        | staticRoute("#general-stats", GeneralStats) ~> renderR(
+          ctl =>
+            circuit(
+              (p: ModelProxy[Option[
+                MdsResult[MdsPointWithAdditionalInfo]
+              ]]) =>
+                GeneralStatsPage(
+                  GeneralStatsPage.Props(p)
+                )
             )
         )
         | staticRoute("#styleguide", Styleguide) ~> renderR(
@@ -54,7 +63,7 @@ object AppRouter {
     r: Resolution[Page]
   ): VdomTagOf[Div] = {
     <.div(
-      "Page",
+      ^.height := "100%",
       r.render()
     )
   }

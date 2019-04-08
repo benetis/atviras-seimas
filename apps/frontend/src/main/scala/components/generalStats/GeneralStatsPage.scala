@@ -1,9 +1,8 @@
-package components
+package components.generalStats
 
-import components.generalStats.GeneralStatsPage
+import components.charts.ScatterPlot
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
-import japgolly.scalajs.react.extra.router.RouterCtl
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
   MdsResult,
@@ -14,9 +13,14 @@ import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
 import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
-import utils.Pages.GeneralStats
+import scala.scalajs.js
+import js.JSConverters._
+import model.FactionColors
+import org.scalajs.dom
+import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
+import me.benetis.shared.common.Charts.ScatterPlotPointPosition
 
-object HomePage {
+object GeneralStatsPage {
 
   import globalStyles.CssSettings._
 
@@ -26,8 +30,7 @@ object HomePage {
   case class Props(
     proxy: ModelProxy[
       Option[MdsResult[MdsPointWithAdditionalInfo]]
-    ],
-    ctl: RouterCtl[utils.Pages.Page])
+    ])
 
   private val component = ScalaComponent
     .builder[Props]("Home page")
@@ -50,14 +53,9 @@ object HomePage {
       s: Unit
     ) = {
       <.div(
-        styles.pageContainer,
-        <.div(
-          styles.navigationContainer,
-          p.ctl.link(GeneralStats)(
-            styles.navButton,
-            "Kaip vienodai balsuoja seimo nariai?"
-          )
-        )
+        <.div("General stats page"),
+        <.p("Mds data:"),
+        MDSChart.apply(MDSChart.Props(p.proxy.value))
       )
     }
   }
@@ -67,33 +65,6 @@ object HomePage {
   class Style extends StyleSheet.Inline {
 
     import dsl._
-
-    val pageContainer = style(
-      height(100 %%),
-      backgroundColor(globalStyles.s.apricot)
-    )
-
-    val navigationContainer = style(
-      height(100 %%),
-      display.flex,
-      justifyContent.center,
-      alignItems.center
-    )
-
-    val navButton = style(
-      textDecoration := "none",
-      backgroundColor(globalStyles.s.englishLavender),
-      color.white,
-      display.inlineBlock,
-      textAlign.center,
-      padding(15 px, 20 px),
-      borderRadius(40 px),
-      fontWeight.bold,
-      &.hover - (
-        color(globalStyles.s.englishLavender),
-        backgroundColor(white)
-      )
-    )
 
   }
 }
