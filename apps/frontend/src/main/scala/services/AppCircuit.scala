@@ -8,7 +8,6 @@ import me.benetis.shared.{
   DiscussionLength,
   MdsPointWithAdditionalInfo,
   MdsResult,
-  ParliamentMemberFactionName,
   TermOfOfficeId
 }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,9 +25,6 @@ case class RootModel(generalStats: GeneralStatisticsModel)
 
 case class GeneralStatisticsModel(
   selectedGeneralStatsChart: GeneralStatsSelectedChart,
-  mdsChartFactionFilterName: Option[
-    ParliamentMemberFactionName
-  ],
   mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
@@ -39,16 +35,13 @@ case class MdsResultLoaded(
 case class SetSelectedGeneralStatsTab(
   chart: GeneralStatsSelectedChart)
     extends Action
-case class SetMdsChartFilter(
-  factionName: Option[ParliamentMemberFactionName])
-    extends Action
 
 object AppCircuit
     extends Circuit[RootModel]
     with ReactConnector[RootModel] {
   def initialModel =
     RootModel(
-      GeneralStatisticsModel(SelectedMdsChart, None, None)
+      GeneralStatisticsModel(SelectedMdsChart, None)
     )
 
   val vizHandler = new ActionHandler(zoomTo(_.generalStats)) {
@@ -68,12 +61,6 @@ object AppCircuit
         updated(
           value.copy(
             selectedGeneralStatsChart = tab
-          )
-        )
-      case SetMdsChartFilter(factionName) =>
-        updated(
-          value.copy(
-            mdsChartFactionFilterName = factionName
           )
         )
     }
