@@ -25,9 +25,16 @@ package object globalStyles {
     val parrotPink      = c"#e5989b"
     val oldLavender     = c"#6d6875"
 
+    val fontColorOnDark  = c"#f1f1f2"
+    val fontColorOnDark2 = c"#c9c8cc"
+
+    val gray1    = c"#7a7581"
+    val darkGray = c"#504c56"
+
     val pageContainer = style(
       height(100 %%),
-      backgroundColor(oldLavender)
+      backgroundColor(oldLavender),
+      color(fontColorOnDark)
     )
 
     val navButton = style(

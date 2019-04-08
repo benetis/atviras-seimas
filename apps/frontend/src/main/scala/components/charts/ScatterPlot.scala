@@ -169,7 +169,8 @@ class ScatterPlot[T <: ScatterPoint] {
           >.circle(
             ^^.r := 0.5,
             ^^.cx := position.x,
-            ^^.cy := position.y
+            ^^.cy := position.y,
+            styles.pointColor
           ),
           >.text(
             ^^.x := textXPosition,
@@ -280,13 +281,17 @@ class ScatterPlot[T <: ScatterPoint] {
     )
 
     val lineStyle = style(
-      svgStroke(gray),
+      svgStroke(globalStyles.s.gray1),
       svgStrokeWidth := "0.5"
     )
 
     val pointText = style(
       fontSize(0.2 em),
-      svgFill := "gray"
+      svgFill := globalStyles.s.fontColorOnDark
+    )
+
+    val pointColor = style(
+      svgFill := globalStyles.s.darkGray
     )
 
     val backgroundStyles = style()
