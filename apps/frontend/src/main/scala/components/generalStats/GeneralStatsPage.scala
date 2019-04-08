@@ -1,24 +1,18 @@
 package components.generalStats
 
-import components.charts.ScatterPlot
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
+import japgolly.scalajs.react.extra.router.RouterCtl
+import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
   MdsResult,
-  SessionId,
   TermOfOfficeId
 }
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
-import services.{LoadMdsResult, RootModel}
-import japgolly.scalajs.react.vdom.html_<^._
-import scala.scalajs.js
-import js.JSConverters._
-import model.FactionColors
-import org.scalajs.dom
-import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
-import me.benetis.shared.common.Charts.ScatterPlotPointPosition
+import services.LoadMdsResult
+import utils.Pages.{GeneralStats, Home}
 
 object GeneralStatsPage {
 
@@ -30,7 +24,8 @@ object GeneralStatsPage {
   case class Props(
     proxy: ModelProxy[
       Option[MdsResult[MdsPointWithAdditionalInfo]]
-    ])
+    ],
+    ctl: RouterCtl[utils.Pages.Page])
 
   private val component = ScalaComponent
     .builder[Props]("Home page")
@@ -53,7 +48,15 @@ object GeneralStatsPage {
       s: Unit
     ) = {
       <.div(
-        <.div("General stats page"),
+        globalStyles.s.pageContainer,
+        styles.statsContainer,
+        <.div(
+          styles.statsNavigation,
+          p.ctl.link(Home)(
+            globalStyles.s.navButton,
+            "← Pradinis puslapis"
+          )
+        ),
         <.p("Mds data:"),
         MDSChart.apply(MDSChart.Props(p.proxy.value))
       )
@@ -65,6 +68,17 @@ object GeneralStatsPage {
   class Style extends StyleSheet.Inline {
 
     import dsl._
+
+    val statsNavigation = style(
+      marginTop(35 px),
+      marginBottom(25 px)
+    )
+
+    val statsContainer = style(
+      display.flex,
+      flexDirection.column,
+      alignItems.center
+    )
 
   }
 }

@@ -34,13 +34,13 @@ object AppRouter {
             )
         )
         | staticRoute("#general-stats", GeneralStats) ~> renderR(
-          ctl =>
+          (ctl: RouterCtl[Page]) =>
             circuit(
               (p: ModelProxy[Option[
                 MdsResult[MdsPointWithAdditionalInfo]
               ]]) =>
                 GeneralStatsPage(
-                  GeneralStatsPage.Props(p)
+                  GeneralStatsPage.Props(p, ctl)
                 )
             )
         )

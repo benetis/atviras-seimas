@@ -22,5 +22,25 @@ package object globalStyles {
     val parrotPink      = c"#e5989b"
     val oldLavender     = c"#6d6875"
 
+    val pageContainer = style(
+      height(100 %%),
+      backgroundColor(apricot)
+    )
+
+    val navButton = style(
+      textDecoration := "none",
+      backgroundColor(englishLavender),
+      color.white,
+      display.inlineBlock,
+      textAlign.center,
+      padding(15 px, 20 px),
+      borderRadius(40 px),
+      fontWeight.bold,
+      &.hover - (
+        color(englishLavender),
+        backgroundColor(white)
+      )
+    )
+
   }
 }

@@ -50,11 +50,11 @@ object HomePage {
       s: Unit
     ) = {
       <.div(
-        styles.pageContainer,
+        globalStyles.s.pageContainer,
         <.div(
           styles.navigationContainer,
           p.ctl.link(GeneralStats)(
-            styles.navButton,
+            globalStyles.s.navButton,
             "Kaip vienodai balsuoja seimo nariai?"
           )
         )
@@ -68,32 +68,11 @@ object HomePage {
 
     import dsl._
 
-    val pageContainer = style(
-      height(100 %%),
-      backgroundColor(globalStyles.s.apricot)
-    )
-
     val navigationContainer = style(
       height(100 %%),
       display.flex,
       justifyContent.center,
       alignItems.center
     )
-
-    val navButton = style(
-      textDecoration := "none",
-      backgroundColor(globalStyles.s.englishLavender),
-      color.white,
-      display.inlineBlock,
-      textAlign.center,
-      padding(15 px, 20 px),
-      borderRadius(40 px),
-      fontWeight.bold,
-      &.hover - (
-        color(globalStyles.s.englishLavender),
-        backgroundColor(white)
-      )
-    )
-
   }
 }
