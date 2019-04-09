@@ -49,8 +49,8 @@ object KMeansComputing {
           .map(_.groupBy(v => v.id))
           .map(_.values.flatten.toArray.map(_.id))
 
-        val data = votesIds.map(allVotesIds => {
-          members.map(
+        votesIds.map(allVotesIds => {
+          val data = members.map(
             m =>
               transformToTrainingRow(
                 voteEncoding,
@@ -59,28 +59,30 @@ object KMeansComputing {
                 allVotesIds
               )
           )
-        })
 
-        data match {
-          case Right(d) =>
-            val model = kmeans(
-              d.toArray,
-              k = 2,
-              maxIter = 20
-            )
+          val model = kmeans(
+            data.toArray,
+            k = 2,
+            maxIter = 20
+          )
 
-            Right(
-              KMeansResult(
-                KMeansCentroids(Array.empty),
-                KMeansDistortion(model.distortion()),
-                termOfOfficeId,
-                SharedDateTime(DateTime.now().getMillis),
-                VoteEncoding1,
-                KMeansPredictedCoordinates(Vector.empty)
+          KMeansResult(
+            KMeansCentroids(Array.empty),
+            KMeansDistortion(model.distortion()),
+            termOfOfficeId,
+            SharedDateTime(DateTime.now().getMillis),
+            VoteEncoding1,
+            KMeansPredictedCoordinates(
+              predictByModel(
+                model,
+                members,
+                voteEncoding,
+                termOfOffice,
+                allVotesIds
               )
             )
-          case Left(err) => Left(err)
-        }
+          )
+        })
       }) match {
       case Some(v) => v
       case None =>
