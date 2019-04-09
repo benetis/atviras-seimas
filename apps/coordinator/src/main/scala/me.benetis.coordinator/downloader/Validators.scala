@@ -7,23 +7,31 @@ sealed trait DomainValidation {
   def errorMessage: String
 }
 
-case class BadDateFormat(field: String) extends DomainValidation {
-  override def errorMessage: String = s"Field '$field' date format is invalid"
-}
-
-case class BadDateAndNonEmptyFormat(field: String, value: String)
+case class BadDateFormat(field: String)
     extends DomainValidation {
   override def errorMessage: String =
-    s"Field $field date format is invalid and field is not empty. Given value: '$value'"
+    s"Field '$field' date format is invalid"
 }
 
-case class BadTimeFormat(field: String, value: String)
+case class BadDateAndNonEmptyFormat(
+  field: String,
+  value: String)
     extends DomainValidation {
   override def errorMessage: String =
-    s"Field $field timeString format is invalid. Given value: '$value'"
+    s"Field $field date format is invalid and field is not empty. Given centroids: '$value'"
 }
 
-case class EmptyField(field: String, customMsg: String = "")
+case class BadTimeFormat(
+  field: String,
+  value: String)
+    extends DomainValidation {
+  override def errorMessage: String =
+    s"Field $field timeString format is invalid. Given centroids: '$value'"
+}
+
+case class EmptyField(
+  field: String,
+  customMsg: String = "")
     extends DomainValidation {
 
   val msgToAdd =
@@ -35,7 +43,8 @@ case class EmptyField(field: String, customMsg: String = "")
     s"Field '$field' must be non empty $msgToAdd"
 }
 
-case class FieldIsNotAnInt(field: String) extends DomainValidation {
+case class FieldIsNotAnInt(field: String)
+    extends DomainValidation {
   override def errorMessage: String =
     s"Field '$field' cannot be converted to int"
 }
@@ -50,12 +59,17 @@ sealed trait FileOrConnectivityError {
   def errorMessage: String
 }
 
-case class BadXML(link: String, error: String) extends FileOrConnectivityError {
+case class BadXML(
+  link: String,
+  error: String)
+    extends FileOrConnectivityError {
   override def errorMessage: String =
     s"XML cannot be parsed as it is bad '$link', error: '$error'"
 }
 
-case class CannotReachWebsite(link: String, error: String)
+case class CannotReachWebsite(
+  link: String,
+  error: String)
     extends FileOrConnectivityError {
   override def errorMessage: String =
     s"Link '$link' cannot be reached. ComputingError: '$error'"

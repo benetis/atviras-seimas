@@ -35,7 +35,7 @@ object Server {
     implicit val executionContext = system.dispatcher
 
     val route =
-      path("compute" / "mds") {
+      path("compute" / "centroids") {
         get {
           computing.Coordinator(ComputeMDS)
           complete(

@@ -1,4 +1,5 @@
-package me.benetis.coordinator.computing.encoding
+package me.benetis.shared.encoding
+
 import me.benetis.shared._
 
 object VoteEncoding {

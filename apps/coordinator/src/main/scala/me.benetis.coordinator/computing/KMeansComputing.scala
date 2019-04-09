@@ -1,6 +1,6 @@
 package me.benetis.coordinator.computing
 
-import me.benetis.coordinator.computing.encoding.VoteEncoding.VoteEncodingT
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingT
 import me.benetis.coordinator.repository.{
   ParliamentMemberRepo,
   TermOfOfficeRepo,
@@ -10,10 +10,23 @@ import me.benetis.coordinator.utils.{
   ComputingError,
   CustomError
 }
-import me.benetis.shared.TermOfOfficeId
+import me.benetis.shared.{
+  DidntVote,
+  KMeansCentroids,
+  KMeansDistortion,
+  KMeansPoint,
+  KMeansPredictedCoordinates,
+  KMeansResult,
+  ParliamentMember,
+  SharedDateTime,
+  TermOfOffice,
+  TermOfOfficeId,
+  VoteEncoding1,
+  VoteId,
+  VoteReduced
+}
+import org.joda.time.DateTime
 import smile.clustering._
-
-case class KMeansResult()
 
 object KMeansComputing {
   def compute(
@@ -24,48 +37,129 @@ object KMeansComputing {
     val termOfOfficeOpt =
       TermOfOfficeRepo.byId(termOfOfficeId)
 
-    termOfOfficeOpt match {
-      case Some(termOfOffice) =>
-        /**
-          * One point - one parliament's votes
-          *parameters - how many votes we are looking at
-           **
-           NameX - 1, 0, 2, 0, ...
-          *NameY - 1, 1, 2, -1, ...
-          */
-//    kmeans()
-        val members =
+    termOfOfficeOpt
+      .map(termOfOffice => {
+        val members: List[ParliamentMember] =
           ParliamentMemberRepo.listByTermOfOffice(
             termOfOfficeId
           )
 
-        val data = members
-          .map(member => {
-            VoteRepo
-              .byPersonIdAndTerm(
-                member.personId,
-                termOfOffice
+        val votesIds = VoteRepo
+          .listForTermOfOffice(termOfOfficeId)
+          .map(_.groupBy(v => v.id))
+          .map(_.values.flatten.toArray.map(_.id))
+
+        val data = votesIds.map(allVotesIds => {
+          members.map(
+            m =>
+              transformToTrainingRow(
+                voteEncoding,
+                termOfOffice,
+                m,
+                allVotesIds
               )
-              .map(
-                voteReduced =>
-                  voteEncoding(voteReduced.singleVote)
+          )
+        })
+
+        data match {
+          case Right(d) =>
+            val model = kmeans(
+              d.toArray,
+              k = 2,
+              maxIter = 20
+            )
+
+            Right(
+              KMeansResult(
+                KMeansCentroids(Array.empty),
+                KMeansDistortion(model.distortion()),
+                termOfOfficeId,
+                SharedDateTime(DateTime.now().getMillis),
+                VoteEncoding1,
+                KMeansPredictedCoordinates(Vector.empty)
               )
-          })
-
-        println(data.map(_.size))
-
-//        val result =
-//          kmeans(
-//            data.map(_.toArray).toArray,
-//            k = 2,
-//            maxIter = 20
-//          )
-
-//        println(result.centroids())
-
-        Right(KMeansResult())
+            )
+          case Left(err) => Left(err)
+        }
+      }) match {
+      case Some(v) => v
       case None =>
         Left(CustomError("Term of office id not found"))
     }
+  }
+
+  private def transformToTrainingRow(
+    voteEncoding: VoteEncodingT,
+    termOfOffice: TermOfOffice,
+    member: ParliamentMember,
+    allVotesIds: Array[VoteId]
+  ) = {
+    val personVotes: List[VoteReduced] = VoteRepo
+      .byPersonIdAndTerm(
+        member.personId,
+        termOfOffice
+      )
+
+    addMissingVotes(
+      personVotes,
+      allVotesIds,
+      voteEncoding
+    ).map(
+      voteReduced => voteEncoding(voteReduced.singleVote)
+    )
+  }
+
+  def addMissingVotes(
+    personVotes: List[VoteReduced],
+    allTermIds: Array[VoteId],
+    encodingT: VoteEncodingT
+  ): Array[VoteReduced] = {
+
+    val missingIds = allTermIds.diff(personVotes.map(_.id))
+
+    val personVote = personVotes.head
+
+    missingIds.map(
+      id =>
+        VoteReduced(
+          id,
+          DidntVote,
+          personVote.personId,
+          personVote.dateTime,
+          personVote.termSpecificVoteId
+        )
+    ) ++ personVotes
+
+  }
+
+  def predictByModel(
+    model: KMeans,
+    members: List[ParliamentMember],
+    voteEncoding: VoteEncodingT,
+    termOfOffice: TermOfOffice,
+    allVoteIds: Array[VoteId]
+  ): Vector[KMeansPoint] = {
+    members
+      .map(
+        member => {
+          model.predict(
+            transformToTrainingRow(
+              voteEncoding,
+              termOfOffice,
+              member,
+              allVoteIds
+            )
+          )
+          KMeansPoint(
+            0,
+            0,
+            member.factionName,
+            member.personId,
+            member.name,
+            member.surname
+          )
+        }
+      )
+      .toVector
   }
 }

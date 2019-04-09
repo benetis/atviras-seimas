@@ -1,6 +1,7 @@
 package me.benetis.coordinator.api
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{
+  ClusteringRepo,
   MDSRepo,
   ParliamentMemberRepo
 }
@@ -25,14 +26,15 @@ object ApiForFrontendController
     extends ApiForFrontend
     with LazyLogging {
   override def fetchMdsResults(
-      termOfOfficeId: TermOfOfficeId)
-    : Option[MdsResult[MdsPointWithAdditionalInfo]] = {
+    termOfOfficeId: TermOfOfficeId
+  ): Option[MdsResult[MdsPointWithAdditionalInfo]] = {
 
     val mdsResultOpt =
       MDSRepo.byTermOfOffice(termOfOfficeId)
 
     val members = ParliamentMemberRepo.listByTermOfOffice(
-      termOfOfficeId)
+      termOfOfficeId
+    )
 
     /* we can't map because we change the type */
     mdsResultOpt match {
@@ -51,7 +53,8 @@ object ApiForFrontendController
                 coords,
                 mds.createdAt,
                 mds.termOfOfficeId
-              ))
+              )
+            )
           case Left(err) =>
             logger.error(err.msg())
             None
@@ -62,9 +65,9 @@ object ApiForFrontendController
   }
 
   private def addAdditionalInfoToMds(
-      mdsPointOnly: MdsPointOnlyXAndY,
-      termMembers: List[ParliamentMember])
-    : Either[ComputingError, MdsPointWithAdditionalInfo] = {
+    mdsPointOnly: MdsPointOnlyXAndY,
+    termMembers: List[ParliamentMember]
+  ): Either[ComputingError, MdsPointWithAdditionalInfo] = {
 
     val memberOpt = termMembers.find { m =>
       m.termOfOfficeSpecificId match {
@@ -77,7 +80,8 @@ object ApiForFrontendController
       case Some(m) => Right(m)
       case None =>
         Left(
-          DBNotExpectedResult("specific id should be set"))
+          DBNotExpectedResult("specific id should be set")
+        )
     }
 
     memberEith.map { m =>

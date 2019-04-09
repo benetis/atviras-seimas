@@ -3,6 +3,7 @@ services:
   mysqldb:
     image: mysql:5.7
     restart: always
+    command: --max_allowed_packet=32505856
     container_name: mysql
     volumes:
       - ./data:/var/lib/mysql

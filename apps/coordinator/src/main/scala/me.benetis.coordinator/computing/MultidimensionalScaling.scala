@@ -2,9 +2,8 @@ package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.computing.Coordinator.logger
 import me.benetis.coordinator.computing.MultidimensionalScaling.Matrix
-import me.benetis.coordinator.computing.encoding.VoteEncoding
 import me.benetis.coordinator.repository.{
-  MDSRepo,
+  ClusteringRepo,
   ParliamentMemberRepo,
   TermOfOfficeRepo,
   VoteRepo
@@ -21,10 +20,10 @@ import scala.collection.parallel.mutable.ParArray
 import scala.util.Try
 import scalaz.zio.{Fiber, UIO}
 import smile.mds._
-
 import cats.instances.vector._
 import cats.syntax.traverse._
 import cats.instances.either._
+import me.benetis.shared.encoding.VoteEncoding
 
 case class ProximityMatrix(value: Array[Array[Double]]) {
   override def toString: String = {
@@ -39,7 +38,8 @@ object MultidimensionalScaling extends LazyLogging {
 
   def calculate(termOfOfficeId: TermOfOfficeId): Either[
     ComputingError,
-    MdsResult[MdsPointOnlyXAndY]] = {
+    MdsResult[MdsPointOnlyXAndY]
+  ] = {
     logger.info(s"Started MDS with $termOfOfficeId")
 
     buildProximityMatrix(termOfOfficeId).flatMap(matrix => {
@@ -49,11 +49,13 @@ object MultidimensionalScaling extends LazyLogging {
 
       logger.info("MDS calculations finished")
 
-      val coords
-        : Either[ComputingError,
-                 MDSCoordinates[MdsPointOnlyXAndY]] =
-        coordinatesMatrixToMdsPoints(result.getCoordinates,
-                                     termOfOfficeId)
+      val coords: Either[ComputingError, MDSCoordinates[
+        MdsPointOnlyXAndY
+      ]] =
+        coordinatesMatrixToMdsPoints(
+          result.getCoordinates,
+          termOfOfficeId
+        )
 
       coords.map(coords => {
         MdsResult(
@@ -68,10 +70,11 @@ object MultidimensionalScaling extends LazyLogging {
   }
 
   private def coordinatesMatrixToMdsPoints(
-      matrix: Array[Array[Double]],
-      termOfOfficeId: TermOfOfficeId)
-    : Either[ComputingError,
-             MDSCoordinates[MdsPointOnlyXAndY]] = {
+    matrix: Array[Array[Double]],
+    termOfOfficeId: TermOfOfficeId
+  ): Either[ComputingError, MDSCoordinates[
+    MdsPointOnlyXAndY
+  ]] = {
 
     matrix.zipWithIndex
       .map {
@@ -84,8 +87,10 @@ object MultidimensionalScaling extends LazyLogging {
             val y = pairArray(1)
             (x, y)
           }.toEither.left
-            .map(t =>
-              LibraryNotBehavingAsExpected(t.getMessage))
+            .map(
+              t =>
+                LibraryNotBehavingAsExpected(t.getMessage)
+            )
             .right
             .map(pair => {
               MdsPointOnlyXAndY(
@@ -101,8 +106,8 @@ object MultidimensionalScaling extends LazyLogging {
   }
 
   private def buildProximityMatrix(
-      termOfOfficeId: TermOfOfficeId)
-    : Either[ComputingError, ProximityMatrix] = {
+    termOfOfficeId: TermOfOfficeId
+  ): Either[ComputingError, ProximityMatrix] = {
 
     val termOpt = TermOfOfficeRepo.byId(termOfOfficeId)
 
@@ -112,7 +117,8 @@ object MultidimensionalScaling extends LazyLogging {
 
         val members =
           ParliamentMemberRepo.listByTermOfOffice(
-            termOfOfficeId)
+            termOfOfficeId
+          )
 
         logger.info("Start building proximity matrix")
 
@@ -130,36 +136,44 @@ object MultidimensionalScaling extends LazyLogging {
 
         val cartesian
           : List[(ParliamentMember, ParliamentMember)] =
-          members.flatMap(member =>
-            members.map(m => (member, m)))
+          members.flatMap(
+            member => members.map(m => (member, m))
+          )
 
-        fillProximityMatrix(term,
-                            votesForMembers,
-                            matrix,
-                            cartesian)
+        fillProximityMatrix(
+          term,
+          votesForMembers,
+          matrix,
+          cartesian
+        )
 
         logger.info("Proximity matrix ready")
 
         Right(ProximityMatrix(matrix))
       case None =>
-        Left(DBNotExpectedResult(
-          s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"))
+        Left(
+          DBNotExpectedResult(
+            s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"
+          )
+        )
     }
   }
 
   private def fillProximityMatrix(
-      termOfOffice: TermOfOffice,
-      votesForMembers: Map[ParliamentMemberId,
-                           List[VoteReduced]],
-      matrix: Matrix,
-      cartesian: List[(ParliamentMember, ParliamentMember)])
-    : Unit = {
+    termOfOffice: TermOfOffice,
+    votesForMembers: Map[ParliamentMemberId, List[
+      VoteReduced
+    ]],
+    matrix: Matrix,
+    cartesian: List[(ParliamentMember, ParliamentMember)]
+  ): Unit = {
 
     cartesian.foreach(pair => {
 
       if (pair._1.termOfOfficeSpecificId.isEmpty || pair._2.termOfOfficeSpecificId.isEmpty) {
         logger.error(
-          "Term of office specific ids must be assigned")
+          "Term of office specific ids must be assigned"
+        )
       }
 
       val pairDistance =
@@ -167,31 +181,39 @@ object MultidimensionalScaling extends LazyLogging {
           votesForMembers,
           pair._1,
           pair._2,
-          VoteEncoding.singleVoteEncodedE1)
+          VoteEncoding.singleVoteEncodedE1
+        )
 
       matrix(
-        pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id)(
-        pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id) =
-        pairDistance.value
+        pair._1.termOfOfficeSpecificId.get.term_of_office_specific_id
+      )(
+        pair._2.termOfOfficeSpecificId.get.term_of_office_specific_id
+      ) = pairDistance.value
     })
   }
   private def euclideanDistanceForMemberVotes(
-      votesForMembers: Map[ParliamentMemberId,
-                           List[VoteReduced]],
-      member1: ParliamentMember,
-      member2: ParliamentMember,
-      encode: SingleVote => Double
+    votesForMembers: Map[ParliamentMemberId, List[
+      VoteReduced
+    ]],
+    member1: ParliamentMember,
+    member2: ParliamentMember,
+    encode: SingleVote => Double
   ): EuclideanDistance = {
 
-    def euclidean(a: Double, b: Double): Double =
+    def euclidean(
+      a: Double,
+      b: Double
+    ): Double =
       Math.abs(a - b)
 
     val euclideanSquared = votesForMembers(member1.personId)
       .zip(votesForMembers(member2.personId))
       .par
       .foldLeft(0.0)((prev, curr) => {
-        prev + euclidean(encode(curr._1.singleVote),
-                         encode(curr._2.singleVote))
+        prev + euclidean(
+          encode(curr._1.singleVote),
+          encode(curr._2.singleVote)
+        )
       })
 
     EuclideanDistance(Math.sqrt(euclideanSquared))
