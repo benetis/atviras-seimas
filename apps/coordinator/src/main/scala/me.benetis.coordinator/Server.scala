@@ -10,7 +10,10 @@ import scala.io.StdIn
 import AutowireServer._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.model.StatusCodes._
-import me.benetis.coordinator.computing.ComputeMDS
+import me.benetis.coordinator.computing.{
+  ComputeKMeans,
+  ComputeMDS
+}
 import me.benetis.shared.{
   FetchFactions,
   FetchParliamentMembers
@@ -20,8 +23,11 @@ object Server {
   def main(args: Array[String]) {
 
     val downloaded = complete(
-      HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                 "<h1>Downloaded</h1>"))
+      HttpEntity(
+        ContentTypes.`text/html(UTF-8)`,
+        "<h1>Downloaded</h1>"
+      )
+    )
 
     implicit val system       = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
@@ -33,8 +39,21 @@ object Server {
         get {
           computing.Coordinator(ComputeMDS)
           complete(
-            HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                       "<h1>Computed MDS</h1>"))
+            HttpEntity(
+              ContentTypes.`text/html(UTF-8)`,
+              "<h1>Computed MDS</h1>"
+            )
+          )
+        }
+      } ~ path("compute" / "k-means") {
+        get {
+          computing.Coordinator(ComputeKMeans)
+          complete(
+            HttpEntity(
+              ContentTypes.`text/html(UTF-8)`,
+              "<h1>Computed KMeans</h1>"
+            )
+          )
         }
       } ~ path("download" / "parliament-members") {
         get {
@@ -56,14 +75,17 @@ object Server {
         case e: Throwable =>
           extractUri { uri =>
             println(
-              s"Request to $uri could not be handled normally")
+              s"Request to $uri could not be handled normally"
+            )
             println(e.getMessage)
             println(e.printStackTrace())
 
             complete(
               HttpResponse(
                 InternalServerError,
-                entity = "Some random exception"))
+                entity = "Some random exception"
+              )
+            )
           }
       }
 
@@ -98,10 +120,11 @@ object Server {
       Http().bindAndHandle(route, "localhost", 8080)
 
     println(
-      s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+      s"Server online at http://localhost:8080/\nPress RETURN to stop..."
+    )
     StdIn.readLine() // let it run until user presses return
     bindingFuture
-      .flatMap(_.unbind()) // trigger unbinding from the port
+      .flatMap(_.unbind())                 // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
 }

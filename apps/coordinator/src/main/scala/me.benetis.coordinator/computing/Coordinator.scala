@@ -1,5 +1,6 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
+import me.benetis.coordinator.computing.encoding.VoteEncoding
 import me.benetis.coordinator.repository.{MDSRepo, VoteRepo}
 import me.benetis.coordinator.utils.ComputingError
 import me.benetis.shared._
@@ -15,7 +16,12 @@ object Coordinator extends LazyLogging {
           case Right(mds) => MDSRepo.insert(mds)
           case Left(err)  => logger.error(err.msg())
         }
-
+      case ComputeKMeans =>
+        val termOfOfficeId = TermOfOfficeId(8)
+        KMeansComputing.compute(
+          termOfOfficeId,
+          VoteEncoding.singleVoteEncodedE1
+        )
     }
   }
 }

@@ -2,7 +2,12 @@ package me.benetis.coordinator.computing.encoding
 import me.benetis.shared._
 
 object VoteEncoding {
-  def singleVoteEncodedE1(singleVote: SingleVote): Double = {
+
+  type VoteEncodingT = SingleVote => Double
+
+  def singleVoteEncodedE1(
+    singleVote: SingleVote
+  ): Double = {
     singleVote match {
       case SingleVoteFor     => 2
       case SingleVoteAgainst => -2
@@ -12,7 +17,9 @@ object VoteEncoding {
     }
   }
 
-  def singleVoteEncodedE2(singleVote: SingleVote): Double = {
+  def singleVoteEncodedE2(
+    singleVote: SingleVote
+  ): Double = {
     singleVote match {
       case SingleVoteFor     => 1
       case SingleVoteAgainst => -1
@@ -21,7 +28,9 @@ object VoteEncoding {
     }
   }
 
-  def singleVoteEncodedE3(singleVote: SingleVote): Double = {
+  def singleVoteEncodedE3(
+    singleVote: SingleVote
+  ): Double = {
     singleVote match {
       case SingleVoteFor     => 2
       case SingleVoteAgainst => -2
