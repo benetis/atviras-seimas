@@ -144,14 +144,7 @@ object KMeansComputing {
     members
       .map(
         member => {
-          model.predict(
-            transformToTrainingRow(
-              voteEncoding,
-              termOfOffice,
-              member,
-              allVoteIds
-            )
-          )
+          println(model.getClusterLabel)
           KMeansPoint(
             0,
             0,
