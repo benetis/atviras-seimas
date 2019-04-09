@@ -19,8 +19,8 @@ lazy val commonSettings = Seq(
 lazy val coordinator = project
   .settings(commonSettings: _*)
   .settings(
+    test in assembly := {},
     name := "coordinator",
-    assemblyMergeStrategy in assembly := (_ => MergeStrategy.first),
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http"   % "10.1.8",
 "com.typesafe.akka" %% "akka-stream" % "2.5.19",
@@ -44,6 +44,10 @@ lazy val coordinator = project
       "io.suzaku" %% "boopickle" % "1.3.0",
       "com.lihaoyi" %% "autowire" % "0.2.6",
     ),
+    assemblyExcludedJars in assembly := {
+      val cp = (fullClasspath in assembly).value
+      cp filter {_.data.getName == "xmlpull-1.1.3.1.jar"}
+    },
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
   )
