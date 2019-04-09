@@ -20,6 +20,7 @@ lazy val coordinator = project
   .settings(commonSettings: _*)
   .settings(
     name := "coordinator",
+    assemblyMergeStrategy in assembly := (_ => MergeStrategy.first),
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http"   % "10.1.8",
 "com.typesafe.akka" %% "akka-stream" % "2.5.19",
@@ -41,11 +42,12 @@ lazy val coordinator = project
       "org.scalaz" %% "scalaz-zio" % "0.9",
       "org.json4s" %% "json4s-native" % "3.6.5",
       "io.suzaku" %% "boopickle" % "1.3.0",
-      "com.lihaoyi" %% "autowire" % "0.2.6"
+      "com.lihaoyi" %% "autowire" % "0.2.6",
     ),
     addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
     addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
-  ).dependsOn(sharedJVM)
+  )
+  .dependsOn(sharedJVM)
 
 
 val webpackResourcesBlob = Def.setting {
