@@ -18,12 +18,11 @@ package object globalStyles {
 
     val emptyStyle = style()
 
-    val englishLavender = c"#b5838d"
-    val apricot         = c"#ffcdb2"
-    val apricot2        = c"#ffd3bf"
-    val peach           = c"#ffb4a2"
-    val parrotPink      = c"#e5989b"
-    val oldLavender     = c"#6d6875"
+    val englishLavender = c"#ff967c"
+    val apricot         = c"#ffb48c"
+    val peach           = c"#b56776"
+    val parrotPink      = c"#e57578"
+    val oldLavender     = c"#605575"
 
     val fontColorOnDark  = c"#f1f1f2"
     val fontColorOnDark2 = c"#c9c8cc"
