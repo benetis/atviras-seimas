@@ -13,7 +13,10 @@ lazy val commonSettings = Seq(
     "-feature",
     "-Xfatal-warnings",
     "-language:implicitConversions"
-  )
+  ),
+  libraryDependencies ++= Seq(
+    "com.github.julien-truffaut" %%  "monocle-core"  % "1.5.0"),
+    addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.0" cross CrossVersion.full)
 )
 
 lazy val coordinator = project

@@ -2,6 +2,7 @@ package components.generalStats
 
 import components.FactionLegend
 import components.charts.ScatterPlot
+import components.filter.DataFilter
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.common.Charts.ScatterPlotPointPosition
@@ -63,10 +64,12 @@ object MDSChart {
       p.mdsResult.fold(<.div("Empty MDS"))(
         (result: MdsResult[MdsPointWithAdditionalInfo]) =>
           <.div(
+            styles.container,
             <.h2(
               styles.title,
               "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
             ),
+            DataFilter(DataFilter.Props()),
             ScatterPlot(
               ScatterPlot
                 .Props[MdsPointWithAdditionalInfo](
@@ -95,6 +98,12 @@ object MDSChart {
       marginTop(10 px),
       textAlign.center,
       color(globalStyles.s.fontColorOnDark2)
+    )
+
+    val container = style(
+      display.flex,
+      flexDirection.column,
+      alignItems.center
     )
 
     val title = style(

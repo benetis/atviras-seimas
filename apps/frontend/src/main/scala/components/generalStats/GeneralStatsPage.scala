@@ -119,6 +119,7 @@ object GeneralStatsPage {
             )
           case SelectedClustering =>
             <.div(
+              styles.statsContainer,
               <.p("Clustering")
             )
         }
