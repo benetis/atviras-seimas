@@ -19,10 +19,12 @@ package object globalStyles {
     val emptyStyle = style()
 
     val englishLavender = c"#ff967c"
+    val lightApricot    = c"#ffcdb2"
     val apricot         = c"#ffb48c"
     val peach           = c"#b56776"
     val parrotPink      = c"#e57578"
     val oldLavender     = c"#605575"
+    val darkerLavender  = c"#322c3d"
 
     val fontColorOnDark  = c"#f1f1f2"
     val fontColorOnDark2 = c"#c9c8cc"
@@ -30,25 +32,31 @@ package object globalStyles {
     val gray1    = c"#7a7581"
     val darkGray = c"#504c56"
 
+    val bitBorderRadius = 5 px
+
     val pageContainer = style(
       height(100 %%),
       backgroundColor(oldLavender),
       color(fontColorOnDark)
     )
 
-    val navButton = style(
-      textDecoration := "none",
+    val commonBottomStyles = style(
       backgroundColor(parrotPink),
-      color.white,
-      display.inlineBlock,
-      textAlign.center,
-      padding(15 px, 20 px),
-      borderRadius(40 px),
-      fontWeight.bold,
       &.hover - (
         color(parrotPink),
-        backgroundColor(white)
-      )
+        backgroundColor(white),
+        cursor.pointer
+      ),
+      fontWeight.bold,
+      color.white,
+      textAlign.center
+    )
+
+    val navButton = commonBottomStyles + style(
+      textDecoration := "none",
+      display.inlineBlock,
+      padding(15 px, 20 px),
+      borderRadius(40 px)
     )
 
   }

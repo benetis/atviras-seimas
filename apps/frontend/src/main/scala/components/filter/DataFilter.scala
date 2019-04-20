@@ -34,7 +34,11 @@ object DataFilter {
 
     def addFilter(filter: Filter): Callback =
       $.modState(
-        s => s.copy(filters = s.filters ++ Set(filter))
+        s =>
+          s.copy(
+            filters = s.filters ++ Set(filter),
+            text = ""
+          )
       )
 
     def onKeyUp(
@@ -59,15 +63,22 @@ object DataFilter {
       p: Props,
       s: State
     ) = {
+
       <.div(
         styles.container,
-        <.input(
-          ^.onChange ==> onChange,
-          ^.onKeyUp ==> { e =>
-            onKeyUp(e)(s)
-          },
-          ^.key := "datafilter",
-          ^.value := s.text
+        <.div(
+          styles.inputBoxContainer,
+          <.input(
+            styles.inputBox,
+            ^.placeholder := "Žodis pagal kurį filtruoti",
+            ^.onChange ==> onChange,
+            ^.onKeyUp ==> { e =>
+              onKeyUp(e)(s)
+            },
+            ^.key := "datafilter",
+            ^.value := s.text
+          ),
+          <.div(styles.inputBoxButton, "+")
         ),
         <.div(
           styles.filtersContainer,
@@ -95,11 +106,42 @@ object DataFilter {
       maxWidth(650 px),
       maxHeight(650 px),
       height(100 %%),
-      width(100 %%)
+      width(100 %%),
+      marginTop(35 px)
+    )
+
+    val inputBoxContainer = style(
+      display.flex,
+      flexDirection.row,
+      boxShadow := "inset 0 0 8px #c7c7c7;",
+      borderRadius(globalStyles.s.bitBorderRadius)
+    )
+
+    val inputBox = style(
+      flexGrow(2),
+      borderTopLeftRadius(globalStyles.s.bitBorderRadius),
+      borderBottomLeftRadius(
+        globalStyles.s.bitBorderRadius
+      ),
+      padding(8 px, 16 px),
+      outline.none,
+      border.none
+    )
+
+    val inputBoxButton = globalStyles.s.commonBottomStyles + style(
+      padding(4 px, 8 px),
+      borderTopRightRadius(globalStyles.s.bitBorderRadius),
+      borderBottomRightRadius(
+        globalStyles.s.bitBorderRadius
+      ),
+      display.flex,
+      alignItems.center,
+      fontFamily :=! "sans serif",
+      fontWeight.normal
     )
 
     val appliedFilter = style(
-      borderRadius(8 px),
+      borderRadius(globalStyles.s.bitBorderRadius),
       fontWeight.bold,
       fontSize(0.8 em),
       padding(4 px, 8 px),

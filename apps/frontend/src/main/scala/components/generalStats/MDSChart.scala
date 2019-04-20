@@ -65,10 +65,6 @@ object MDSChart {
         (result: MdsResult[MdsPointWithAdditionalInfo]) =>
           <.div(
             styles.container,
-            <.h2(
-              styles.title,
-              "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
-            ),
             DataFilter(DataFilter.Props()),
             ScatterPlot(
               ScatterPlot
@@ -78,6 +74,10 @@ object MDSChart {
                   domain = ScatterPlot
                     .Domain(-30, 30, -50, 50)
                 )
+            ),
+            <.h2(
+              styles.title,
+              "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
             ),
             FactionLegend(FactionLegend.Props()),
             <.div(
