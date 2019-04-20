@@ -33,13 +33,15 @@ object DataFilter {
   class Backend($ : BackendScope[Props, State]) {
 
     def addFilter(filter: Filter): Callback =
-      $.modState(
-        s =>
-          s.copy(
-            filters = s.filters ++ Set(filter),
-            text = ""
-          )
-      )
+      if (filter.value.nonEmpty) {
+        $.modState(
+          s =>
+            s.copy(
+              filters = s.filters ++ Set(filter),
+              text = ""
+            )
+        )
+      } else Callback.empty
 
     def onKeyUp(
       e: ReactKeyboardEventFromInput
@@ -70,7 +72,7 @@ object DataFilter {
           styles.inputBoxContainer,
           <.input(
             styles.inputBox,
-            ^.placeholder := "Žodis pagal kurį filtruoti",
+            ^.placeholder := "Tekstas pagal kurį filtruoti",
             ^.onChange ==> onChange,
             ^.onKeyUp ==> { e =>
               onKeyUp(e)(s)
@@ -78,7 +80,11 @@ object DataFilter {
             ^.key := "datafilter",
             ^.value := s.text
           ),
-          <.div(styles.inputBoxButton, "+")
+          <.div(
+            styles.inputBoxButton,
+            "+",
+            ^.onClick --> addFilter(Filter(s.text))
+          )
         ),
         <.div(
           styles.filtersContainer,
@@ -137,7 +143,10 @@ object DataFilter {
       display.flex,
       alignItems.center,
       fontFamily :=! "sans serif",
-      fontWeight.normal
+      fontWeight.normal,
+      borderLeft :=! "1px solid white",
+      &.hover(borderLeft :=! "1px solid lightgray"),
+      userSelect := "none"
     )
 
     val appliedFilter = style(

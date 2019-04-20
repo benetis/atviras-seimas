@@ -35,7 +35,6 @@ package object globalStyles {
     val bitBorderRadius = 5 px
 
     val pageContainer = style(
-      height(100 %%),
       backgroundColor(oldLavender),
       color(fontColorOnDark)
     )
