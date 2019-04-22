@@ -146,7 +146,8 @@ object GeneralStatsPage {
     val statsContainer = style(
       display.flex,
       flexDirection.column,
-      alignItems.center
+      alignItems.center,
+      height(100 %%)
     )
 
     val activeTabContainer = style(

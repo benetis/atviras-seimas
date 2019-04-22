@@ -6,6 +6,7 @@ import japgolly.scalajs.react.raw.SyntheticKeyboardEvent
 import japgolly.scalajs.react.vdom.html_<^._
 import model.FactionColors
 import org.scalajs.dom
+import org.scalajs.dom.html
 import org.scalajs.dom.raw.HTMLInputElement
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
@@ -37,6 +38,8 @@ object DataFilter {
 
   class Backend($ : BackendScope[Props, State]) {
 
+    private val inputRef = Ref[html.Input]
+
     def onKeyUp(
       e: ReactKeyboardEventFromInput
     )(
@@ -62,7 +65,10 @@ object DataFilter {
     def removeFilter(
       filter: Filter,
       p: Props
-    ) = p.proxy.dispatchCB(RemoveMdsFilter(filter))
+    ) =
+      p.proxy
+        .dispatchCB(RemoveMdsFilter(filter))
+        .flatMap(_ => inputRef.foreach(_.focus()))
 
     def onChange(e: ReactEventFromInput) = {
       val newValue = e.target.value
@@ -78,6 +84,7 @@ object DataFilter {
         <.div(
           styles.inputBoxContainer,
           <.input(
+            ^.autoFocus := true,
             styles.inputBox,
             ^.placeholder := "Tekstas pagal kurį filtruoti",
             ^.onChange ==> onChange,
@@ -86,7 +93,7 @@ object DataFilter {
             },
             ^.key := "datafilter",
             ^.value := s.text
-          ),
+          ).withRef(inputRef),
           <.div(
             styles.inputBoxButton,
             "+",
@@ -100,12 +107,12 @@ object DataFilter {
             .map(
               f =>
                 <.div(
+                  ^.onClick --> removeFilter(f, p),
                   styles.appliedFilter,
                   <.span(styles.appliedFilterText, f.value),
                   <.div(
                     styles.appliedFilterRemove,
-                    "\u2715",
-                    ^.onClick --> removeFilter(f, p)
+                    "\u2715"
                   )
                 )
             )
@@ -181,7 +188,8 @@ object DataFilter {
       paddingRight(4 px),
       margin(3 px),
       textAlign.center,
-      backgroundColor(globalStyles.s.peach)
+      backgroundColor(globalStyles.s.peach),
+      cursor.pointer
     )
 
     val appliedFilterText = style(
@@ -194,8 +202,7 @@ object DataFilter {
       padding(2 px, 1.5 px, 0.5 px, 1 px),
       marginLeft(3 px),
       fontSize(0.8 em),
-      lineHeight(0.8 em),
-      cursor.pointer
+      lineHeight(0.8 em)
     )
 
     val filtersContainer = style(
