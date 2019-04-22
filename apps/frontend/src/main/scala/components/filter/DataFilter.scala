@@ -88,7 +88,17 @@ object DataFilter {
           styles.filtersContainer,
           p.proxy.value.mdsFilters.toVector
             .sortBy(_.value)
-            .map(f => <.div(styles.appliedFilter, f.value))
+            .map(
+              f =>
+                <.div(
+                  styles.appliedFilter,
+                  <.span(styles.appliedFilterText, f.value),
+                  <.div(
+                    styles.appliedFilterRemove,
+                    "\u2715"
+                  )
+                )
+            )
             .toTagMod
         ),
         <.div()
@@ -148,13 +158,34 @@ object DataFilter {
     )
 
     val appliedFilter = style(
+      display.flex,
+      flexWrap.nowrap,
+      justifyContent.spaceBetween,
+      alignItems.center,
       borderRadius(globalStyles.s.bitBorderRadius),
       fontWeight.bold,
       fontSize(0.8 em),
-      padding(4 px, 8 px),
+      paddingTop(4 px),
+      paddingBottom(4 px),
+      paddingLeft(8 px),
+      paddingRight(4 px),
       margin(3 px),
       textAlign.center,
       backgroundColor(globalStyles.s.peach)
+    )
+
+    val appliedFilterText = style(
+      lineHeight(0.8 em)
+    )
+
+    val appliedFilterRemove = style(
+      borderRadius(50 %%),
+      backgroundColor(globalStyles.s.oldLavender),
+      padding(2 px, 1.5 px, 0.5 px, 1 px),
+      marginLeft(3 px),
+      fontSize(0.8 em),
+      lineHeight(0.8 em),
+      cursor.pointer
     )
 
     val filtersContainer = style(
