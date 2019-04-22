@@ -9,7 +9,11 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
-import services.{AddMdsFilter, GeneralStatisticsModel}
+import services.{
+  AddMdsFilter,
+  GeneralStatisticsModel,
+  RemoveMdsFilter
+}
 
 case class Filter(value: String)
 
@@ -55,6 +59,11 @@ object DataFilter {
         .flatMap(_ => $.modState(_.copy(text = "")))
     }
 
+    def removeFilter(
+      filter: Filter,
+      p: Props
+    ) = p.proxy.dispatchCB(RemoveMdsFilter(filter))
+
     def onChange(e: ReactEventFromInput) = {
       val newValue = e.target.value
       $.modState(_.copy(text = newValue))
@@ -95,7 +104,8 @@ object DataFilter {
                   <.span(styles.appliedFilterText, f.value),
                   <.div(
                     styles.appliedFilterRemove,
-                    "\u2715"
+                    "\u2715",
+                    ^.onClick --> removeFilter(f, p)
                   )
                 )
             )

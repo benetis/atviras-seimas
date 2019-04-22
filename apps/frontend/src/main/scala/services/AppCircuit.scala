@@ -38,8 +38,8 @@ case class SetSelectedGeneralStatsTab(
   chart: GeneralStatsSelectedChart)
     extends Action
 
-case class AddMdsFilter(filter: Filter) extends Action
-//case class AddMdsFilter(filter: Filter) extends Action
+case class AddMdsFilter(filter: Filter)    extends Action
+case class RemoveMdsFilter(filter: Filter) extends Action
 
 object AppCircuit
     extends Circuit[RootModel]
@@ -81,6 +81,14 @@ object AppCircuit
           )
         else
           noChange
+
+      case RemoveMdsFilter(filter: Filter) =>
+        updated(
+          value.copy(
+            mdsFilters =
+              value.mdsFilters.filter(_ != filter)
+          )
+        )
 
     }
   }
