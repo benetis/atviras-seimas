@@ -49,8 +49,10 @@ object DataFilter {
     def addFilter(
       p: Props,
       s: State
-    ) = {
-      p.proxy.dispatchCB(AddMdsFilter(Filter(s.text)))
+    ): Callback = {
+      p.proxy
+        .dispatchCB(AddMdsFilter(Filter(s.text)))
+        .flatMap(_ => $.modState(_.copy(text = "")))
     }
 
     def onChange(e: ReactEventFromInput) = {
