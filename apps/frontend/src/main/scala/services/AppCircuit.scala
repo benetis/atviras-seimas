@@ -13,6 +13,7 @@ import me.benetis.shared.{
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
 import boopickle.Default._
+import components.filter.Filter
 import org.scalajs.dom
 
 sealed trait GeneralStatsSelectedChart
@@ -25,7 +26,8 @@ case class RootModel(generalStats: GeneralStatisticsModel)
 
 case class GeneralStatisticsModel(
   selectedGeneralStatsChart: GeneralStatsSelectedChart,
-  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]])
+  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]],
+  mdsFilters: Set[Filter])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
     extends Action
@@ -36,12 +38,19 @@ case class SetSelectedGeneralStatsTab(
   chart: GeneralStatsSelectedChart)
     extends Action
 
+case class AddMdsFilter(filter: Filter) extends Action
+//case class AddMdsFilter(filter: Filter) extends Action
+
 object AppCircuit
     extends Circuit[RootModel]
     with ReactConnector[RootModel] {
   def initialModel =
     RootModel(
-      GeneralStatisticsModel(SelectedMdsChart, None)
+      GeneralStatisticsModel(
+        SelectedMdsChart,
+        None,
+        Set.empty
+      )
     )
 
   val vizHandler = new ActionHandler(zoomTo(_.generalStats)) {
@@ -63,6 +72,16 @@ object AppCircuit
             selectedGeneralStatsChart = tab
           )
         )
+      case AddMdsFilter(filter: Filter) =>
+        if (filter.value.nonEmpty)
+          updated(
+            value.copy(
+              mdsFilters = value.mdsFilters ++ Set(filter)
+            )
+          )
+        else
+          noChange
+
     }
   }
 

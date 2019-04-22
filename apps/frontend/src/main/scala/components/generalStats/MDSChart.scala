@@ -3,6 +3,7 @@ package components.generalStats
 import components.FactionLegend
 import components.charts.ScatterPlot
 import components.filter.DataFilter
+import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.common.Charts.ScatterPlotPointPosition
@@ -14,6 +15,7 @@ import model.FactionColors
 import scalacss.internal.mutable.GlobalRegistry
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
+import services.GeneralStatisticsModel
 
 object MDSChart {
 
@@ -25,7 +27,8 @@ object MDSChart {
   case class Props(
     mdsResult: Option[
       MdsResult[MdsPointWithAdditionalInfo]
-    ])
+    ],
+    proxy: ModelProxy[GeneralStatisticsModel])
 
   private val component = ScalaComponent
     .builder[Props]("Mds chart")
@@ -65,7 +68,7 @@ object MDSChart {
         (result: MdsResult[MdsPointWithAdditionalInfo]) =>
           <.div(
             styles.container,
-            DataFilter(DataFilter.Props()),
+            DataFilter(DataFilter.Props(p.proxy)),
             ScatterPlot(
               ScatterPlot
                 .Props[MdsPointWithAdditionalInfo](

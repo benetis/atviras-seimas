@@ -1,5 +1,6 @@
 package components.filter
 
+import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.raw.SyntheticKeyboardEvent
 import japgolly.scalajs.react.vdom.html_<^._
@@ -8,6 +9,9 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
+import services.{AddMdsFilter, GeneralStatisticsModel}
+
+case class Filter(value: String)
 
 object DataFilter {
 
@@ -16,47 +20,40 @@ object DataFilter {
   GlobalRegistry.register(new Style)
   val styles = GlobalRegistry[Style].get
 
-  case class Filter(value: String)
+  case class Props(
+    proxy: ModelProxy[GeneralStatisticsModel])
 
-  case class Props()
-
-  case class State(
-    text: String,
-    filters: Set[Filter])
+  case class State(text: String)
 
   private val component = ScalaComponent
     .builder[Props]("data filter")
-    .initialState(State("", Set.empty))
+    .initialState(State(""))
     .renderBackend[Backend]
     .build
 
   class Backend($ : BackendScope[Props, State]) {
 
-    def addFilter(filter: Filter): Callback =
-      if (filter.value.nonEmpty) {
-        $.modState(
-          s =>
-            s.copy(
-              filters = s.filters ++ Set(filter),
-              text = ""
-            )
-        )
-      } else Callback.empty
-
     def onKeyUp(
       e: ReactKeyboardEventFromInput
     )(
-      state: State
+      p: Props,
+      s: State
     ) = {
       val enter = 13
       if (e.keyCode == enter)
-        addFilter(Filter(state.text))
+        addFilter(p, s)
       else
         Callback.empty
     }
 
+    def addFilter(
+      p: Props,
+      s: State
+    ) = {
+      p.proxy.dispatchCB(AddMdsFilter(Filter(s.text)))
+    }
+
     def onChange(e: ReactEventFromInput) = {
-      dom.console.log($.state.runNow().filters.toString())
       val newValue = e.target.value
       $.modState(_.copy(text = newValue))
     }
@@ -65,7 +62,6 @@ object DataFilter {
       p: Props,
       s: State
     ) = {
-
       <.div(
         styles.container,
         <.div(
@@ -75,7 +71,7 @@ object DataFilter {
             ^.placeholder := "Tekstas pagal kurį filtruoti",
             ^.onChange ==> onChange,
             ^.onKeyUp ==> { e =>
-              onKeyUp(e)(s)
+              onKeyUp(e)(p, s)
             },
             ^.key := "datafilter",
             ^.value := s.text
@@ -83,12 +79,12 @@ object DataFilter {
           <.div(
             styles.inputBoxButton,
             "+",
-            ^.onClick --> addFilter(Filter(s.text))
+            ^.onClick --> addFilter(p, s)
           )
         ),
         <.div(
           styles.filtersContainer,
-          s.filters.toVector
+          p.proxy.value.mdsFilters.toVector
             .sortBy(_.value)
             .map(f => <.div(styles.appliedFilter, f.value))
             .toTagMod
