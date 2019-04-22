@@ -1,15 +1,18 @@
 package components.generalStats
 
+import cats.data
 import components.FactionLegend
 import components.charts.ScatterPlot
-import components.filter.DataFilter
+import components.filter.{DataFilter, Filter}
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.common.Charts.ScatterPlotPointPosition
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
-  MdsResult
+  MdsResult,
+  ParliamentMemberName,
+  ParliamentMemberSurname
 }
 import model.FactionColors
 import scalacss.internal.mutable.GlobalRegistry
@@ -38,6 +41,64 @@ object MDSChart {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
+    def filterData(
+      filtersToCheck: Set[Filter],
+      data: Vector[MdsPointWithAdditionalInfo]
+    ): Vector[MdsPointWithAdditionalInfo] = {
+
+      def doValuesMatchFilter(
+        filter: Filter,
+        valuesToFilter: Vector[String]
+      ): Boolean =
+        valuesToFilter
+          .map(
+            value =>
+              value
+                .toLowerCase()
+                .trim
+                .contains(filter.value.trim.toLowerCase())
+          )
+          .fold(false)(_ || _)
+
+      def checkMultipleFilters(
+        valuesToFilter: Vector[String]
+      ): Boolean =
+        filtersToCheck.forall(
+          curr =>
+            doValuesMatchFilter(
+              curr,
+              valuesToFilter
+            )
+        )
+
+      data.filter(point => {
+        val fullName = constructName(
+          point.parliamentMemberName,
+          point.parliamentMemberSurname
+        )
+
+        val valuesToFilter =
+          Vector(fullName, point.factionName.faction_name)
+
+        if (filtersToCheck.nonEmpty)
+          checkMultipleFilters(valuesToFilter)
+        else
+          true
+      })
+    }
+
+    def addFilterFromState(
+      props: Props,
+      data: Vector[MdsPointWithAdditionalInfo]
+    ): Vector[MdsPointWithAdditionalInfo] = {
+      filterData(props.proxy.value.mdsFilters, data)
+    }
+
+    def constructName(
+      parliamentMemberName: ParliamentMemberName,
+      parliamentMemberSurname: ParliamentMemberSurname
+    ): String =
+      s"${parliamentMemberName.person_name} ${parliamentMemberSurname.person_surname}"
     val mdsPoint: (
       MdsPointWithAdditionalInfo,
       ScatterPlotPointPosition
@@ -54,7 +115,10 @@ object MDSChart {
               )
               .value,
             >.title(
-              s"${point.parliamentMemberName.person_name} ${point.parliamentMemberSurname.person_surname}"
+              constructName(
+                point.parliamentMemberName,
+                point.parliamentMemberSurname
+              )
             )
           )
         )
@@ -72,7 +136,10 @@ object MDSChart {
             ScatterPlot(
               ScatterPlot
                 .Props[MdsPointWithAdditionalInfo](
-                  data = result.coordinates.value,
+                  data = addFilterFromState(
+                    p,
+                    result.coordinates.value
+                  ),
                   pointToTagMod = mdsPoint,
                   domain = ScatterPlot
                     .Domain(-30, 30, -50, 50)
