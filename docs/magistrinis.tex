@@ -68,7 +68,8 @@
     \newacronym{tfidf}{TFIDF}{ Term Frequency Inverse Document Frequency }
     \newacronym{io}{IO}{ Input/Output }
     \newacronym{mds}{MDS}{ Multidimensional scaling }
-    \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania }    
+    \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania } 
+    \newacronym{xml}{XML}{ PLACEHOLDER }   
     
     \begin{document}
     
@@ -108,6 +109,7 @@
 	
 	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 
+	This thesis goal is to X and Y
     
     \clearpage
     
@@ -115,16 +117,88 @@
    
    	\subsection{Literature analysis}
    	
-	There is a decent amount of previous work analyzing voting on roll call data. Research seems to be focused on specific elections that happened in the past.\\	
+	There is a decent amount of previous work analyzing voting on roll call data. A huge part of this research is on specific elections that happened in the past.\\	
 	
-	In \textit{Spatial Models of Parliamentary Voting} author discusses how voter's positions on specific issues can be captured by his position on one or two dimensions such as liberalism or conservatism. This constraint means there are two spaces - one with few dimensions - basic  or ideological. The other - high dimensional space which represents remaining issues. This breakthrough might suggest \acrlong{mds} as a good performance method for visualization and analysis as majority of data is encoded in few dimensions.\\
+	In \textit{Spatial Models of Parliamentary Voting} \cite{poole_2005} author discusses how voter's positions on specific issues can be captured by his position on one or two dimensions such as liberalism or conservatism. This constraint means there are two spaces - one with few dimensions - basic  or ideological. The other - high dimensional space which represents remaining issues. This breakthrough might suggest \acrlong{mds} as a good performance method for visualization and analysis as majority of data is encoded in few dimensions.\\
 	
 	
-	There is also research done specifically on \gls{lrs} data. One such is \textit{On Structural Analysis of Parliamentarian Voting Data} \cite{DBLP:journals/informaticaLT/KrilaviciusZ08}. In this paper authors discuss about data reduction to \gls{dissimilarity_matrix}, vote encoding, \gls{mds} and its performance on specific dimensions. Authors focus on specific elections and term of office which is different from our goal.
+	There is also research done specifically on \gls{lrs} data. One such is \textit{On Structural Analysis of Parliamentarian Voting Data} \cite{DBLP:journals/informaticaLT/KrilaviciusZ08}. In this paper authors discuss about data reduction to \gls{dissimilarity_matrix}, vote encoding, \gls{mds} and its performance on specific dimensions. Authors focus on specific elections and term of office which is different from our goal. However, methods discussed and research results are relevant for this project.\\
 	
-	    	
+	In \textit{The new Voteview.com: preserving and continuing Keith Poole’s infrastructure for scholars, students and observers of Congress} \cite{article} paper, authors discuss famous \textit{Voteview.com} website. While website's primary goal is to provide open data access is different from ours - it contains useful information about how specific methods are used, how visualizations work. It also contains visualization which shows how data changed over time - how ideology and party composition changes.
+	
+	\clearpage
+	
+	\subsection{Materials and methods}
    	
- 	\subsection{Lithuania's parliament open data analysis }
+ 	\subsubsection{Lithuania's parliament open data analysis }
+ 	
+ 	In this section open data from \acrshort{xml} is reviewed. Only data and properties important to the project are included and commented on. All data is imported into \gls{mysql} database, therefore to demonstrate structure tables are used. Field types are inferred empirically by looking at data, therefore might not be correct in some cases. Moreover, data itself is not consistent through all years of \acrlong{lrs} activity.\\
+	
+	\noindent
+	Table \ref{tab:term_of_office} contains term of office table structure.
+	\begin{center}
+	 	\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
+	 		\multicolumn{4}{c}{}\\ 
+	 		\hline
+	 		In XML & In database & Type & Comments\\
+	 		\hline 
+	 		kadencijos\_id & term\_of\_office\_id & int(11) & Unique term of office id \\ 
+	 		pavadinimas & name & varchar(255) NOT NULL & Name \\
+	 		data\_nuo & date\_from & date NOT NULL & Date when term of office begins \\ 
+	 		data\_iki & date\_to & DEFAULT NULL & Date when term of office ends \\
+	 		\hline
+	 	\end{tabular}
+	 	\captionof{table}{Term of office table structure} \label{tab:term_of_office}
+	\end{center}
+
+	\hfill
+	
+	
+	\noindent
+	Table \ref{tab:sessions} contains parliament sessions table structure.
+	\begin{center}
+		\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
+			\multicolumn{4}{c}{}\\ 
+			\hline
+			In XML & In database & Type & Comments\\
+			\hline 
+			sesijos\_id & session\_id & int(11) NOT NULL & Unique parliament session id \\
+			kadencijos\_id & term\_of\_office\_id & int(11) & Unique term of office id \\ 
+			numeris & number & varchar(255) NOT NULL & Number \\ 
+			pavadinimas & name & varchar(255) NOT NULL & Session name \\ 
+			data\_nuo & date\_from & date NOT NULL & Date when session begins \\
+			data\_iki & date\_to & date DEFAULT NULL & Date when session ends. Current session doesn't have this value set. \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Parliament session table structure} \label{tab:sessions}
+	\end{center}
+	
+	\hfill
+	
+	\noindent
+	Table \ref{tab:plenary} contains parliament plenaries table structure.
+	\begin{center}
+		\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
+			\multicolumn{4}{c}{}\\ 
+			\hline
+			In XML & In database & Type & Comments\\
+			\hline
+			posėdžio\_id & plenary\_id & int(11) NOT NULL & Unique plenary id \\
+			sesijos\_id & session\_id & int(11) NOT NULL & Unique parliament session id \\
+			numeris & number & varchar(255) NOT NULL & Number \\ 
+			tipas & plenary\_type & varchar(255) NOT NULL & Plenary type \\ 
+			pradžia & time\_start & datetime DEFAULT NULL & Plenary starting time \\
+			pabaiga & time\_finish & datetime DEFAULT NULL & Plenary ending time. Some plenaries are not yet finished and some entries don't include times at all \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Plenary table structure} \label{tab:plenary}
+	\end{center}
+	
+	\hfill
+
+	
+	\clearpage
+	 
  	 
  	\subsection{Problem analysis}
  	
@@ -174,9 +248,10 @@
 		%    \end{figure}
 		
 		%    \vspace{1cm}
+  	\subsection{Tools}
+    % 	\subsubsection{Programming language: {\textit Scala}}
     
-    \subsection{Tools}
-    \subsubsection{Programming language: {\textit Scala}}
+    
     \subsubsection{Database: {\textit MySQL}}
     \subsection{Downloader}
     \subsection{Coordinator}
@@ -200,20 +275,6 @@
     
     \bibliography{bibtex}{}
     \bibliographystyle{ieeetr}
-    
-%    \begin{thebibliography}{9}
-%    	
-%          
-%        
-%        \bibitem{poole_models}
-%        Poole, K. (2005). Spatial Models of Parliamentary Voting (Analytical Methods for Social Research). Cambridge: Cambridge University Press. doi:10.1017/CBO9780511614644
-%        
-%        \bibitem{structural_analysis_lt}
-%        T. Krilavičius, A. Žilinskas. On Structural Analysis of Parlamentarian Voting Data.\\ 
-%        Informatica, 19(3):377–390, 2008.
-%        
-%    
-%    \end{thebibliography}
         
     \clearpage
     
