@@ -17,7 +17,6 @@
     \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
     \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
     
-    
     \makeglossaries
     
     \newglossaryentry{mysql}
@@ -50,11 +49,13 @@
 		name=k means,
 		description={ }
 	} 
-   \newglossaryentry{mds}
+   \newglossaryentry{dissimilarity_matrix}
 	{
-		name=mds,
+		name=dissimilarity matrix,
 		description={ }
-	}     
+	} 
+
+
 
     
     % TODO check this list
@@ -66,6 +67,8 @@
     \newacronym{ip}{IP}{ Internet protocol address }
     \newacronym{tfidf}{TFIDF}{ Term Frequency Inverse Document Frequency }
     \newacronym{io}{IO}{ Input/Output }
+    \newacronym{mds}{MDS}{ Multidimensional scaling }
+    \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania }    
     
     \begin{document}
     
@@ -111,6 +114,16 @@
     \section{Analysis}
    
    	\subsection{Literature analysis}
+   	
+	There is a decent amount of previous work analyzing voting on roll call data. Research seems to be focused on specific elections that happened in the past.\\	
+	
+	In \textit{Spatial Models of Parliamentary Voting} author discusses how voter's positions on specific issues can be captured by his position on one or two dimensions such as liberalism or conservatism. This constraint means there are two spaces - one with few dimensions - basic  or ideological. The other - high dimensional space which represents remaining issues. This breakthrough might suggest \acrlong{mds} as a good performance method for visualization and analysis as majority of data is encoded in few dimensions.\\
+	
+	
+	There is also research done specifically on \gls{lrs} data. One such is \textit{On Structural Analysis of Parliamentarian Voting Data} \cite{DBLP:journals/informaticaLT/KrilaviciusZ08}. In this paper authors discuss about data reduction to \gls{dissimilarity_matrix}, vote encoding, \gls{mds} and its performance on specific dimensions. Authors focus on specific elections and term of office which is different from our goal.
+	
+	    	
+   	
  	\subsection{Lithuania's parliament open data analysis }
  	 
  	\subsection{Problem analysis}
@@ -185,14 +198,22 @@
    
     \clearpage
     
-    \begin{thebibliography}{9}
-    	
-        \bibitem{political_abuse} 
-        J. Ratkiewicz, M. D. Conover, M. Meiss, B. Goncalves, A. Flammini, F. Menczer
-        \textit{Detecting and Tracking Political Abuse in Social Media}. 
-        In proceedings of the Fifth International AAAI Conference on Weblogs and Social Media, 2011.    
+    \bibliography{bibtex}{}
+    \bibliographystyle{ieeetr}
     
-    \end{thebibliography}
+%    \begin{thebibliography}{9}
+%    	
+%          
+%        
+%        \bibitem{poole_models}
+%        Poole, K. (2005). Spatial Models of Parliamentary Voting (Analytical Methods for Social Research). Cambridge: Cambridge University Press. doi:10.1017/CBO9780511614644
+%        
+%        \bibitem{structural_analysis_lt}
+%        T. Krilavičius, A. Žilinskas. On Structural Analysis of Parlamentarian Voting Data.\\ 
+%        Informatica, 19(3):377–390, 2008.
+%        
+%    
+%    \end{thebibliography}
         
     \clearpage
     
