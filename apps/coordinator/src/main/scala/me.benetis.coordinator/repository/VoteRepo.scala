@@ -2,25 +2,35 @@ package me.benetis.coordinator.repository
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.coordinator.repository.DiscussionEventRepo.ctx
-import me.benetis.coordinator.utils.{ComputingError, DBNotExpectedResult}
+import me.benetis.coordinator.utils.{
+  ComputingError,
+  DBNotExpectedResult
+}
 import me.benetis.shared.encoding.EncodersDecoders
 import me.benetis.shared._
-
+import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import me.benetis.coordinator.utils.dates.SharedDateDecoders._
 object VoteRepo {
 
-  private lazy val ctx = new MysqlJdbcContext(SnakeCase, "ctx")
+  private lazy val ctx =
+    new MysqlJdbcContext(SnakeCase, "ctx")
 
   import ctx._
 
   import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
 
   private implicit val encodeSingleVote =
-    MappedEncoding[SingleVote, Int](EncodersDecoders.voteSerializer)
+    MappedEncoding[SingleVote, Int](
+      EncodersDecoders.voteSerializer
+    )
 
   private implicit val decodeSingleVote =
-    MappedEncoding[Int, SingleVote](EncodersDecoders.voteDeserializer)
+    MappedEncoding[Int, SingleVote](
+      EncodersDecoders.voteDeserializer
+    )
 
-  private implicit val FactionInsertMeta = insertMeta[Vote]()
+  private implicit val FactionInsertMeta =
+    insertMeta[Vote]()
 
   def insert(votes: Seq[Vote]): Unit = {
     val q = quote {
@@ -28,7 +38,8 @@ object VoteRepo {
         e =>
           query[Vote]
             .insert(e)
-            .onConflictIgnore(_.personId))
+            .onConflictIgnore(_.personId)
+      )
     }
     ctx.run(q)
   }
@@ -45,37 +56,70 @@ object VoteRepo {
     ctx.run(q).map(toVoteReduced)
   }
 
-  def listForTermOfOffice(termOfOfficeId: TermOfOfficeId)
-    : Either[ComputingError, List[VoteReduced]] = {
+  def listForTermOfOffice(
+    termOfOfficeId: TermOfOfficeId
+  ): Either[ComputingError, List[VoteReduced]] = {
 
     val term = TermOfOfficeRepo.byId(termOfOfficeId)
 
     term match {
       case Some(termValue) =>
-        Right(list().filter(vote => isDateInRange(vote.dateTime, termValue)))
+        Right(
+          list().filter(
+            vote =>
+              isDateInTermOfficeRange(
+                vote.dateTime,
+                termValue
+              )
+          )
+        )
       case None =>
-        Left(DBNotExpectedResult(
-          s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"))
+        Left(
+          DBNotExpectedResult(
+            s"TermOfOffice with this ID should have been found in the DB. Id: ${termOfOfficeId.term_of_office_id}"
+          )
+        )
     }
   }
 
-  private def isDateInRange(voteTime: VoteTime,
-                            termOfOffice: TermOfOffice): Boolean = {
-    termOfOffice.dateTo match {
-      case Some(dateTo) =>
-        voteTime.time.millis < dateTo.dateTo.millis && voteTime.time.millis > termOfOffice.dateFrom.dateFrom.millis
+  private def isDateInRange(
+    voteTime: VoteTime,
+    dateFrom: SharedDateTime,
+    dateTo: Option[SharedDateTime]
+  ): Boolean = {
+    dateTo match {
+      case Some(dateToV) =>
+        voteTime.time.millis < dateToV.millis && voteTime.time.millis > dateFrom.millis
       case None => //Current term
-        voteTime.time.millis > termOfOffice.dateFrom.dateFrom.millis
+        voteTime.time.millis > dateFrom.millis
     }
   }
 
-  def byPersonIdAndTerm(personId: ParliamentMemberId,
-                        termOfOffice: TermOfOffice): List[VoteReduced] = {
-    /* I just want to say that quill sucks big time. Don't waste your time. */
+  private def isDateInTermOfficeRange(
+    voteTime: VoteTime,
+    termOfOffice: TermOfOffice
+  ): Boolean = {
+    isDateInRange(
+      voteTime,
+      sharedDOToSharedDT(termOfOffice.dateFrom.dateFrom),
+      termOfOffice.dateTo
+        .map(_.dateTo)
+        .map(sharedDOToSharedDT)
+    )
+  }
+
+  def byPersonIdAndRange(
+    personId: ParliamentMemberId,
+    termOfOffice: TermOfOffice,
+    from: SharedDateTime,
+    to: SharedDateTime
+  ): List[VoteReduced] = {
     val q = quote {
       for {
         p <- query[Vote]
-          .filter(_.personId.person_id == lift(personId.person_id))
+          .filter(
+            _.personId.person_id == lift(personId.person_id)
+          )
       } yield {
         p
       }
@@ -83,7 +127,33 @@ object VoteRepo {
 
     ctx
       .run(q)
-      .filter(v => isDateInRange(v.time, termOfOffice))
+      .filter(
+        v => isDateInRange(v.time, from, Some(to))
+      )
+      .map(toVoteReduced)
+  }
+
+  def byPersonIdAndTerm(
+    personId: ParliamentMemberId,
+    termOfOffice: TermOfOffice
+  ): List[VoteReduced] = {
+    /* I just want to say that quill sucks big time. Don't waste your time. */
+    val q = quote {
+      for {
+        p <- query[Vote]
+          .filter(
+            _.personId.person_id == lift(personId.person_id)
+          )
+      } yield {
+        p
+      }
+    }
+
+    ctx
+      .run(q)
+      .filter(
+        v => isDateInTermOfficeRange(v.time, termOfOffice)
+      )
       .map(toVoteReduced)
   }
 

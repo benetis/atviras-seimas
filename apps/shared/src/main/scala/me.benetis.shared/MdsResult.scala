@@ -7,22 +7,22 @@ case class EigenValues(value: Array[Double])
     extends Embedded
 
 case class MdsPointWithAdditionalInfo(
-    x: Double,
-    y: Double,
-    id: ParliamentMemberTermOfOfficeSpecificId,
-    factionName: ParliamentMemberFactionName,
-    parliamentMemberId: ParliamentMemberId,
-    parliamentMemberName: ParliamentMemberName,
-    parliamentMemberSurname: ParliamentMemberSurname
-) extends Embedded
+  x: Double,
+  y: Double,
+  id: ParliamentMemberTermOfOfficeSpecificId,
+  factionName: ParliamentMemberFactionName,
+  parliamentMemberId: ParliamentMemberId,
+  parliamentMemberName: ParliamentMemberName,
+  parliamentMemberSurname: ParliamentMemberSurname)
+    extends Embedded
     with ScatterPoint
 
 /* Data class used for visualization */
 case class MdsPointOnlyXAndY(
-    x: Double,
-    y: Double,
-    id: ParliamentMemberTermOfOfficeSpecificId,
-) extends Embedded
+  x: Double,
+  y: Double,
+  id: ParliamentMemberTermOfOfficeSpecificId)
+    extends Embedded
     with ScatterPoint
 
 object MdsPointOnlyXAndY {
@@ -51,22 +51,29 @@ object MDSProportion {
 object MDSCoordinates {
   implicit val pickler
     : Pickler[MDSCoordinates[MdsPointWithAdditionalInfo]] =
-    generatePickler[
-      MDSCoordinates[MdsPointWithAdditionalInfo]]
+    generatePickler[MDSCoordinates[
+      MdsPointWithAdditionalInfo
+    ]]
 }
 case class MDSProportion(value: Array[Double])
     extends Embedded
 case class MDSCoordinates[T <: ScatterPoint](
-    value: Vector[T])
+  value: Vector[T])
     extends Embedded
 
+case class MdsResultFrom(from: SharedDateTime)
+    extends Embedded
+case class MdsResultTo(to: SharedDateTime) extends Embedded
+
 case class MdsResult[T <: ScatterPoint](
-    eigenValues: EigenValues,
-    proportion: MDSProportion,
-    coordinates: MDSCoordinates[T],
-    createdAt: SharedDateTime,
-    termOfOfficeId: TermOfOfficeId
-) extends Embedded
+  eigenValues: EigenValues,
+  proportion: MDSProportion,
+  coordinates: MDSCoordinates[T],
+  createdAt: SharedDateTime,
+  termOfOfficeId: TermOfOfficeId,
+  from: MdsResultFrom,
+  to: MdsResultTo)
+    extends Embedded
 
 object MdsResult {
   implicit val pickler: Pickler[MdsResult[ScatterPoint]] =

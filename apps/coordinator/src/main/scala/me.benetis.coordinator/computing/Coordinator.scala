@@ -1,5 +1,6 @@
 package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
+import me.benetis.coordinator.computing.MDS.MultidimensionalScaling
 import me.benetis.coordinator.repository.{
   ClusteringRepo,
   MDSRepo,
@@ -9,7 +10,7 @@ import me.benetis.coordinator.utils.ComputingError
 import me.benetis.shared._
 import me.benetis.shared.encoding.VoteEncoding
 import org.joda.time.DateTime
-import smile.mds.MDS
+import scala.collection.immutable
 
 object Coordinator extends LazyLogging {
   def apply(computingSettings: ComputingSettings) = {
@@ -17,8 +18,21 @@ object Coordinator extends LazyLogging {
       case ComputeMDS =>
         val termOfOfficeId = TermOfOfficeId(8)
         MultidimensionalScaling.calculate(termOfOfficeId) match {
-          case Right(mds) => MDSRepo.insert(mds)
-          case Left(err)  => logger.error(err.msg())
+          case Right(
+              mds: immutable.Seq[Either[
+                ComputingError,
+                MdsResult[MdsPointOnlyXAndY]
+              ]]
+              ) =>
+            mds.foreach {
+              case Right(singleMds) =>
+                MDSRepo.insert(singleMds)
+              case Left(err) =>
+                logger.error(
+                  s"MDS of ${mds.length} results size. Error '${err.msg()}'"
+                )
+            }
+          case Left(err) => logger.error(err.msg())
         }
       case ComputeKMeans =>
         val termOfOfficeId = TermOfOfficeId(8)

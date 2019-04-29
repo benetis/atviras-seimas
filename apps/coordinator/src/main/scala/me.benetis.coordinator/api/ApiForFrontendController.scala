@@ -52,7 +52,9 @@ object ApiForFrontendController
                 mds.proportion,
                 coords,
                 mds.createdAt,
-                mds.termOfOfficeId
+                mds.termOfOfficeId,
+                mds.from,
+                mds.to
               )
             )
           case Left(err) =>
