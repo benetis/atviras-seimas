@@ -74,6 +74,7 @@ object MultidimensionalScaling extends LazyLogging {
 
             coords.map(coords => {
               MdsResult(
+                None,
                 EigenValues(result.getEigenValues),
                 MDSProportion(result.getProportion),
                 coords,

@@ -48,6 +48,7 @@ object ApiForFrontendController
           case Right(coords) =>
             Some(
               MdsResult[MdsPointWithAdditionalInfo](
+                mds.id,
                 mds.eigenValues,
                 mds.proportion,
                 coords,

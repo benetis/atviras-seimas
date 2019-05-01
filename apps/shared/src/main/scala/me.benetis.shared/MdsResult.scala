@@ -66,7 +66,10 @@ case class MdsResultFrom(range_from: SharedDateTime)
 case class MdsResultTo(range_to: SharedDateTime)
     extends Embedded
 
+case class MdsResultId(id: Int) extends Embedded
+
 case class MdsResult[T <: ScatterPoint](
+  id: Option[MdsResultId],
   eigenValues: EigenValues,
   proportion: MDSProportion,
   coordinates: MDSCoordinates[T],
