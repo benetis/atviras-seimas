@@ -11,12 +11,15 @@ import me.benetis.shared.encoding.VoteEncoding
 import me.benetis.shared.{
   ParliamentMember,
   ParliamentMemberId,
+  SharedDateOnly,
   SingleVote,
   TermOfOffice,
+  TermOfOfficeDateTo,
   VoteReduced
 }
 import me.benetis.coordinator.utils.dates.SharedDateDecoders._
 import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import org.joda.time.DateTime
 
 case class ProximityMatrix(value: Array[Array[Double]]) {
   override def toString: String = {
@@ -29,7 +32,7 @@ object ProximityMatrix extends LazyLogging {
   def buildMatrices(
     termOfOffice: TermOfOffice,
     timeRangeOfMds: Option[Vector[TimeRangeOfMds]]
-  ): Vector[ProximityMatrix] = {
+  ): Map[TimeRangeOfMds, ProximityMatrix] = {
     ParliamentMemberRepo.updateTermsSpecificIds(
       termOfOffice
     )
@@ -39,27 +42,34 @@ object ProximityMatrix extends LazyLogging {
         termOfOffice.id
       )
 
-    val result: Vector[ProximityMatrix] =
+    val result =
       timeRangeOfMds match {
         case Some(ranges) =>
           logger.info(
             s"Start building ${ranges.length} proximity matrixes"
           )
-          ranges.map(
-            range =>
-              buildMatrix(
-                members,
-                termOfOffice,
-                Some(range)
-              )
-          )
+          ranges
+            .map(
+              range =>
+                range -> buildMatrix(
+                  members,
+                  termOfOffice,
+                  Some(range)
+                )
+            )
+            .toMap
 
         case None =>
           logger.info(
             s"Start building proximity matrix"
           )
-          Vector(
-            buildMatrix(members, termOfOffice)
+          Map(
+            TimeRangeOfMds(
+              sharedDOToDT(termOfOffice.dateFrom.dateFrom),
+              termOfOffice.dateTo.fold(
+                DateTime.now()
+              )(d => sharedDOToDT(d.dateTo))
+            ) -> buildMatrix(members, termOfOffice)
           )
       }
 

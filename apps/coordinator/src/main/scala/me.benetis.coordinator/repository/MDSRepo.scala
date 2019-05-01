@@ -22,23 +22,26 @@ object MDSRepo extends LazyLogging {
     MappedEncoding[MDSProportion, String](write(_))
 
   implicit val mdsCoordinatesEncoding =
-    MappedEncoding[MDSCoordinates[MdsPointOnlyXAndY],
-                   String](write(_))
+    MappedEncoding[MDSCoordinates[MdsPointOnlyXAndY], String](
+      write(_)
+    )
 
   implicit val eigenDecoding =
     MappedEncoding[String, EigenValues](
-      read[EigenValues](_))
+      read[EigenValues](_)
+    )
 
   implicit val mdsProportionDecoding =
     MappedEncoding[String, MDSProportion](
-      read[MDSProportion](_))
+      read[MDSProportion](_)
+    )
 
   implicit val mdsCoordinatesDecoding =
-    MappedEncoding[String,
-                   MDSCoordinates[MdsPointOnlyXAndY]](
-      (coords: String) => {
-        read[MDSCoordinates[MdsPointOnlyXAndY]](coords)
-      })
+    MappedEncoding[String, MDSCoordinates[
+      MdsPointOnlyXAndY
+    ]]((coords: String) => {
+      read[MDSCoordinates[MdsPointOnlyXAndY]](coords)
+    })
 
   private implicit val MDSInsertMeta =
     insertMeta[MdsResult[MdsPointOnlyXAndY]]()
@@ -50,17 +53,21 @@ object MDSRepo extends LazyLogging {
         .onConflictIgnore
     }
 
+    println(q.toString)
+
     ctx.run(q)
   }
 
-  def byTermOfOffice(termOfOfficeId: TermOfOfficeId)
-    : Option[MdsResult[MdsPointOnlyXAndY]] = {
+  def byTermOfOffice(
+    termOfOfficeId: TermOfOfficeId
+  ): Option[MdsResult[MdsPointOnlyXAndY]] = {
     val q = quote {
       for {
         p <- query[MdsResult[MdsPointOnlyXAndY]]
           .filter(
             _.termOfOfficeId.term_of_office_id == lift(
-              termOfOfficeId.term_of_office_id)
+              termOfOfficeId.term_of_office_id
+            )
           )
           .sortBy(_.createdAt)(Ord.desc)
       } yield {

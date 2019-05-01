@@ -46,7 +46,7 @@
 	}   
    \newglossaryentry{k-means}
 	{
-		name=k means,
+		name=\textit{k-means},
 		description={ }
 	} 
    \newglossaryentry{dissimilarity_matrix}
@@ -67,15 +67,12 @@
     \newacronym{ip}{IP}{ Internet protocol address }
     \newacronym{tfidf}{TFIDF}{ Term Frequency Inverse Document Frequency }
     \newacronym{io}{IO}{ Input/Output }
-    \newacronym{mds}{MDS}{ Multidimensional scaling }
+    \newacronym{mds}{MDS}{ Multidimensional scaling}
     \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania } 
     \newacronym{xml}{XML}{ PLACEHOLDER }   
     
     \begin{document}
-    
-    % \title{\large Analysis for\\ \huge Detecting and analysing computer generated comments}
-    % \author{Author: Žygimantas Benetis\\Supervisor: Prof. Dr. Tomas Krilavičius}
-    % \maketitle
+   
     
     \pagenumbering{roman}
     
@@ -84,7 +81,17 @@
     \end{center}
         
         \addcontentsline{toc}{section}{\numberline{}\kern-1.5emAbstract}%
-        Abstract
+        
+%         \title{{\vspace{-4cm} \large Lithuanian parliament legislative voting analysis and vizualization} \vspace{-1cm}}
+%         \author{\small Author: Žygimantas Benetis\\\small Supervisor: Prof. Dr. Tomas Krilavičius}
+%         \maketitle
+        
+        In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. Due nature of politics, a problem arises once citizens wants to observe and evaluate parliament members work. Main output of parliament is their votes for various legislatures. Voting data is publicly available through \gls{lrs} website. This project aims to visualize voting patterns and their changes. Another goal is to provide public access to results.
+        
+        In the project \gls{mds} and \gls{k-means} clustering are used to analyze voting patterns. Software to download, process and visualize  data is written with \gls{scala}.
+        
+        
+        
     \clearpage
     
     \tableofcontents

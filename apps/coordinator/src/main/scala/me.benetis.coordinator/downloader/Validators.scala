@@ -46,13 +46,13 @@ case class EmptyField(
 case class FieldIsNotAnInt(field: String)
     extends DomainValidation {
   override def errorMessage: String =
-    s"Field '$field' cannot be converted to int"
+    s"Field '$field' cannot be converted rangeTo int"
 }
 
 case class PlenaryShouldBeStarted(plenaryId: PlenaryId)
     extends DomainValidation {
   override def errorMessage: String =
-    s"Plenary '${plenaryId.plenary_id}' must have start timeString for it to have agenda questions"
+    s"Plenary '${plenaryId.plenary_id}' must have start timeString for it rangeTo have agenda questions"
 }
 
 sealed trait FileOrConnectivityError {

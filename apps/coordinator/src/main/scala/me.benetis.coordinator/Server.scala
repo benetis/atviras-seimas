@@ -75,7 +75,7 @@ object Server {
         case e: Throwable =>
           extractUri { uri =>
             println(
-              s"Request to $uri could not be handled normally"
+              s"Request rangeTo $uri could not be handled normally"
             )
             println(e.getMessage)
             println(e.printStackTrace())
@@ -120,11 +120,11 @@ object Server {
       Http().bindAndHandle(route, "0.0.0.0", 8080)
 
     println(
-      s"Server online at http://0.0.0.0:8080/\nPress RETURN to stop..."
+      s"Server online at http://0.0.0.0:8080/\nPress RETURN rangeTo stop..."
     )
     StdIn.readLine() // let it run until user presses return
     bindingFuture
-      .flatMap(_.unbind())                 // trigger unbinding from the port
+      .flatMap(_.unbind())                 // trigger unbinding rangeFrom the port
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
 }

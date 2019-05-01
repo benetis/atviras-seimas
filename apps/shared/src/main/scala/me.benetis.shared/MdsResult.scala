@@ -61,9 +61,10 @@ case class MDSCoordinates[T <: ScatterPoint](
   value: Vector[T])
     extends Embedded
 
-case class MdsResultFrom(from: SharedDateTime)
+case class MdsResultFrom(range_from: SharedDateTime)
     extends Embedded
-case class MdsResultTo(to: SharedDateTime) extends Embedded
+case class MdsResultTo(range_to: SharedDateTime)
+    extends Embedded
 
 case class MdsResult[T <: ScatterPoint](
   eigenValues: EigenValues,
@@ -71,8 +72,8 @@ case class MdsResult[T <: ScatterPoint](
   coordinates: MDSCoordinates[T],
   createdAt: SharedDateTime,
   termOfOfficeId: TermOfOfficeId,
-  from: MdsResultFrom,
-  to: MdsResultTo)
+  rangeFrom: MdsResultFrom,
+  rangeTo: MdsResultTo)
     extends Embedded
 
 object MdsResult {

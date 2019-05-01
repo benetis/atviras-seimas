@@ -55,11 +55,11 @@ object MultidimensionalScaling extends LazyLogging {
         termOfOffice,
         Some(timeRangeOfMds)
       )
-      .map(matrix => {
+      .map((matrix: (TimeRangeOfMds, ProximityMatrix)) => {
         val outputDimensions = 2
 
         val resultEith: Either[Throwable, MDS] =
-          Try(mds(matrix.value, outputDimensions)).toEither
+          Try(mds(matrix._2.value, outputDimensions)).toEither
 
         resultEith
           .flatMap(result => {
@@ -80,11 +80,11 @@ object MultidimensionalScaling extends LazyLogging {
                 SharedDateTime(DateTime.now().getMillis),
                 termOfOffice.id,
                 MdsResultFrom(
-                  timeRangeOfMds.head.from
+                  matrix._1.from
                     .toSharedDateTime()
                 ),
                 MdsResultTo(
-                  timeRangeOfMds.last.to.toSharedDateTime()
+                  matrix._1.to.toSharedDateTime()
                 )
               )
             })
@@ -100,6 +100,7 @@ object MultidimensionalScaling extends LazyLogging {
           )
 
       })
+      .toVector
 
   }
 

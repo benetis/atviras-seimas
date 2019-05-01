@@ -23,7 +23,8 @@ object ParliamentMemberRepo extends LazyLogging {
         e =>
           query[ParliamentMember]
             .insert(e)
-            .onConflictIgnore(_.uniqueId))
+            .onConflictIgnore(_.uniqueId)
+      )
     }
     ctx.run(q)
   }
@@ -40,13 +41,16 @@ object ParliamentMemberRepo extends LazyLogging {
     ctx.run(q)
   }
 
-  def listByTermOfOffice(termOfOfficeId: TermOfOfficeId)
-    : List[ParliamentMember] = {
+  def listByTermOfOffice(
+    termOfOfficeId: TermOfOfficeId
+  ): List[ParliamentMember] = {
     val q = quote {
       for {
         p <- query[ParliamentMember].filter(
           _.termOfOfficeId.term_of_office_id == lift(
-            termOfOfficeId.term_of_office_id))
+            termOfOfficeId.term_of_office_id
+          )
+        )
       } yield {
         p
       }
@@ -56,7 +60,8 @@ object ParliamentMemberRepo extends LazyLogging {
   }
 
   def updateTermsSpecificIds(
-      termOfOffice: TermOfOffice): Unit = {
+    termOfOffice: TermOfOffice
+  ): Unit = {
 
     logger.info("Update members with term specific ids")
 
@@ -66,7 +71,8 @@ object ParliamentMemberRepo extends LazyLogging {
       case (m, i) =>
         m.copy(
           termOfOfficeSpecificId =
-            Some(ParliamentMemberTermOfOfficeSpecificId(i)))
+            Some(ParliamentMemberTermOfOfficeSpecificId(i))
+        )
     }
 
     updateSpecificIds(updated)
@@ -74,19 +80,23 @@ object ParliamentMemberRepo extends LazyLogging {
   }
 
   private def updateSpecificIds(
-      members: List[ParliamentMember]): Unit = {
+    members: List[ParliamentMember]
+  ): Unit = {
 
-    //Unsafe as it requires byId id to be set, but works
+    //Unsafe as it requires byId id rangeTo be set, but works
 
     val q = quote {
       liftQuery(members).foreach { person =>
         query[ParliamentMember]
-          .filter(p =>
-            p.personId.person_id == person.personId.person_id)
-          .update(p =>
-            p.termOfOfficeSpecificId
-              .map(_.term_of_office_specific_id) -> person.termOfOfficeSpecificId
-              .map(_.term_of_office_specific_id))
+          .filter(
+            p => p.personId.person_id == person.personId.person_id
+          )
+          .update(
+            p =>
+              p.termOfOfficeSpecificId
+                .map(_.term_of_office_specific_id) -> person.termOfOfficeSpecificId
+                .map(_.term_of_office_specific_id)
+          )
       }
     }
 
