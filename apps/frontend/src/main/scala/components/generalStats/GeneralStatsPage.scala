@@ -113,7 +113,7 @@ object GeneralStatsPage {
             <.div(
               MDSChart.apply(
                 MDSChart.Props(
-                  p.proxy.value.generalStats.mdsResult,
+                  p.proxy.value.generalStats.mdsResults.headOption,
                   p.proxy.zoom(_.generalStats)
                 )
               )

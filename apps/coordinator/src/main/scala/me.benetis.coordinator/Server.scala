@@ -75,7 +75,7 @@ object Server {
         case e: Throwable =>
           extractUri { uri =>
             println(
-              s"Request rangeTo $uri could not be handled normally"
+              s"Request to $uri could not be handled normally"
             )
             println(e.getMessage)
             println(e.printStackTrace())
@@ -120,7 +120,7 @@ object Server {
       Http().bindAndHandle(route, "0.0.0.0", 8080)
 
     println(
-      s"Server online at http://0.0.0.0:8080/\nPress RETURN rangeTo stop..."
+      s"Server online at http://0.0.0.0:8080/\nPress RETURN to stop..."
     )
     StdIn.readLine() // let it run until user presses return
     bindingFuture

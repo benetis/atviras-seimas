@@ -137,7 +137,7 @@ object VoteRepo {
     personId: ParliamentMemberId,
     termOfOffice: TermOfOffice
   ): List[VoteReduced] = {
-    /* I just want rangeTo say that quill sucks big time. Don't waste your time. */
+    /* I just want to say that quill sucks big time. Don't waste your time. */
     val q = quote {
       for {
         p <- query[Vote]

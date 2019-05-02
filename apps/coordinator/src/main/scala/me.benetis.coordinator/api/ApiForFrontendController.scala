@@ -25,20 +25,18 @@ import cats.instances.either._
 object ApiForFrontendController
     extends ApiForFrontend
     with LazyLogging {
-  override def fetchMdsResults(
+  override def fetchMdsList(
     termOfOfficeId: TermOfOfficeId
-  ): Option[MdsResult[MdsPointWithAdditionalInfo]] = {
-
-    val mdsResultOpt =
+  ): Vector[MdsResult[MdsPointWithAdditionalInfo]] = {
+    val mdsResultList =
       MDSRepo.byTermOfOffice(termOfOfficeId)
 
     val members = ParliamentMemberRepo.listByTermOfOffice(
       termOfOfficeId
     )
 
-    /* we can't map because we change the type */
-    mdsResultOpt match {
-      case Some(mds) =>
+    mdsResultList.flatMap(
+      (mds: MdsResult[MdsPointOnlyXAndY]) => {
         val updatedCoords = mds.coordinates.value
           .map(p => addAdditionalInfoToMds(p, members))
           .sequence
@@ -62,10 +60,14 @@ object ApiForFrontendController
             logger.error(err.msg())
             None
         }
-
-      case None => None
-    }
+      }
+    )
   }
+
+  override def fetchMdsResults(
+    termOfOfficeId: TermOfOfficeId
+  ): Option[MdsResult[MdsPointWithAdditionalInfo]] =
+    fetchMdsList(termOfOfficeId).headOption
 
   private def addAdditionalInfoToMds(
     mdsPointOnly: MdsPointOnlyXAndY,

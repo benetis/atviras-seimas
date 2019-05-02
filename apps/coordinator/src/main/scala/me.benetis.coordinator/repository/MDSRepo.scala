@@ -60,7 +60,7 @@ object MDSRepo extends LazyLogging {
 
   def byTermOfOffice(
     termOfOfficeId: TermOfOfficeId
-  ): Option[MdsResult[MdsPointOnlyXAndY]] = {
+  ): Vector[MdsResult[MdsPointOnlyXAndY]] = {
     val q = quote {
       for {
         p <- query[MdsResult[MdsPointOnlyXAndY]]
@@ -75,7 +75,7 @@ object MDSRepo extends LazyLogging {
       }
     }
 
-    ctx.run(q).headOption
+    ctx.run(q).toVector
   }
 
 }

@@ -6,6 +6,11 @@ import me.benetis.shared.{
 }
 
 trait ApiForFrontend {
-  def fetchMdsResults(termOfOfficeId: TermOfOfficeId)
-    : Option[MdsResult[MdsPointWithAdditionalInfo]]
+  def fetchMdsResults(
+    termOfOfficeId: TermOfOfficeId
+  ): Option[MdsResult[MdsPointWithAdditionalInfo]]
+
+  def fetchMdsList(
+    termOfOfficeId: TermOfOfficeId
+  ): Vector[MdsResult[MdsPointWithAdditionalInfo]]
 }

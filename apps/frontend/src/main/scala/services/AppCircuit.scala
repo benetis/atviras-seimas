@@ -26,13 +26,13 @@ case class RootModel(generalStats: GeneralStatisticsModel)
 
 case class GeneralStatisticsModel(
   selectedGeneralStatsChart: GeneralStatsSelectedChart,
-  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]],
+  mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]],
   mdsFilters: Set[Filter])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
     extends Action
 case class MdsResultLoaded(
-  mdsResult: Option[MdsResult[MdsPointWithAdditionalInfo]])
+  mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]])
     extends Action
 case class SetSelectedGeneralStatsTab(
   chart: GeneralStatsSelectedChart)
@@ -48,7 +48,7 @@ object AppCircuit
     RootModel(
       GeneralStatisticsModel(
         SelectedMdsChart,
-        None,
+        Vector.empty,
         Set.empty
       )
     )
@@ -59,13 +59,13 @@ object AppCircuit
         effectOnly(
           Effect(
             AjaxClient[ApiForFrontend]
-              .fetchMdsResults(termOfOfficeId)
+              .fetchMdsList(termOfOfficeId)
               .call()
               .map(MdsResultLoaded)
           )
         )
       case MdsResultLoaded(mdsResult) =>
-        updated(value.copy(mdsResult = mdsResult))
+        updated(value.copy(mdsResults = mdsResult))
       case SetSelectedGeneralStatsTab(tab) =>
         updated(
           value.copy(
