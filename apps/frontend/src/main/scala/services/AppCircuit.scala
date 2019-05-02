@@ -8,6 +8,7 @@ import me.benetis.shared.{
   DiscussionLength,
   MdsPointWithAdditionalInfo,
   MdsResult,
+  MdsResultId,
   TermOfOfficeId
 }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,6 +28,7 @@ case class RootModel(generalStats: GeneralStatisticsModel)
 case class GeneralStatisticsModel(
   selectedGeneralStatsChart: GeneralStatsSelectedChart,
   mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]],
+  mdsSelectedId: Option[MdsResultId],
   mdsFilters: Set[Filter])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
@@ -34,6 +36,10 @@ case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
 case class MdsResultLoaded(
   mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]])
     extends Action
+
+case class SetSelectedMdsResult(mdsSelectedId: MdsResultId)
+    extends Action
+
 case class SetSelectedGeneralStatsTab(
   chart: GeneralStatsSelectedChart)
     extends Action
@@ -47,9 +53,10 @@ object AppCircuit
   def initialModel =
     RootModel(
       GeneralStatisticsModel(
-        SelectedMdsChart,
-        Vector.empty,
-        Set.empty
+        selectedGeneralStatsChart = SelectedMdsChart,
+        mdsResults = Vector.empty,
+        mdsSelectedId = None,
+        mdsFilters = Set.empty
       )
     )
 
@@ -72,6 +79,13 @@ object AppCircuit
             selectedGeneralStatsChart = tab
           )
         )
+      case SetSelectedMdsResult(mdsId) =>
+        updated(
+          value.copy(
+            mdsSelectedId = Some(mdsId)
+          )
+        )
+
       case AddMdsFilter(filter: Filter) =>
         if (filter.value.nonEmpty)
           updated(

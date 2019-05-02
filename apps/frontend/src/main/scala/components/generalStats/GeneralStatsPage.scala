@@ -2,11 +2,13 @@ package components.generalStats
 
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
+import japgolly.scalajs.react.extra.Reusable
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
   MdsResult,
+  MdsResultId,
   TermOfOfficeId
 }
 import org.scalajs.dom
@@ -18,7 +20,8 @@ import services.{
   RootModel,
   SelectedClustering,
   SelectedMdsChart,
-  SetSelectedGeneralStatsTab
+  SetSelectedGeneralStatsTab,
+  SetSelectedMdsResult
 }
 import utils.Pages.{GeneralStats, Home}
 
@@ -44,7 +47,6 @@ object GeneralStatsPage {
     .build
 
   class Backend($ : BackendScope[Props, Unit]) {
-
     def onComponentMount(p: Props): Callback = {
       p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
     }
@@ -89,6 +91,26 @@ object GeneralStatsPage {
       )
     }
 
+    val onDateRangeChange =
+      Reusable.fn((id: MdsResultId) => {
+
+        $.props.flatMap(
+          props =>
+            props.proxy.dispatchCB(SetSelectedMdsResult(id))
+        )
+
+      })
+
+    def selectFirst(
+      mdsList: Vector[MdsResult[MdsPointWithAdditionalInfo]]
+    ): Option[MdsResultId] = {
+      val first
+        : Option[MdsResult[MdsPointWithAdditionalInfo]] =
+        mdsList.headOption
+
+      first.flatMap(_.id)
+    }
+
     def render(
       p: Props,
       s: Unit
@@ -113,7 +135,11 @@ object GeneralStatsPage {
             <.div(
               MDSChart.apply(
                 MDSChart.Props(
-                  p.proxy.value.generalStats.mdsResults.headOption,
+                  p.proxy.value.generalStats.mdsResults,
+                  selectFirst(
+                    p.proxy.value.generalStats.mdsResults
+                  ),
+                  onDateRangeChange,
                   p.proxy.zoom(_.generalStats)
                 )
               )

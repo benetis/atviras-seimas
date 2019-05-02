@@ -1,16 +1,18 @@
 package components.generalStats
 
 import cats.data
-import components.FactionLegend
+import components.ChartDateRange
 import components.charts.ScatterPlot
 import components.filter.{DataFilter, Filter}
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
+import japgolly.scalajs.react.extra.~=>
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.common.Charts.ScatterPlotPointPosition
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
   MdsResult,
+  MdsResultId,
   ParliamentMemberName,
   ParliamentMemberSurname
 }
@@ -28,9 +30,11 @@ object MDSChart {
   val styles = GlobalRegistry[Style].get
 
   case class Props(
-    mdsResult: Option[
+    mdsResults: Vector[
       MdsResult[MdsPointWithAdditionalInfo]
     ],
+    mdsSelectedId: Option[MdsResultId],
+    onMdsResultChange: MdsResultId ~=> Callback,
     proxy: ModelProxy[GeneralStatisticsModel])
 
   private val component = ScalaComponent
@@ -128,34 +132,43 @@ object MDSChart {
       p: Props,
       s: Unit
     ) = {
-      p.mdsResult.fold(<.div("Empty MDS"))(
-        (result: MdsResult[MdsPointWithAdditionalInfo]) =>
-          <.div(
-            styles.container,
-            DataFilter(DataFilter.Props(p.proxy)),
-            ScatterPlot(
-              ScatterPlot
-                .Props[MdsPointWithAdditionalInfo](
-                  data = addFilterFromState(
-                    p,
-                    result.coordinates.value
-                  ),
-                  pointToTagMod = mdsPoint,
-                  domain = ScatterPlot
-                    .Domain(-30, 30, -50, 50)
-                )
-            ),
-            <.h2(
-              styles.title,
-              "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
-            ),
-            FactionLegend(FactionLegend.Props()),
+
+      p.mdsResults
+        .find(_.id == p.mdsSelectedId)
+        .fold(<.div("Empty MDS"))(
+          (result: MdsResult[MdsPointWithAdditionalInfo]) =>
             <.div(
-              styles.dataFromTo,
-              "Duomenys nuo 2016.11.01 iki 2019.03.28"
+              styles.container,
+              DataFilter(DataFilter.Props(p.proxy)),
+              ChartDateRange(
+                ChartDateRange.Props(
+                  p.mdsSelectedId,
+                  p.mdsResults,
+                  p.onMdsResultChange
+                )
+              ),
+              ScatterPlot(
+                ScatterPlot
+                  .Props[MdsPointWithAdditionalInfo](
+                    data = addFilterFromState(
+                      p,
+                      result.coordinates.value
+                    ),
+                    pointToTagMod = mdsPoint,
+                    domain = ScatterPlot
+                      .Domain(-30, 30, -50, 50)
+                  )
+              ),
+              <.h2(
+                styles.title,
+                "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
+              ),
+              <.div(
+                styles.dataFromTo,
+                "Duomenys nuo 2016.11.01 iki 2019.03.28"
+              )
             )
-          )
-      )
+        )
     }
   }
 
