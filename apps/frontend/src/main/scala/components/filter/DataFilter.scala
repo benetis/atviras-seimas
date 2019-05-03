@@ -86,7 +86,7 @@ object DataFilter {
           <.input(
             ^.autoFocus := true,
             styles.inputBox,
-            ^.placeholder := "Tekstas pagal kurį filtruoti",
+            ^.placeholder := "Filtras pagal tekstą",
             ^.onChange ==> onChange,
             ^.onKeyUp ==> { e =>
               onKeyUp(e)(p, s)

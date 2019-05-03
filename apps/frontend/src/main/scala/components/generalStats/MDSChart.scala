@@ -66,14 +66,14 @@ object MDSChart {
 
       def checkMultipleFilters(
         valuesToFilter: Vector[String]
-      ): Boolean =
-        filtersToCheck.forall(
-          curr =>
-            doValuesMatchFilter(
-              curr,
-              valuesToFilter
-            )
-        )
+      ): Boolean = {
+        filtersToCheck.foldLeft(false)((prev, curr) => {
+          prev || doValuesMatchFilter(
+            curr,
+            valuesToFilter
+          )
+        })
+      }
 
       data.filter(point => {
         val fullName = constructName(
