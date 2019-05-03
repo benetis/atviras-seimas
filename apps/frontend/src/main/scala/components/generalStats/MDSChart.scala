@@ -1,6 +1,5 @@
 package components.generalStats
 
-import cats.data
 import components.ChartDateRange
 import components.charts.ScatterPlot
 import components.filter.{DataFilter, Filter}
@@ -157,7 +156,7 @@ object MDSChart {
                     ),
                     pointToTagMod = mdsPoint,
                     domain = ScatterPlot
-                      .Domain(-30, 30, -50, 50)
+                      .Domain(-20, 20, -20, 20)
                   )
               ),
               <.h2(
