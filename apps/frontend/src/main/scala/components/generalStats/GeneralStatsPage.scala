@@ -11,6 +11,7 @@ import me.benetis.shared.{
   MdsResultId,
   TermOfOfficeId
 }
+import diode.ActionHandler._
 import org.scalajs.dom
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
@@ -48,7 +49,8 @@ object GeneralStatsPage {
 
   class Backend($ : BackendScope[Props, Unit]) {
     def onComponentMount(p: Props): Callback = {
-      p.proxy.dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
+      p.proxy
+        .dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
     }
 
     def tabButton(text: String)(isActive: Boolean) =
@@ -101,16 +103,6 @@ object GeneralStatsPage {
 
       })
 
-    def selectFirst(
-      mdsList: Vector[MdsResult[MdsPointWithAdditionalInfo]]
-    ): Option[MdsResultId] = {
-      val first
-        : Option[MdsResult[MdsPointWithAdditionalInfo]] =
-        mdsList.headOption
-
-      first.flatMap(_.id)
-    }
-
     def render(
       p: Props,
       s: Unit
@@ -136,9 +128,7 @@ object GeneralStatsPage {
               MDSChart.apply(
                 MDSChart.Props(
                   p.proxy.value.generalStats.mdsResults,
-                  selectFirst(
-                    p.proxy.value.generalStats.mdsResults
-                  ),
+                  p.proxy.value.generalStats.mdsSelectedId,
                   onDateRangeChange,
                   p.proxy.zoom(_.generalStats)
                 )

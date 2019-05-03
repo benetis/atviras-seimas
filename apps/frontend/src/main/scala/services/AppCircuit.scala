@@ -15,6 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
 import boopickle.Default._
 import components.filter.Filter
+import japgolly.scalajs.react.Callback
 import org.scalajs.dom
 
 sealed trait GeneralStatsSelectedChart
@@ -72,14 +73,24 @@ object AppCircuit
           )
         )
       case MdsResultLoaded(mdsResult) =>
-        updated(value.copy(mdsResults = mdsResult))
+        val selectFirstIdOpt =
+          mdsResult.headOption
+            .flatMap(_.id)
+
+        updated(
+          value.copy(
+            mdsResults = mdsResult,
+            mdsSelectedId = selectFirstIdOpt
+          )
+        )
+
       case SetSelectedGeneralStatsTab(tab) =>
         updated(
           value.copy(
             selectedGeneralStatsChart = tab
           )
         )
-      case SetSelectedMdsResult(mdsId) =>
+      case SetSelectedMdsResult(mdsId: MdsResultId) =>
         updated(
           value.copy(
             mdsSelectedId = Some(mdsId)

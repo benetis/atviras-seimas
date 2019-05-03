@@ -20,6 +20,7 @@ import model.FactionColors
 import scalacss.internal.mutable.GlobalRegistry
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
+import org.scalajs.dom
 import services.GeneralStatisticsModel
 
 object MDSChart {
@@ -136,7 +137,7 @@ object MDSChart {
       p.mdsResults
         .find(_.id == p.mdsSelectedId)
         .fold(<.div("Empty MDS"))(
-          (result: MdsResult[MdsPointWithAdditionalInfo]) =>
+          (result: MdsResult[MdsPointWithAdditionalInfo]) => {
             <.div(
               styles.container,
               DataFilter(DataFilter.Props(p.proxy)),
@@ -168,6 +169,7 @@ object MDSChart {
                 "Duomenys nuo 2016.11.01 iki 2019.03.28"
               )
             )
+          }
         )
     }
   }
