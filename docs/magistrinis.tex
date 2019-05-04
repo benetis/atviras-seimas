@@ -430,7 +430,8 @@
    			Select different time periods for \gls{mds} results & \checkmark & \checkmark \\
    			View clustering results & \checkmark & \checkmark \\
 			Filter clustering results & \checkmark & \checkmark \\
-			Automatically update data with http query &  & \checkmark \\
+			Automatically download data with http query &  & \checkmark \\
+			Automatically compute data with http query &  & \checkmark \\
    			\hline
    		\end{tabular}
    		\captionof{table}{Functional requirements for \gls{atviras_seimas}} \label{tab:system_features}
@@ -451,18 +452,20 @@
    	\hfill
    	
   	\subsubsection{Data flow diagram}
-		Data flow diagram
-		        \begin{figure}[H]	
-		    	\centering
-		    	\includegraphics[width=10.5cm]{images/data_flow_overview.png}
-		    	\caption{Data flow from database to \textit{k-means}}
-		    	\label{fig:data_flow_pipeline}
-		    \end{figure}
+		On \gls{atviras_seimas} software system data flow is visualized in figure \ref{fig:data_flow_pipeline}. Scientist can initiate coordinator to start \textit{Downloader} which will download data and clean data depending on the scientist query. Scientist can also initiate query which will process data with \acrshort{mds} or \gls{k-means}.
+
+      	\begin{figure}[H]	
+	    	\centering
+	    	\includegraphics[width=10.5cm]{images/data_flow_overview.png}
+	    	\caption{Data flow from database to \textit{k-means}}
+	    	\label{fig:data_flow_pipeline}
+  		\end{figure}
 		
 		    \vspace{1cm}
   	\subsection{Tools}
-    % 	\subsubsection{Programming language: {\textit Scala}}
+    \subsubsection{Programming language: {\textit Scala}}
     
+    Both research and software parts of the project were done using \gls{scala}. 
     
     \subsubsection{Database: {\textit MySQL}}
     \subsection{Downloader}
