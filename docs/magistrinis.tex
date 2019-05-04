@@ -62,7 +62,11 @@
 		name=atviras-seimas.lt,
 		description={ }
 	} 
-
+   \newglossaryentry{drawio}
+	{
+		name=draw.io,
+		description={ }
+	} 
 
 
     
@@ -356,6 +360,17 @@
 	
 		\subsection{Method analysis}
 	\subsubsection{MDS}
+	
+	\acrfull{mds} is a method to visualize similarity of individual cases for a specific dataset. It takes an input matrix called proximity matrix $\Upsilon$ (or distance matrix). Proximity matrix is symmetric matrix containing distances between all objects $\psi$. Or in more generic terms - it contains similarities or dissimilarities of pairs. Actual distance can be calculated using Euclidian distance as described in formula \ref{eq:1}. Classic \acrshort{mds} will assume distance to be Euclidian.
+	\begin{center}
+		\begin{equation}\label{eq:1}
+		d(\mathbf{p},\mathbf{q}) = \sqrt{\sum_{i=1}^n (q_i-p_i)^2}
+		\end{equation}
+	\end{center} 
+	
+	 Method outputs coordinate matrix minimizes loss function $strain$ \cite{BorgGroenen2005}. Given proximity matrix $\Upsilon$, goal of \acrshort{mds} is to find $\psi$ vectors $q_i,...,q_\psi$ such that $||q_i - q_j\| \approx \upsilon_{ij} \forall i,j \in 1,...,\upsilon$, where $||x||$ is vector norm. 
+	
+	
 	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
 	
 	Due missing labels of this dataset we are forced to look into unsupervised machine learning methods. \textit{k-means} clusterization \cite{clusterization} is one such method and it fits well with our features. This is due \acrshort{tfidf} which transforms text into vectors be used with \textit{k-means}.
@@ -372,7 +387,7 @@
  		\item Software development
  	\end{itemize}
  	
- 	If considered what is output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say there is a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Votes can be divided into groups depended on term of office $T$ during which they were cast. Each term of office $T_i$ can be divided into smaller empirically chosen time periods $\{p_1, p_2, ...p_n\}$. Each time periods can have votes assigned which were cast during that time. Goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
+ 	If considered what is output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say there is a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Votes can be divided into groups depended on term of office $T$ during which they were cast. Each term of office $T_i$ can be divided into smaller arbitrarily chosen time periods $\{p_1, p_2, ...p_n\}$. Each time periods can have votes assigned which were cast during that time. Goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
  	
  	In order to visualize voting patterns by members, its dimensions need to be reduced. With help of \acrfull{mds}, vote set $V$ with parameters set $P$ can be visualized on a two or one dimensional coordinate system. As discussed in literature analysis and \cite{poole_2005} voting patterns can be captured by only few dimensions. To observe how voting patterns change during time, different time periods could be chosen. Term of office should be the maximum time period $p_n$ to analyze, as majority and minority usually changes together with parliament members.
  	
@@ -389,8 +404,6 @@
  	% • Įvertinami siūlomi literatūroje teoriniai problemos %sprendimo būdai (metodai);
  	% • Pagrindžiama pasirinktos problemos tyrimo logika bei metodai.
  	% Teorinė dalis neturi būti aprašomojo (referato) pobūdžio. Darbo autorius privalo pateikti ir pagrįsti savo asmeninę nuomonę, diskutuoti su kitų tyrinėtojų teiginiais apie sprendžiamą problemą.
- 	
-    \subsection{Visualizations}
 
     
     \clearpage
@@ -456,14 +469,37 @@
     \subsection{Coordinator}
     \subsection{API server}
 %    \subsection{Repository}
+	\clearpage
+
     \subsection{User interface (Frontend)}
+    
+     To visualize voting patterns data needs to be projected on two or one dimensional plot. Each dot represented can be different parliament member and its position can indicate its voting pattern. The more scattered two points are - the more different voting patterns are. Each point can have color of faction to easier indicate clusters with human eye. Another important feature is view different time periods, even arbitrarily chosen. This enables users to inspect differences during term of office.   
+    Also it is worth to mention that parliament member change factions throughout term of office. For the sake of simplicity point color can be left to be faction color when member was elected to office. This approach has a drawback when looking at data changes during different periods, but it can keep things simplified.
+    
+    For users to inspect data with more than hundred points, filtering for members and factions needs to be present.
+    
+    Taking these things in mind, a possible application on desktop size screens created with \gls{drawio} diagram tool. It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
+    
+  	\begin{figure}[H]	
+    	\centering
+    	\includegraphics[width=9.5cm]{images/frontend_mockup_crop_1.png}
+    	\caption{Mockup of \gls{atviras_seimas} first screen}
+    	\label{fig:frontend_mockup}
+    \end{figure}
+
+  	\begin{figure}[H]	
+	\centering
+	\includegraphics[width=9.5cm]{images/frontend_mockup_crop_2.png}
+	\caption{Mockup of \gls{atviras_seimas} second screen}
+	\label{fig:frontend_mockup_2}
+	\end{figure}
     
     \clearpage
     
     \section{Description of experimental research}
     \subsection{Data statistics}
     
-   	Data statistics are calculated from data \gls{lrs_open} \acrshort{api} which was downloaded and saved to local database. Quite a big chunk data from 1997-2007 and 1990-1997 is missing due different information systems used at that time and other reasons. It was not migrated to current open data \acrshort{api}.
+   	Data statistics are calculated from data \gls{lrs_open} \acrshort{api} which was downloaded and saved to local database. Quite a big chunk data from 1990-2012 is missing due different information systems used at that time and other reasons. It was not migrated to current open data \acrshort{api}. For this reason this project focuses more on recent data, but it is not limited to analyze older data too if it becomes available.
     
    	\noindent
     \begin{center}
@@ -484,12 +520,17 @@
     	\end{tabular}
     	\captionof{table}{Statistics of downloaded data} \label{tab:data_statistics}
     \end{center}
+
     
     \hfill
     
     
    	\subsection{Experiments}
    	\subsubsection{MDS}
+   	
+   	
+   	
+   	
    	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
    	
    	\subsection{Results}
