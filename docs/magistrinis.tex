@@ -16,6 +16,9 @@
     \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
     \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
     \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \usepackage{tikz}
+    \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+    
     
     \makeglossaries
     
@@ -52,6 +55,11 @@
    \newglossaryentry{dissimilarity_matrix}
 	{
 		name=dissimilarity matrix,
+		description={ }
+	} 
+   \newglossaryentry{atviras_seimas}
+	{
+		name=atviras-seimas.lt,
 		description={ }
 	} 
 
@@ -129,15 +137,20 @@
 	In \textit{Spatial Models of Parliamentary Voting} \cite{poole_2005} author discusses how voter's positions on specific issues can be captured by his position on one or two dimensions such as liberalism or conservatism. This constraint means there are two spaces - one with few dimensions - basic  or ideological. The other - high dimensional space which represents remaining issues. This breakthrough might suggest \acrlong{mds} as a good performance method for visualization and analysis as majority of data is encoded in few dimensions.\\
 	
 	
-	There is also research done specifically on \gls{lrs} data. One such is \textit{On Structural Analysis of Parliamentarian Voting Data} \cite{DBLP:journals/informaticaLT/KrilaviciusZ08}. In this paper authors discuss about data reduction to \gls{dissimilarity_matrix}, vote encoding, \gls{mds} and its performance on specific dimensions. Authors focus on specific elections and term of office which is different from our goal. However, methods discussed and research results are relevant for this project.\\
+	There is research done specifically on \gls{lrs} data. One such is \textit{On Structural Analysis of Parliamentarian Voting Data} \cite{DBLP:journals/informaticaLT/KrilaviciusZ08}. In this paper authors discuss about data reduction to \gls{dissimilarity_matrix}, vote encoding, \gls{mds} and its performance on specific dimensions. Authors focus on specific elections and term of office which is different from our goal. However, methods discussed and research results are relevant for this project.\\
+	
+	Master thesis was written few years ago on \gls{lrs} voting which included similar analysis. One of research areas was to see if there are hidden groups in the parliament \cite{vytautas_mick_magistrinis}. Author was not able to detect hidden groups. In this project, goal, data and parameters are different so conclusion might differ too. Method used was \textit{k-means} clustering and data was showed on \gls{mds} reduced coordinates. In this project similar approach can be taken with different parameters like date ranges for votes.  \\
 	
 	In \textit{The new Voteview.com: preserving and continuing Keith Poole’s infrastructure for scholars, students and observers of Congress} \cite{article} paper, authors discuss famous \textit{Voteview.com} website. While website's primary goal is to provide open data access is different from ours - it contains useful information about how specific methods are used, how visualizations work. It also contains visualization which shows how data changed over time - how ideology and party composition changes.
+	
+		
+	
 	
 	\clearpage
 	
 	\subsection{Materials and methods}
    	
- 	\subsubsection{Lithuania's parliament open data analysis }
+ 	\subsubsection{Lithuania's parliament open data semantics analysis }
  	
  	In this section open data from \acrshort{xml} is reviewed. Only data and properties important to the project are included and commented on. All data is imported into \gls{mysql} database, therefore to demonstrate structure tables are used. Field types are inferred empirically by looking at data, therefore might not be correct in some cases. Moreover, data itself is not consistent through all years of \acrlong{lrs} activity.\\
 	
@@ -340,6 +353,15 @@
 	\hfill
 	
 	\clearpage
+	
+		\subsection{Method analysis}
+	\subsubsection{MDS}
+	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
+	
+	Due missing labels of this dataset we are forced to look into unsupervised machine learning methods. \textit{k-means} clusterization \cite{clusterization} is one such method and it fits well with our features. This is due \acrshort{tfidf} which transforms text into vectors be used with \textit{k-means}.
+	For distance between comments we can use cosine similarity \cite{cosine_similarity} due its nature of performing better when comparing texts. To compare we can try with Euclidian and Manhattan distances too.
+	
+	\clearpage
 	 
  	 
  	\subsection{Problem analysis}
@@ -350,13 +372,14 @@
  		\item Software development
  	\end{itemize}
  	
- 	If we consider what is the output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say we have a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Our goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
+ 	If considered what is output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say there is a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Votes can be divided into groups depended on term of office $T$ during which they were cast. Each term of office $T_i$ can be divided into smaller empirically chosen time periods $\{p_1, p_2, ...p_n\}$. Each time periods can have votes assigned which were cast during that time. Goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
  	
- 	With \gls{mds} XX
+ 	In order to visualize voting patterns by members, its dimensions need to be reduced. With help of \acrfull{mds}, vote set $V$ with parameters set $P$ can be visualized on a two or one dimensional coordinate system. As discussed in literature analysis and \cite{poole_2005} voting patterns can be captured by only few dimensions. To observe how voting patterns change during time, different time periods could be chosen. Term of office should be the maximum time period $p_n$ to analyze, as majority and minority usually changes together with parliament members.
  	
- 	With \gls{k-means} XX
+ 	Another goal is to see if votes can be classified to certain political groups` without knowing who voted. This also enables us to see if there are hidden factions between the explicitly stated ones. As discussed in literature analysis, in order to predict if voting pattern reveals political faction, majority or minority side, different amount of clusters need to be chosen. Finding clusters $\{c_1, c_2,...c_n\}$ representing political faction voting patterns and then assigning votes to the specifics clusters will show how similarly explicitly stated sides vote. 
  
  	
+ 	\clearpage
  	
  	%
  	% Problemos analizė – nagrinėjamoji problema turi būti atskleista moksliniais ar profesiniais terminais, mokslinėmis hipotezėmis ar techninėmis specifikacijomis. Problemos aktualumas turi būti pagrįstas literatūros ir savarankiška analitine apžvalga. Šioje dalyje:
@@ -367,12 +390,6 @@
  	% • Pagrindžiama pasirinktos problemos tyrimo logika bei metodai.
  	% Teorinė dalis neturi būti aprašomojo (referato) pobūdžio. Darbo autorius privalo pateikti ir pagrįsti savo asmeninę nuomonę, diskutuoti su kitų tyrinėtojų teiginiais apie sprendžiamą problemą.
  	
- 	\subsection{Method analysis}
-	\subsubsection{MDS}
-	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
-    
-    Due missing labels of this dataset we are forced to look into unsupervised machine learning methods. \textit{k-means} clusterization \cite{clusterization} is one such method and it fits well with our features. This is due \acrshort{tfidf} which transforms text into vectors be used with \textit{k-means}.
-    For distance between comments we can use cosine similarity \cite{cosine_similarity} due its nature of performing better when comparing texts. To compare we can try with Euclidian and Manhattan distances too.
     \subsection{Visualizations}
 
     
@@ -380,16 +397,56 @@
     
     \section{Software design}
     \subsection{Components of system}
+   	\subsubsection{Functional requirements}
+   	
+   	Main goal of software is to provide public access for masses to view analysis and research done in this project. Software will run on virtual server and be available online on \gls{atviras_seimas}. There are two main roles: guest user and scientist. Users will be able to access system with any modern browser. Scientist, or the person maintaining project will be able to update data to most recent one on \gls{lrs_open} website.
+   
+   	
+   	 Data is visualized using interactive diagrams. In table \ref{tab:system_features} functional requirements are presented.
+   	
+ 	\noindent
+   	\begin{center}
+   		\begin{tabular}{L{8cm} C{1cm} C{2cm}}
+   			\multicolumn{3}{c}{}\\ 
+   			\hline
+   			Requirement & User & Scientist \\
+   			\hline
+   			Access online with browser & \checkmark & \checkmark \\
+   			View \gls{mds} results & \checkmark & \checkmark \\
+   			Filter \gls{mds} results & \checkmark & \checkmark \\
+   			Select different time periods for \gls{mds} results & \checkmark & \checkmark \\
+   			View clustering results & \checkmark & \checkmark \\
+			Filter clustering results & \checkmark & \checkmark \\
+			Automatically update data with http query &  & \checkmark \\
+   			\hline
+   		\end{tabular}
+   		\captionof{table}{Functional requirements for \gls{atviras_seimas}} \label{tab:system_features}
+   	\end{center}
+   	
+   	\hfill
+   	
+   	\subsubsection{Non-functional requirements}
+   	
+   	Non functional requirements:
+   	\begin{itemize}
+   		\item Page should load faster than 2 seconds
+  		\item Data should update in less than a day after query running
+  		\item User experience for users should be good
+  		\item System source code should be open source
+   	\end{itemize}
+   	
+   	\hfill
+   	
   	\subsubsection{Data flow diagram}
 		Data flow diagram
-		%        \begin{figure}[H]	
-		%    	\centering
-		%    	\includegraphics[width=10.5cm]{images/data_flow_diagram.png}
-		%    	\caption{Data flow from database to \textit{k-means}}
-		%    	\label{fig:data_flow_pipeline}
-		%    \end{figure}
+		        \begin{figure}[H]	
+		    	\centering
+		    	\includegraphics[width=10.5cm]{images/data_flow_overview.png}
+		    	\caption{Data flow from database to \textit{k-means}}
+		    	\label{fig:data_flow_pipeline}
+		    \end{figure}
 		
-		%    \vspace{1cm}
+		    \vspace{1cm}
   	\subsection{Tools}
     % 	\subsubsection{Programming language: {\textit Scala}}
     
@@ -398,14 +455,39 @@
     \subsection{Downloader}
     \subsection{Coordinator}
     \subsection{API server}
-    \subsection{Repository}
+%    \subsection{Repository}
     \subsection{User interface (Frontend)}
     
-    \section{Description of experimental research}
+    \clearpage
     
-    \subsection{Data}
-    \subsubsection{Data semantics}
-    \subsubsection{Data statistics}
+    \section{Description of experimental research}
+    \subsection{Data statistics}
+    
+   	Data statistics are calculated from data \gls{lrs_open} \acrshort{api} which was downloaded and saved to local database. Quite a big chunk data from 1997-2007 and 1990-1997 is missing due different information systems used at that time and other reasons. It was not migrated to current open data \acrshort{api}.
+    
+   	\noindent
+    \begin{center}
+    	\begin{tabular}{L{5cm} R{3cm}}
+    		\multicolumn{2}{c}{}\\ 
+    		\hline
+    		Name & Count \\\hline
+    		Term of offices & 8\\
+    		Sessions & 101\\
+    		Parliament members & 1207\\
+    		Plenaries & 3977\\
+    		Vote rows & 3933006\\
+    		Votes & 28121\\
+    		Agenda questions & 64243\\
+    		Plenary questions (2012-) & 15108\\
+    		Discussion events (2007-) & 361996\\
+    		\hline
+    	\end{tabular}
+    	\captionof{table}{Statistics of downloaded data} \label{tab:data_statistics}
+    \end{center}
+    
+    \hfill
+    
+    
    	\subsection{Experiments}
    	\subsubsection{MDS}
    	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
