@@ -106,6 +106,8 @@ object MDSChart {
                       p,
                       result.coordinates.value
                     ),
+                    unfilteredData =
+                      result.coordinates.value,
                     pointToTagMod = mdsPoint
                   )
               ),

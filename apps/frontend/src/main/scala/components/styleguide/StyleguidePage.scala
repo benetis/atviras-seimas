@@ -67,6 +67,7 @@ object StyleguidePage {
         ScatterPlot
           .Props[ScatterDemoPoint](
             data = scatterPlotData,
+            unfilteredData = scatterPlotData,
             pointToTagMod = demoPoint,
             domain = Some(
               ScatterPlot

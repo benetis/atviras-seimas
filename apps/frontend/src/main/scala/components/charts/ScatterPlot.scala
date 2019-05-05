@@ -64,18 +64,28 @@ class ScatterPlot[T <: ScatterPoint] {
             def subtractThreshold(x: Double) =
               x - (Math.abs(x) * threshold)
 
-            val maxX = p.data.maxBy(_.x).x
-            val minX = p.data.minBy(_.x).x
+            if (p.unfilteredData.isEmpty) {
+              ScatterPlot.Domain(
+                -5,
+                5,
+                -5,
+                5
+              )
+            } else {
 
-            val maxY = p.data.maxBy(_.y).y
-            val minY = p.data.minBy(_.y).y
+              val maxX = p.unfilteredData.maxBy(_.x).x
+              val minX = p.unfilteredData.minBy(_.x).x
 
-            ScatterPlot.Domain(
-              subtractThreshold(minX),
-              addThreshold(maxX),
-              subtractThreshold(minY),
-              addThreshold(maxY)
-            )
+              val maxY = p.unfilteredData.maxBy(_.y).y
+              val minY = p.unfilteredData.minBy(_.y).y
+
+              ScatterPlot.Domain(
+                subtractThreshold(minX),
+                addThreshold(maxX),
+                subtractThreshold(minY),
+                addThreshold(maxY)
+              )
+            }
 
         }
       }
@@ -342,6 +352,7 @@ object ScatterPlot {
 
   case class Props[T](
     data: Vector[T],
+    unfilteredData: Vector[T],
     pointToTagMod: (T, ScatterPlotPointPosition) => TagMod,
     backgroundTagMod: TagMod =
       new ScatterPlot().styles.backgroundStyles,
