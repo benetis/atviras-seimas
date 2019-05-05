@@ -67,6 +67,8 @@
 		name=draw.io,
 		description={ }
 	} 
+\newglossaryentry{mockup}
+{name={Mockup},description={description}}
 
 
     
@@ -476,12 +478,13 @@
 
     \subsection{User interface (Frontend)}
     
-     To visualize voting patterns data needs to be projected on two or one dimensional plot. Each dot represented can be different parliament member and its position can indicate its voting pattern. The more scattered two points are - the more different voting patterns are. Each point can have color of faction to easier indicate clusters with human eye. Another important feature is view different time periods, even arbitrarily chosen. This enables users to inspect differences during term of office.   
-    Also it is worth to mention that parliament member change factions throughout term of office. For the sake of simplicity point color can be left to be faction color when member was elected to office. This approach has a drawback when looking at data changes during different periods, but it can keep things simplified.
+    \subsubsection{User flow}
     
-    For users to inspect data with more than hundred points, filtering for members and factions needs to be present.
+   	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool.
     
-    Taking these things in mind, a possible application on desktop size screens created with \gls{drawio} diagram tool. It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
+    Happy path NEEDS CITATION is x and y, copy from scatter plot.
+    
+    . It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
     
   	\begin{figure}[H]	
     	\centering
@@ -496,6 +499,15 @@
 	\caption{Mockup of \gls{atviras_seimas} second screen}
 	\label{fig:frontend_mockup_2}
 	\end{figure}
+
+	\subsubsection{Scatter plot}
+	
+	To visualize voting patterns data needs to be projected on two or one dimensional plot. Each dot represented can be different parliament member and its position can indicate its voting pattern. The more scattered two points are - the more different voting patterns are. Each point can have color of faction to easier indicate clusters with human eye. Another important feature is view different time periods, even arbitrarily chosen. This enables users to inspect differences during term of office.   
+	Also it is worth to mention that parliament member change factions throughout term of office. For the sake of simplicity point color can be left to be faction color when member was elected to office. This approach has a drawback when looking at data changes during different periods, but it can keep things simplified.
+	
+ 	\subsubsection{Filtering data}
+	
+	For users to inspect data with more than hundred points, filtering for members and factions needs to be present.
     
     \clearpage
     
