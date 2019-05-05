@@ -1,6 +1,6 @@
 package components.generalStats
 
-import components.ChartDateRange
+import components.{ChartDateRange, FactionLegend}
 import components.charts.ScatterPlot
 import components.filter.{DataFilter, Filter}
 import diode.react.ModelProxy
@@ -163,9 +163,9 @@ object MDSChart {
                 styles.title,
                 "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
               ),
+              FactionLegend(FactionLegend.Props()),
               <.div(
-                styles.dataFromTo,
-                "Duomenys nuo 2016.11.01 iki 2019.03.28"
+                styles.dataFromTo
               )
             )
           }

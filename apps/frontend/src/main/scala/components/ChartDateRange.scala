@@ -61,6 +61,7 @@ object ChartDateRange {
     ) = {
 
       <.div(
+        <.span(styles.label, "Duomenų laikotarpis"),
         styles.container,
         <.select(
           ^.onChange ==> { e =>
@@ -97,7 +98,12 @@ object ChartDateRange {
     import dsl._
 
     val container = style(
-      width(100 %%)
+      width(100 %%),
+      marginBottom(5 px)
+    )
+
+    val label = style(
+      marginRight(5 px)
     )
 
   }
