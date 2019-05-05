@@ -17,6 +17,7 @@ import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
 import services.{
   GeneralStatsSelectedChart,
+  LoadKMeansResult,
   LoadMdsResult,
   RootModel,
   SelectedClustering,
@@ -50,7 +51,8 @@ object GeneralStatsPage {
   class Backend($ : BackendScope[Props, Unit]) {
     def onComponentMount(p: Props): Callback = {
       p.proxy
-        .dispatchCB(LoadMdsResult(TermOfOfficeId(8)))
+        .dispatchCB(LoadMdsResult(TermOfOfficeId(8))) >> p.proxy
+        .dispatchCB(LoadKMeansResult(TermOfOfficeId(8)))
     }
 
     def tabButton(text: String)(isActive: Boolean) =
@@ -136,8 +138,12 @@ object GeneralStatsPage {
             )
           case SelectedClustering =>
             <.div(
-              styles.statsContainer,
-              <.p("Clustering")
+              KMeansChart.apply(
+                KMeansChart.Props(
+                  p.proxy.value.generalStats.kMeansResults,
+                  p.proxy.zoom(_.generalStats)
+                )
+              )
             )
         }
       )

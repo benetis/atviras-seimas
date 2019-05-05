@@ -6,6 +6,7 @@ import diode.react.ReactConnector
 import me.benetis.shared.api.ApiForFrontend
 import me.benetis.shared.{
   DiscussionLength,
+  KMeansResult,
   MdsPointWithAdditionalInfo,
   MdsResult,
   MdsResultId,
@@ -30,12 +31,20 @@ case class GeneralStatisticsModel(
   selectedGeneralStatsChart: GeneralStatsSelectedChart,
   mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]],
   mdsSelectedId: Option[MdsResultId],
-  mdsFilters: Set[Filter])
+  mdsFilters: Set[Filter],
+  kMeansFilters: Set[Filter],
+  kMeansResults: Option[KMeansResult])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
     extends Action
 case class MdsResultLoaded(
   mdsResults: Vector[MdsResult[MdsPointWithAdditionalInfo]])
+    extends Action
+
+case class LoadKMeansResult(termOfOfficeId: TermOfOfficeId)
+    extends Action
+case class KMeansResultLoaded(
+  KMeansResult: Option[KMeansResult])
     extends Action
 
 case class SetSelectedMdsResult(mdsSelectedId: MdsResultId)
@@ -57,7 +66,9 @@ object AppCircuit
         selectedGeneralStatsChart = SelectedMdsChart,
         mdsResults = Vector.empty,
         mdsSelectedId = None,
-        mdsFilters = Set.empty
+        mdsFilters = Set.empty,
+        kMeansFilters = Set.empty,
+        kMeansResults = None
       )
     )
 
@@ -81,6 +92,23 @@ object AppCircuit
           value.copy(
             mdsResults = mdsResult,
             mdsSelectedId = selectFirstIdOpt
+          )
+        )
+
+      case LoadKMeansResult(termOfOfficeId) =>
+        effectOnly(
+          Effect(
+            AjaxClient[ApiForFrontend]
+              .fetchKMeansResults(termOfOfficeId)
+              .call()
+              .map(r => KMeansResultLoaded(r))
+          )
+        )
+
+      case KMeansResultLoaded(kMeansResult) =>
+        updated(
+          value.copy(
+            kMeansResults = kMeansResult
           )
         )
 

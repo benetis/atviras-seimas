@@ -1,28 +1,25 @@
 package components.generalStats
 
-import components.{ChartDateRange, FactionLegend}
 import components.charts.{ChartUtils, ScatterPlot}
 import components.filter.{DataFilter, Filter, FilterUtils}
+import components.generalStats.MDSChart.Props
+import components.{ChartDateRange, FactionLegend}
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.~=>
 import japgolly.scalajs.react.vdom.html_<^._
-import me.benetis.shared.common.Charts.ScatterPlotPointPosition
-import me.benetis.shared.{
-  MdsPointWithAdditionalInfo,
-  MdsResult,
-  MdsResultId,
-  ParliamentMemberName,
-  ParliamentMemberSurname
-}
-import model.FactionColors
-import scalacss.internal.mutable.GlobalRegistry
-import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import japgolly.scalajs.react.vdom.svg_<^.{< => >, ^ => ^^}
-import org.scalajs.dom
+import me.benetis.shared.common.Charts.{
+  PointWithParliamentInfo,
+  ScatterPlotPointPosition
+}
+import me.benetis.shared._
+import model.FactionColors
+import scalacss.ScalaCssReact.scalacssStyleaToTagMod
+import scalacss.internal.mutable.GlobalRegistry
 import services.GeneralStatisticsModel
 
-object MDSChart {
+object KMeansChart {
 
   import globalStyles.CssSettings._
 
@@ -30,15 +27,11 @@ object MDSChart {
   val styles = GlobalRegistry[Style].get
 
   case class Props(
-    mdsResults: Vector[
-      MdsResult[MdsPointWithAdditionalInfo]
-    ],
-    mdsSelectedId: Option[MdsResultId],
-    onMdsResultChange: MdsResultId ~=> Callback,
+    kMeansResult: Option[KMeansResult],
     proxy: ModelProxy[GeneralStatisticsModel])
 
   private val component = ScalaComponent
-    .builder[Props]("Mds chart")
+    .builder[Props]("KMeans chart")
     .stateless
     .renderBackend[Backend]
     .build
@@ -47,16 +40,16 @@ object MDSChart {
 
     def addFilterFromState(
       props: Props,
-      data: Vector[MdsPointWithAdditionalInfo]
-    ): Vector[MdsPointWithAdditionalInfo] = {
+      data: Vector[KMeansPoint]
+    ): Vector[KMeansPoint] = {
       FilterUtils.filterData(
-        props.proxy.value.mdsFilters,
+        props.proxy.value.kMeansFilters,
         data
       )
     }
 
-    val mdsPoint: (
-      MdsPointWithAdditionalInfo,
+    val kMeansPoint: (
+      KMeansPoint,
       ScatterPlotPointPosition
     ) => TagMod =
       (point, position) => {
@@ -85,40 +78,29 @@ object MDSChart {
       s: Unit
     ) = {
 
-      p.mdsResults
-        .find(_.id == p.mdsSelectedId)
-        .fold(<.div("Empty MDS"))(
-          (result: MdsResult[MdsPointWithAdditionalInfo]) => {
+      p.kMeansResult
+        .fold(<.div("Empty KMeans result"))(
+          (result: KMeansResult) => {
             <.div(
               styles.container,
               DataFilter(DataFilter.Props(p.proxy)),
-              ChartDateRange(
-                ChartDateRange.Props(
-                  p.mdsSelectedId,
-                  p.mdsResults,
-                  p.onMdsResultChange
-                )
-              ),
               ScatterPlot(
                 ScatterPlot
-                  .Props[MdsPointWithAdditionalInfo](
+                  .Props[KMeansPoint](
                     data = addFilterFromState(
                       p,
-                      result.coordinates.value
+                      result.coordinates.coordinates.value
                     ),
-                    pointToTagMod = mdsPoint,
+                    pointToTagMod = kMeansPoint,
                     domain = ScatterPlot
                       .Domain(-40, 40, -40, 40)
                   )
               ),
               <.h2(
                 styles.title,
-                "Kaip panašiai vienas į kitą balsuoją seimo nariai? Kuo arčiau - tuo panašiau"
+                "PLACEHOLDER"
               ),
-              FactionLegend(FactionLegend.Props()),
-              <.div(
-                styles.dataFromTo
-              )
+              FactionLegend(FactionLegend.Props())
             )
           }
         )
@@ -129,12 +111,6 @@ object MDSChart {
 
   class Style extends StyleSheet.Inline {
     import dsl._
-
-    val dataFromTo = style(
-      marginTop(10 px),
-      textAlign.center,
-      color(globalStyles.s.fontColorOnDark2)
-    )
 
     val container = style(
       display.flex,

@@ -10,6 +10,7 @@ import me.benetis.coordinator.utils.{
   DBNotExpectedResult
 }
 import me.benetis.shared.{
+  KMeansResult,
   MDSCoordinates,
   MdsPointOnlyXAndY,
   MdsPointWithAdditionalInfo,
@@ -61,6 +62,15 @@ object ApiForFrontendController
         }
       }
     )
+  }
+
+  override def fetchKMeansResults(
+    termOfOfficeId: TermOfOfficeId
+  ): Option[KMeansResult] = {
+    val result =
+      ClusteringRepo.byTermOfOffice(termOfOfficeId)
+
+    result
   }
 
   override def fetchMdsResults(

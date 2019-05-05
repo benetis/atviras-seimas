@@ -57,25 +57,25 @@ object ClusteringRepo extends LazyLogging {
 
     ctx.run(q)
   }
-//
-//  def byTermOfOffice(
-//    termOfOfficeId: TermOfOfficeId
-//  ): Option[MdsResult[MdsPointOnlyXAndY]] = {
-//    val q = quote {
-//      for {
-//        p <- query[MdsResult[MdsPointOnlyXAndY]]
-//          .filter(
-//            _.termOfOfficeId.term_of_office_id == lift(
-//              termOfOfficeId.term_of_office_id
-//            )
-//          )
-//          .sortBy(_.createdAt)(Ord.desc)
-//      } yield {
-//        p
-//      }
-//    }
-//
-//    ctx.run(q).headOption
-//  }
+
+  def byTermOfOffice(
+    termOfOfficeId: TermOfOfficeId
+  ): Option[KMeansResult] = {
+    val q = quote {
+      for {
+        p <- query[KMeansResult]
+          .filter(
+            _.termOfOfficeId.term_of_office_id == lift(
+              termOfOfficeId.term_of_office_id
+            )
+          )
+          .sortBy(_.createdAt)(Ord.desc)
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q).headOption
+  }
 
 }

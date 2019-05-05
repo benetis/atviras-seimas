@@ -1,7 +1,10 @@
 package me.benetis.shared
 import io.getquill.Embedded
 import boopickle.Default._
-import me.benetis.shared.common.Charts.ScatterPoint
+import me.benetis.shared.common.Charts.{
+  PointWithParliamentInfo,
+  ScatterPoint
+}
 
 case class EigenValues(value: Array[Double])
     extends Embedded
@@ -16,6 +19,7 @@ case class MdsPointWithAdditionalInfo(
   parliamentMemberSurname: ParliamentMemberSurname)
     extends Embedded
     with ScatterPoint
+    with PointWithParliamentInfo
 
 /* Data class used for visualization */
 case class MdsPointOnlyXAndY(
