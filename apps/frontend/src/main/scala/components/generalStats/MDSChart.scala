@@ -156,7 +156,7 @@ object MDSChart {
                     ),
                     pointToTagMod = mdsPoint,
                     domain = ScatterPlot
-                      .Domain(-20, 20, -20, 20)
+                      .Domain(-40, 40, -40, 40)
                   )
               ),
               <.h2(
