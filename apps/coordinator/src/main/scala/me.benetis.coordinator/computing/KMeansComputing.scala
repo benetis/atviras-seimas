@@ -1,5 +1,9 @@
 package me.benetis.coordinator.computing
 
+import me.benetis.coordinator.computing.MDS.{
+  AdditionalInfo,
+  MultidimensionalScaling
+}
 import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 import me.benetis.coordinator.repository.{
   MDSRepo,
@@ -14,11 +18,13 @@ import me.benetis.coordinator.utils.{
 import me.benetis.shared.{
   DidntVote,
   KMeansCentroids,
+  KMeansClusterNumber,
   KMeansDistortion,
   KMeansPoint,
   KMeansPredictedPoints,
   KMeansResult,
   MDSCoordinates,
+  MdsPointOnlyXAndY,
   MdsPointWithAdditionalInfo,
   MdsResult,
   MdsResultId,
@@ -55,12 +61,12 @@ object KMeansComputing {
           .map(_.groupBy(v => v.id))
           .map(_.values.flatten.toArray.map(_.id))
 
-        votesIds.map(allVotesIds => {
-          val data: Map[ParliamentMember, Array[Double]] =
+        votesIds.flatMap(allVotesIds => {
+          val data: Map[ParliamentMemberId, Array[Double]] =
             members
               .map(
                 m =>
-                  m -> transformToTrainingRow(
+                  m.personId -> transformToTrainingRow(
                     voteEncoding,
                     termOfOffice,
                     m,
@@ -75,19 +81,23 @@ object KMeansComputing {
             maxIter = 20
           )
 
-          KMeansResult(
-            KMeansCentroids(Array.empty), /* Too big */
-            KMeansDistortion(model.distortion()),
-            termOfOfficeId,
-            SharedDateTime(DateTime.now().getMillis),
-            voteEncoding,
-            KMeansPredictedPoints(
-              predictByModel(
-                model = model,
-                mdsResultId = mdsId,
-                data = data
+          val predictedEith = predictByModel(
+            model = model,
+            members = members,
+            mdsResultId = mdsId,
+            data = data
+          )
+
+          predictedEith.map(
+            predicted =>
+              KMeansResult(
+                KMeansCentroids(Array.empty), /* Too big */
+                KMeansDistortion(model.distortion()),
+                termOfOfficeId,
+                SharedDateTime(DateTime.now().getMillis),
+                voteEncoding,
+                predicted
               )
-            )
           )
         })
       }) match {
@@ -142,22 +152,33 @@ object KMeansComputing {
 
   def predictByModel(
     model: KMeans,
+    members: List[ParliamentMember],
     mdsResultId: MdsResultId,
-    data: Map[ParliamentMember, Array[Double]]
-  ): Option[MDSCoordinates[KMeansPoint]] = {
+    data: Map[ParliamentMemberId, Array[Double]]
+  ): Either[ComputingError, KMeansPredictedPoints] = {
 
     def getFromPredictions(
       parliamentMemberId: ParliamentMemberId
-    ): Int = {
-      predictions.get()
+    ): Option[Int] = {
+      predictions.get(parliamentMemberId)
     }
 
-    lazy val mds
-      : Option[MdsResult[MdsPointWithAdditionalInfo]] =
-      MDSRepo.findById(mdsResultId)
+    lazy val mds =
+      MDSRepo
+        .findById(mdsResultId)
+        .flatMap(
+          (res: MdsResult[MdsPointOnlyXAndY]) => {
+            AdditionalInfo
+              .transformToAdditionalInfo(res, members)
+              .map(coords => res.copy(coordinates = coords)) match {
+              case Left(value)  => None
+              case Right(value) => Some(value)
+            }
+          }
+        )
 
-    lazy val predictions: Map[ParliamentMember, Int] =
-      data.map((tupl) => {
+    lazy val predictions: Map[ParliamentMemberId, Int] =
+      data.map(tupl => {
         tupl._1 -> model.predict(tupl._2)
       })
 
@@ -170,13 +191,18 @@ object KMeansComputing {
           point.parliamentMemberId,
           point.parliamentMemberName,
           point.parliamentMemberSurname,
-          1
+          KMeansClusterNumber(
+            getFromPredictions(point.parliamentMemberId)
+              .getOrElse(-1)
+          )
         )
       })
-    })
-
-//    apjungti mds ir predictions
-//kmeans results turi grazinti lista kur paaiskinti clusteriai(? ) arba ne
+    }) match {
+      case Some(value) =>
+        Right(KMeansPredictedPoints(MDSCoordinates(value)))
+      case None =>
+        Left(CustomError("Mds by given id not found"))
+    }
 
   }
 }

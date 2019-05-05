@@ -28,6 +28,18 @@ object ClusteringRepo extends LazyLogging {
       read[KMeansCentroids](_)
     )
 
+  implicit val mdsCoordinatesDecoding =
+    MappedEncoding[String, MDSCoordinates[
+      MdsPointOnlyXAndY
+    ]]((coords: String) => {
+      read[MDSCoordinates[MdsPointOnlyXAndY]](coords)
+    })
+
+  implicit val mdsCoordinatesEncoding =
+    MappedEncoding[MDSCoordinates[MdsPointOnlyXAndY], String](
+      write(_)
+    )
+
   implicit val kMeansDecoding =
     MappedEncoding[String, Vector[KMeansPoint]](
       read[Vector[KMeansPoint]](_)

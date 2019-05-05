@@ -531,12 +531,14 @@
    	\subsection{Experiments}
    	\subsubsection{MDS}
    	
-   	
+   	To use \acrshort{mds} method proximity matrix needs to be generated. Distances need to be calculated from given data. Goal is to view voting patterns for given parliament members meaning that connection between somehow encoded votes and parliament members needs to be represented with this matrix.
    	   	
    	
    	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
    	
-   	Since some members joined parliament later or left it before the term of office ended - data is missing on their votes during that time. To counter this - empty training rows are added for that missing time.
+   	Since some members joined parliament after term of office start or left it before it ended - data is missing on their votes during that time. To avoid this issue - empty training rows are added for that missing time.
+   	
+	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same period.
    	
    	\subsection{Results}
     

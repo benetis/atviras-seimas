@@ -10,6 +10,9 @@ case class KMeansCentroids(centroids: Array[Array[Double]])
 case class KMeansDistortion(distortion: Double)
     extends Embedded
 
+case class KMeansClusterNumber(cluster_number: Int)
+    extends Embedded
+
 case class KMeansPoint(
   x: Double,
   y: Double,
@@ -17,7 +20,7 @@ case class KMeansPoint(
   parliamentMemberId: ParliamentMemberId,
   parliamentMemberName: ParliamentMemberName,
   parliamentMemberSurname: ParliamentMemberSurname,
-  clusterNumber: Int)
+  clusterNumber: KMeansClusterNumber)
     extends Embedded
     with ScatterPoint
 

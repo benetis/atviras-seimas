@@ -80,12 +80,12 @@ object MDSRepo extends LazyLogging {
 
   def findById(
     mdsResultId: MdsResultId
-  ): Option[MdsResult[MdsPointWithAdditionalInfo]] = {
+  ): Option[MdsResult[MdsPointOnlyXAndY]] = {
     val q = quote {
       for {
-        p <- query[MdsResult[MdsPointWithAdditionalInfo]]
+        p <- query[MdsResult[MdsPointOnlyXAndY]]
           .filter(
-            _.id.contains(mdsResultId)
+            _.id.exists(_.id == lift(mdsResultId.id))
           )
       } yield {
         p

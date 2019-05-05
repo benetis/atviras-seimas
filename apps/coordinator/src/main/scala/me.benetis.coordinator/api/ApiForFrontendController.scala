@@ -18,9 +18,10 @@ import me.benetis.shared.{
   TermOfOfficeId
 }
 import me.benetis.shared.api.ApiForFrontend
-import cats.instances.vector._
-import cats.syntax.traverse._
-import cats.instances.either._
+import me.benetis.coordinator.computing.MDS.{
+  AdditionalInfo,
+  MultidimensionalScaling
+}
 
 object ApiForFrontendController
     extends ApiForFrontend
@@ -37,10 +38,8 @@ object ApiForFrontendController
 
     mdsResultList.flatMap(
       (mds: MdsResult[MdsPointOnlyXAndY]) => {
-        val updatedCoords = mds.coordinates.value
-          .map(p => addAdditionalInfoToMds(p, members))
-          .sequence
-          .map(MDSCoordinates(_))
+        val updatedCoords = AdditionalInfo
+          .transformToAdditionalInfo(mds, members)
 
         updatedCoords match {
           case Right(coords) =>
@@ -69,36 +68,4 @@ object ApiForFrontendController
   ): Option[MdsResult[MdsPointWithAdditionalInfo]] =
     fetchMdsList(termOfOfficeId).headOption
 
-  private def addAdditionalInfoToMds(
-    mdsPointOnly: MdsPointOnlyXAndY,
-    termMembers: List[ParliamentMember]
-  ): Either[ComputingError, MdsPointWithAdditionalInfo] = {
-
-    val memberOpt = termMembers.find { m =>
-      m.termOfOfficeSpecificId match {
-        case Some(specId) => specId == mdsPointOnly.id
-        case None         => false
-      }
-    }
-
-    val memberEith = memberOpt match {
-      case Some(m) => Right(m)
-      case None =>
-        Left(
-          DBNotExpectedResult("specific id should be set")
-        )
-    }
-
-    memberEith.map { m =>
-      MdsPointWithAdditionalInfo(
-        mdsPointOnly.x,
-        mdsPointOnly.y,
-        mdsPointOnly.id,
-        m.factionName,
-        m.personId,
-        m.name,
-        m.surname
-      )
-    }
-  }
 }

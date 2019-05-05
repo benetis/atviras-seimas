@@ -9,6 +9,7 @@ import me.benetis.coordinator.utils.dates.SharedDateEncoders._
 import me.benetis.coordinator.utils.{
   ComputingError,
   CustomError,
+  DBNotExpectedResult,
   LibraryNotBehavingAsExpected
 }
 import me.benetis.shared._

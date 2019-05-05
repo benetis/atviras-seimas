@@ -17,7 +17,10 @@ object Coordinator extends LazyLogging {
     computingSettings match {
       case ComputeMDS =>
         val termOfOfficeId = TermOfOfficeId(8)
-        MultidimensionalScaling.calculate(termOfOfficeId) match {
+        MultidimensionalScaling.calculate(
+          termOfOfficeId,
+          periods = false
+        ) match {
           case Right(
               mds: immutable.Seq[Either[
                 ComputingError,
@@ -36,16 +39,15 @@ object Coordinator extends LazyLogging {
         }
       case ComputeKMeans =>
         val termOfOfficeId = TermOfOfficeId(8)
-        val mdsId          = MdsResultId(1)
+        val mdsId          = MdsResultId(38)
 
         KMeansComputing.compute(
           termOfOfficeId,
           VoteEncoding.VoteEncodingE1,
           mdsId
         ) match {
-          case Left(value)  => logger.error(value.msg())
+          case Left(value) => logger.error(value.msg())
           case Right(value) =>
-//            value.centroids.centroids.head.foreach(println)
             ClusteringRepo.insert(value)
         }
     }
