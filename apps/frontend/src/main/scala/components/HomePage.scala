@@ -48,7 +48,6 @@ object HomePage {
       s: Unit
     ) = {
       <.div(
-        ^.height := "100%",
         globalStyles.s.pageContainer,
         <.div(
           styles.navigationContainer,

@@ -36,7 +36,8 @@ package object globalStyles {
 
     val pageContainer = style(
       backgroundColor(oldLavender),
-      color(fontColorOnDark)
+      color(fontColorOnDark),
+      height(100 vh)
     )
 
     val commonBottomStyles = style(

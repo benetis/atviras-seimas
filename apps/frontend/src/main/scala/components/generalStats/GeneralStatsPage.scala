@@ -163,6 +163,7 @@ object GeneralStatsPage {
       display.flex,
       flexDirection.column,
       alignItems.center,
+      minHeight(100 vh),
       height(100 %%)
     )
 
