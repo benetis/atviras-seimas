@@ -39,7 +39,7 @@ object Coordinator extends LazyLogging {
         }
       case ComputeKMeans =>
         val termOfOfficeId = TermOfOfficeId(8)
-        val mdsId          = MdsResultId(38)
+        val mdsId          = MdsResultId(39)
 
         KMeansComputing.compute(
           termOfOfficeId,
