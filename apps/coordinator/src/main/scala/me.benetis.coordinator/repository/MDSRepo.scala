@@ -78,4 +78,21 @@ object MDSRepo extends LazyLogging {
     ctx.run(q).toVector
   }
 
+  def findById(
+    mdsResultId: MdsResultId
+  ): Option[MdsResult[MdsPointWithAdditionalInfo]] = {
+    val q = quote {
+      for {
+        p <- query[MdsResult[MdsPointWithAdditionalInfo]]
+          .filter(
+            _.id.contains(mdsResultId)
+          )
+      } yield {
+        p
+      }
+    }
+
+    ctx.run(q).headOption
+  }
+
 }

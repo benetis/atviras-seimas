@@ -1,7 +1,8 @@
 package me.benetis.coordinator.utils
 
 import io.getquill.{MysqlJdbcContext, SnakeCase}
-import me.benetis.shared.VoteEncoding
+import me.benetis.shared.encoding.VoteEncoding
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.{read, write}
 
@@ -15,7 +16,9 @@ object SQLVoteEncodersDecoders {
   implicit val formats = DefaultFormats
 
   implicit val encoding =
-    MappedEncoding[VoteEncoding, String](write(_))
+    MappedEncoding[VoteEncodingConfig, String](
+      VoteEncoding.encode
+    )
 
 //  implicit val mdsProportionEncoding =
 //    MappedEncoding[MDSProportion, String](write(_))
@@ -26,8 +29,8 @@ object SQLVoteEncodersDecoders {
 //    )
 
   implicit val decoding =
-    MappedEncoding[String, VoteEncoding](
-      read[VoteEncoding](_)
+    MappedEncoding[String, VoteEncodingConfig](
+      VoteEncoding.decode
     )
 
 }

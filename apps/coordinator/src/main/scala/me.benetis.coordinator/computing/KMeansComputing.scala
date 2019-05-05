@@ -1,7 +1,8 @@
 package me.benetis.coordinator.computing
 
-import me.benetis.shared.encoding.VoteEncoding.VoteEncodingT
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 import me.benetis.coordinator.repository.{
+  MDSRepo,
   ParliamentMemberRepo,
   TermOfOfficeRepo,
   VoteRepo
@@ -15,13 +16,17 @@ import me.benetis.shared.{
   KMeansCentroids,
   KMeansDistortion,
   KMeansPoint,
-  KMeansPredictedCoordinates,
+  KMeansPredictedPoints,
   KMeansResult,
+  MDSCoordinates,
+  MdsPointWithAdditionalInfo,
+  MdsResult,
+  MdsResultId,
   ParliamentMember,
+  ParliamentMemberId,
   SharedDateTime,
   TermOfOffice,
   TermOfOfficeId,
-  VoteEncoding1,
   VoteId,
   VoteReduced
 }
@@ -31,7 +36,8 @@ import smile.clustering._
 object KMeansComputing {
   def compute(
     termOfOfficeId: TermOfOfficeId,
-    voteEncoding: VoteEncodingT
+    voteEncoding: VoteEncodingConfig,
+    mdsId: MdsResultId
   ): Either[ComputingError, KMeansResult] = {
 
     val termOfOfficeOpt =
@@ -50,35 +56,36 @@ object KMeansComputing {
           .map(_.values.flatten.toArray.map(_.id))
 
         votesIds.map(allVotesIds => {
-          val data = members.map(
-            m =>
-              transformToTrainingRow(
-                voteEncoding,
-                termOfOffice,
-                m,
-                allVotesIds
+          val data: Map[ParliamentMember, Array[Double]] =
+            members
+              .map(
+                m =>
+                  m -> transformToTrainingRow(
+                    voteEncoding,
+                    termOfOffice,
+                    m,
+                    allVotesIds
+                  )
               )
-          )
+              .toMap
 
           val model = kmeans(
-            data.toArray,
-            k = 2,
+            data.values.toArray,
+            k = 3,
             maxIter = 20
           )
 
           KMeansResult(
-            KMeansCentroids(Array.empty),
+            KMeansCentroids(Array.empty), /* Too big */
             KMeansDistortion(model.distortion()),
             termOfOfficeId,
             SharedDateTime(DateTime.now().getMillis),
-            VoteEncoding1,
-            KMeansPredictedCoordinates(
+            voteEncoding,
+            KMeansPredictedPoints(
               predictByModel(
-                model,
-                members,
-                voteEncoding,
-                termOfOffice,
-                allVotesIds
+                model = model,
+                mdsResultId = mdsId,
+                data = data
               )
             )
           )
@@ -91,11 +98,11 @@ object KMeansComputing {
   }
 
   private def transformToTrainingRow(
-    voteEncoding: VoteEncodingT,
+    voteEncoding: VoteEncodingConfig,
     termOfOffice: TermOfOffice,
     member: ParliamentMember,
     allVotesIds: Array[VoteId]
-  ) = {
+  ): Array[Double] = {
     val personVotes: List[VoteReduced] = VoteRepo
       .byPersonIdAndTerm(
         member.personId,
@@ -104,17 +111,16 @@ object KMeansComputing {
 
     addMissingVotes(
       personVotes,
-      allVotesIds,
-      voteEncoding
+      allVotesIds
     ).map(
-      voteReduced => voteEncoding(voteReduced.singleVote)
+      voteReduced =>
+        voteEncoding.encode(voteReduced.singleVote)
     )
   }
 
   def addMissingVotes(
     personVotes: List[VoteReduced],
-    allTermIds: Array[VoteId],
-    encodingT: VoteEncodingT
+    allTermIds: Array[VoteId]
   ): Array[VoteReduced] = {
 
     val missingIds = allTermIds.diff(personVotes.map(_.id))
@@ -136,25 +142,41 @@ object KMeansComputing {
 
   def predictByModel(
     model: KMeans,
-    members: List[ParliamentMember],
-    voteEncoding: VoteEncodingT,
-    termOfOffice: TermOfOffice,
-    allVoteIds: Array[VoteId]
-  ): Vector[KMeansPoint] = {
-    members
-      .map(
-        member => {
-          println(model.getClusterLabel)
-          KMeansPoint(
-            0,
-            0,
-            member.factionName,
-            member.personId,
-            member.name,
-            member.surname
-          )
-        }
-      )
-      .toVector
+    mdsResultId: MdsResultId,
+    data: Map[ParliamentMember, Array[Double]]
+  ): Option[MDSCoordinates[KMeansPoint]] = {
+
+    def getFromPredictions(
+      parliamentMemberId: ParliamentMemberId
+    ): Int = {
+      predictions.get()
+    }
+
+    lazy val mds
+      : Option[MdsResult[MdsPointWithAdditionalInfo]] =
+      MDSRepo.findById(mdsResultId)
+
+    lazy val predictions: Map[ParliamentMember, Int] =
+      data.map((tupl) => {
+        tupl._1 -> model.predict(tupl._2)
+      })
+
+    mds.map(mdsRes => {
+      mdsRes.coordinates.value.map(point => {
+        KMeansPoint(
+          point.x,
+          point.y,
+          point.factionName,
+          point.parliamentMemberId,
+          point.parliamentMemberName,
+          point.parliamentMemberSurname,
+          1
+        )
+      })
+    })
+
+//    apjungti mds ir predictions
+//kmeans results turi grazinti lista kur paaiskinti clusteriai(? ) arba ne
+
   }
 }

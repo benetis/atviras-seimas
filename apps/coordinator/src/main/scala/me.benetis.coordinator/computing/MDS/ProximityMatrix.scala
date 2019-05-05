@@ -153,7 +153,7 @@ object ProximityMatrix extends LazyLogging {
           votesForMembers,
           pair._1,
           pair._2,
-          VoteEncoding.singleVoteEncodedE1
+          VoteEncoding.VoteEncodingE1.encode
         )
 
       matrix(

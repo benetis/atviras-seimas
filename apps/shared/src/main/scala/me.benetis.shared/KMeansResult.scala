@@ -2,6 +2,7 @@ package me.benetis.shared
 
 import io.getquill.Embedded
 import me.benetis.shared.common.Charts.ScatterPoint
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 
 case class KMeansCentroids(centroids: Array[Array[Double]])
     extends Embedded
@@ -15,12 +16,13 @@ case class KMeansPoint(
   factionName: ParliamentMemberFactionName,
   parliamentMemberId: ParliamentMemberId,
   parliamentMemberName: ParliamentMemberName,
-  parliamentMemberSurname: ParliamentMemberSurname)
+  parliamentMemberSurname: ParliamentMemberSurname,
+  clusterNumber: Int)
     extends Embedded
     with ScatterPoint
 
-case class KMeansPredictedCoordinates(
-  coordinates: Vector[KMeansPoint])
+case class KMeansPredictedPoints(
+  coordinates: MDSCoordinates[KMeansPoint])
     extends Embedded
 
 case class KMeansResult(
@@ -28,6 +30,6 @@ case class KMeansResult(
   distortion: KMeansDistortion,
   termOfOfficeId: TermOfOfficeId,
   createdAt: SharedDateTime,
-  encoding: VoteEncoding,
-  coordinates: KMeansPredictedCoordinates)
+  encoding: VoteEncodingConfig,
+  coordinates: KMeansPredictedPoints)
     extends Embedded

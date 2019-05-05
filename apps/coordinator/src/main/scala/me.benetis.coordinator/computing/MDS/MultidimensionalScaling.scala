@@ -19,7 +19,8 @@ import smile.mds._
 object MultidimensionalScaling extends LazyLogging {
 
   def calculate(
-    termOfOfficeId: TermOfOfficeId
+    termOfOfficeId: TermOfOfficeId,
+    periods: Boolean = true
   ): Either[ComputingError, Vector[
     Either[ComputingError, MdsResult[MdsPointOnlyXAndY]]
   ]] = {
@@ -31,7 +32,11 @@ object MultidimensionalScaling extends LazyLogging {
         val ranges =
           TimeRanges.calculatePeriods(termOfOffice)
 
-        Right(calculateForPeriod(termOfOffice, ranges))
+        if (periods)
+          Right(
+            calculateForPeriod(termOfOffice, Some(ranges))
+          )
+        else Right(calculateForPeriod(termOfOffice, None))
       case None =>
         Left(
           CustomError(
@@ -43,7 +48,7 @@ object MultidimensionalScaling extends LazyLogging {
 
   private def calculateForPeriod(
     termOfOffice: TermOfOffice,
-    timeRangeOfMds: Vector[TimeRangeOfMds]
+    timeRangeOfMds: Option[Vector[TimeRangeOfMds]]
   ): Vector[
     Either[ComputingError, MdsResult[MdsPointOnlyXAndY]]
   ] = {
@@ -53,7 +58,7 @@ object MultidimensionalScaling extends LazyLogging {
     ProximityMatrix
       .buildMatrices(
         termOfOffice,
-        Some(timeRangeOfMds)
+        timeRangeOfMds
       )
       .map((matrix: (TimeRangeOfMds, ProximityMatrix)) => {
         val outputDimensions = 2
