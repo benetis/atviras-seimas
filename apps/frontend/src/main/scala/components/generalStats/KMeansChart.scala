@@ -91,9 +91,9 @@ object KMeansChart {
                       p,
                       result.coordinates.coordinates.value
                     ),
-                    pointToTagMod = kMeansPoint,
-                    domain = ScatterPlot
-                      .Domain(-40, 40, -40, 40)
+                    pointToTagMod = kMeansPoint
+//                    domain = ScatterPlot
+//                      .Domain(-40, 40, -40, 40)
                   )
               ),
               <.h2(

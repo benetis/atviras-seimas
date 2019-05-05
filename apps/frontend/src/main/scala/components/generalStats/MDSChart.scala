@@ -106,9 +106,7 @@ object MDSChart {
                       p,
                       result.coordinates.value
                     ),
-                    pointToTagMod = mdsPoint,
-                    domain = ScatterPlot
-                      .Domain(-40, 40, -40, 40)
+                    pointToTagMod = mdsPoint
                   )
               ),
               <.h2(

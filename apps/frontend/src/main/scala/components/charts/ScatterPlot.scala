@@ -8,6 +8,7 @@ import me.benetis.shared.common.Charts.{
   ScatterPlotPointPosition,
   ScatterPoint
 }
+import org.scalajs.dom
 import org.scalajs.dom.svg.{G, Line}
 import scala.language.existentials
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
@@ -51,6 +52,34 @@ class ScatterPlot[T <: ScatterPoint] {
       FourthQuarter
     )
 
+    lazy val findDomain: Props[T] => ScatterPlot.Domain =
+      p => {
+        p.domain match {
+          case Some(d) => d
+          case None =>
+            val threshold = 0.3
+
+            def addThreshold(x: Double) =
+              x + (threshold * x)
+            def subtractThreshold(x: Double) =
+              x - (Math.abs(x) * threshold)
+
+            val maxX = p.data.maxBy(_.x).x
+            val minX = p.data.minBy(_.x).x
+
+            val maxY = p.data.maxBy(_.y).y
+            val minY = p.data.minBy(_.y).y
+
+            ScatterPlot.Domain(
+              subtractThreshold(minX),
+              addThreshold(maxX),
+              subtractThreshold(minY),
+              addThreshold(maxY)
+            )
+
+        }
+      }
+
     val svgHeight = 500
     val svgWidth  = 500
 
@@ -65,14 +94,17 @@ class ScatterPlot[T <: ScatterPoint] {
           ^^.height := svgHeight,
           ^^.width := svgWidth,
           ^^.viewBox := s"0 0 100 100",
-          quarterSplittingLines(p.domain),
+          quarterSplittingLines(findDomain(p)),
           p.data
             .map(
               data =>
                 >.g(
                   p.pointToTagMod(
                     data,
-                    pointToPointPosition(data, p.domain)
+                    pointToPointPosition(
+                      data,
+                      findDomain(p)
+                    )
                   )
                 )
             )
@@ -139,9 +171,9 @@ class ScatterPlot[T <: ScatterPoint] {
 
         val pointText = point.axis match {
           case XAxis =>
-            s"${point.x}"
+            s"${point.x.floor}"
           case YAxis =>
-            s"${point.y}"
+            s"${point.y.floor}"
         }
 
         def emptyIfBothZero(pointText: String) = {
@@ -313,7 +345,7 @@ object ScatterPlot {
     pointToTagMod: (T, ScatterPlotPointPosition) => TagMod,
     backgroundTagMod: TagMod =
       new ScatterPlot().styles.backgroundStyles,
-    domain: Domain)
+    domain: Option[Domain] = None)
 
   def apply[T <: ScatterPoint](props: Props[T]) =
     new ScatterPlot().apply(props)
