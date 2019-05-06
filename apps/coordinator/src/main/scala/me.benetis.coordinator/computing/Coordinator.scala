@@ -42,7 +42,7 @@ object Coordinator extends LazyLogging {
         val mdsId          = MdsResultId(39)
         KMeansComputing.compute(
           termOfOfficeId,
-          VoteEncoding.VoteEncodingE1,
+          VoteEncoding.VoteEncodingE3,
           mdsId
         ) match {
           case Left(value) => logger.error(value.msg())

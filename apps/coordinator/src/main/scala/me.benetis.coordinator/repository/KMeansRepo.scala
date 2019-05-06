@@ -2,7 +2,10 @@ package me.benetis.coordinator.repository
 
 import com.typesafe.scalalogging.LazyLogging
 import io.getquill.{MysqlJdbcContext, SnakeCase}
+import me.benetis.coordinator.utils.SQLVoteEncodersDecoders
 import me.benetis.shared._
+import me.benetis.shared.encoding.VoteEncoding
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingE1
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.{read, write}
 
@@ -62,6 +65,7 @@ object KMeansRepo extends LazyLogging {
               termOfOfficeId.term_of_office_id
             )
           )
+          .filter(_.id.contains(KMeansId(29)))
           .sortBy(_.createdAt)(Ord.desc)
       } yield {
         p

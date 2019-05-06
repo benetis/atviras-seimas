@@ -19,6 +19,8 @@ case class KMeansClusterNumber(cluster_number: Int)
 case class KMeansTotalClusters(total_clusters: Int)
     extends Embedded
 
+case class KMeansId(id: Int) extends Embedded
+
 case class KMeansPoint(
   x: Double,
   y: Double,
@@ -37,6 +39,7 @@ object KMeansPoint {
 }
 
 case class KMeansResult(
+  id: Option[KMeansId],
   centroids: KMeansCentroids,
   distortion: KMeansDistortion,
   termOfOfficeId: TermOfOfficeId,

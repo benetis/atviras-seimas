@@ -93,6 +93,7 @@ object KMeansComputing {
           predictedEith.map(
             predicted =>
               KMeansResult(
+                None,
                 KMeansCentroids(Array.empty), /* Too big */
                 KMeansDistortion(model.distortion()),
                 termOfOfficeId,
