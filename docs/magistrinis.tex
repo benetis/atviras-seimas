@@ -68,9 +68,19 @@
 		name=draw.io,
 		description={ }
 	} 
+  \newglossaryentry{http}
+{
+	name=HTTP,
+	description={ }
+} 
    \newglossaryentry{euclidian}
 {
 	name=Euclidian distance,
+	description={ }
+} 
+   \newglossaryentry{jvm}
+{
+	name=JVM,
 	description={ }
 } 
 \newglossaryentry{mockup}
@@ -90,6 +100,7 @@
     \newacronym{mds}{MDS}{ Multidimensional scaling}
     \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania } 
     \newacronym{xml}{XML}{ PLACEHOLDER }   
+    \newacronym{sql}{SQL}{  Structured Query Language }   
     
     \begin{document}
    
@@ -525,12 +536,23 @@
   	\subsection{Tools}
     \subsubsection{Programming language: {\textit Scala}}
     
-    Both research and software parts of the project were done using \gls{scala}. 
+    Both research and software parts of the project were done using \gls{scala} \cite{scala_lang}. \Gls{scala} choice is due its powerful type system and \gls{jvm} libraries accessibility \cite{scala_in_depth}. 
     
     \subsubsection{Database: {\textit MySQL}}
+    
+  	Since amount of data is relatively small as seen in experiment part - there is no need to consider data distribution problems. In this case the most important factor is to have fewer bugs. To achieve that \acrfull{sql} is picked which has types for each column - \gls{mysql} \cite{mysql_lang}.
+    
+	\subsection{API server}
+	
+	This subsystem handles incoming \gls{http} requests from users. It uses \textit{Akka-http} library \cite{akka_http}. Both computing and application requests are handled in this subsystem. Computing requests tell server to download specific set of data, update to newest data or order server to compute data for scientific methods. Application requests serve data to the client, querying it from the database. Since both client and server side are written with one programming language there are many benefits to use. While client side can remain as a single page application, server side can still share code with it. One such benefit - no need to write serializers and deserializers, since data types can be shared between two projects and process can be automatic. 
+	
+	\subsection{Coordinator}
+        
     \subsection{Downloader}
-    \subsection{Coordinator}
-    \subsection{API server}
+    
+    Downloader consists of few parts: \textit{Download coordinator, Scraper, Parser, Error handler}. 
+    
+ 
 %    \subsection{Repository}
     \clearpage
     
@@ -600,7 +622,7 @@
    	
    	Since some members joined parliament after term of office start or left it before it ended - data is missing on their votes during that time. To avoid this issue - empty training rows are added for that missing time.
    	
-	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same time period. Training rows for clustering are prepared by encoding votes for given parliament member.
+	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same time period. Training rows for clustering are prepared by encoding votes for given parliament member. Iteration count is 20.
 	
 	\subsubsection{Majority vs minority} 
 	
