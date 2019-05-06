@@ -89,15 +89,19 @@ object KMeansChart {
                   .Props[KMeansPoint](
                     data = addFilterFromState(
                       p,
-                      result.coordinates.coordinates.value
+                      result.coordinates.value
                     ),
                     pointToTagMod = kMeansPoint,
                     unfilteredData =
-                      result.coordinates.coordinates.value
+                      result.coordinates.value
                   )
               ),
               <.h2(
                 styles.title,
+                result.coordinates.value.headOption
+                  .fold("empty")(
+                    x => x.parliamentMemberSurname.person_surname
+                  ),
                 "PLACEHOLDER"
               ),
               FactionLegend(FactionLegend.Props())

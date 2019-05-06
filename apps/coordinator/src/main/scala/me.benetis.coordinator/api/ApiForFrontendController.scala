@@ -1,7 +1,7 @@
 package me.benetis.coordinator.api
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.repository.{
-  ClusteringRepo,
+  KMeansRepo,
   MDSRepo,
   ParliamentMemberRepo
 }
@@ -68,8 +68,7 @@ object ApiForFrontendController
     termOfOfficeId: TermOfOfficeId
   ): Option[KMeansResult] = {
     val result =
-      ClusteringRepo.byTermOfOffice(termOfOfficeId)
-
+      KMeansRepo.byTermOfOffice(termOfOfficeId)
     result
   }
 

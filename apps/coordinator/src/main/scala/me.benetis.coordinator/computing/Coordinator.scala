@@ -2,7 +2,7 @@ package me.benetis.coordinator.computing
 import com.typesafe.scalalogging.LazyLogging
 import me.benetis.coordinator.computing.MDS.MultidimensionalScaling
 import me.benetis.coordinator.repository.{
-  ClusteringRepo,
+  KMeansRepo,
   MDSRepo,
   VoteRepo
 }
@@ -40,7 +40,6 @@ object Coordinator extends LazyLogging {
       case ComputeKMeans =>
         val termOfOfficeId = TermOfOfficeId(8)
         val mdsId          = MdsResultId(39)
-
         KMeansComputing.compute(
           termOfOfficeId,
           VoteEncoding.VoteEncodingE1,
@@ -48,7 +47,7 @@ object Coordinator extends LazyLogging {
         ) match {
           case Left(value) => logger.error(value.msg())
           case Right(value) =>
-            ClusteringRepo.insert(value)
+            KMeansRepo.insert(value)
         }
     }
   }

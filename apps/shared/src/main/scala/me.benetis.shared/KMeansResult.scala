@@ -1,5 +1,5 @@
 package me.benetis.shared
-
+import boopickle.Default._
 import io.getquill.Embedded
 import me.benetis.shared.common.Charts.{
   PointWithParliamentInfo,
@@ -28,9 +28,10 @@ case class KMeansPoint(
     with ScatterPoint
     with PointWithParliamentInfo
 
-case class KMeansPredictedPoints(
-  coordinates: MDSCoordinates[KMeansPoint])
-    extends Embedded
+object KMeansPoint {
+  implicit val pickler: Pickler[KMeansPoint] =
+    compositePickler[KMeansPoint]
+}
 
 case class KMeansResult(
   centroids: KMeansCentroids,
@@ -38,5 +39,10 @@ case class KMeansResult(
   termOfOfficeId: TermOfOfficeId,
   createdAt: SharedDateTime,
   encoding: VoteEncodingConfig,
-  coordinates: KMeansPredictedPoints)
+  coordinates: MDSCoordinates[KMeansPoint])
     extends Embedded
+
+object KMeansResult {
+  implicit val pickler: Pickler[KMeansResult] =
+    compositePickler[KMeansResult]
+}

@@ -53,8 +53,6 @@ object MDSRepo extends LazyLogging {
         .onConflictIgnore
     }
 
-    println(q.toString)
-
     ctx.run(q)
   }
 

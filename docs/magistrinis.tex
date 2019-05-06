@@ -410,7 +410,7 @@
     
     \clearpage
     
-    \section{Software design}
+    \section{Design and development of atviras-seimas.lt}
     \subsection{Components of system}
    	\subsubsection{Functional requirements}
    	
@@ -464,6 +464,44 @@
   		\end{figure}
 		
 		    \vspace{1cm}
+		    
+	\clearpage
+	
+	\subsection{User interface}
+	
+	\subsubsection{User flow}
+	
+	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool.
+	
+	Happy path NEEDS CITATION is x and y, copy from scatter plot.
+	
+	. It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
+	
+	\begin{figure}[H]	
+		\centering
+		\includegraphics[width=9.5cm]{images/frontend_mockup_crop_1.png}
+		\caption{Mockup of \gls{atviras_seimas} first screen}
+		\label{fig:frontend_mockup}
+	\end{figure}
+	
+	\begin{figure}[H]	
+		\centering
+		\includegraphics[width=9.5cm]{images/frontend_mockup_crop_2.png}
+		\caption{Mockup of \gls{atviras_seimas} second screen}
+		\label{fig:frontend_mockup_2}
+	\end{figure}
+	
+	\subsubsection{Scatter plot}
+	
+	To visualize voting patterns data needs to be projected on two or one dimensional plot. Each dot represented can be different parliament member and its position can indicate its voting pattern. The more scattered two points are - the more different voting patterns are. Each point can have color of faction to easier indicate clusters with human eye. Another important feature is view different time periods, even arbitrarily chosen. This enables users to inspect differences during term of office.   
+	Also it is worth to mention that parliament member change factions throughout term of office. For the sake of simplicity point color can be left to be faction color when member was elected to office. This approach has a drawback when looking at data changes during different periods, but it can keep things simplified.
+	
+	\subsubsection{Data filter}
+	
+	For users to inspect data with more than hundred points, filtering for members and factions needs to be present. Users are able to filter data by word. It is possible to filter by one word or phrase, however multiple words or phrases can also be used. In addition, while filtering data users can choose different periods of time. All this helps to compare separate factions to one another or parliament members to factions.
+	
+	\clearpage
+
   	\subsection{Tools}
     \subsubsection{Programming language: {\textit Scala}}
     
@@ -474,41 +512,6 @@
     \subsection{Coordinator}
     \subsection{API server}
 %    \subsection{Repository}
-	\clearpage
-
-    \subsection{User interface (Frontend)}
-    
-    \subsubsection{User flow}
-    
-   	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool.
-    
-    Happy path NEEDS CITATION is x and y, copy from scatter plot.
-    
-    . It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
-    
-  	\begin{figure}[H]	
-    	\centering
-    	\includegraphics[width=9.5cm]{images/frontend_mockup_crop_1.png}
-    	\caption{Mockup of \gls{atviras_seimas} first screen}
-    	\label{fig:frontend_mockup}
-    \end{figure}
-
-  	\begin{figure}[H]	
-	\centering
-	\includegraphics[width=9.5cm]{images/frontend_mockup_crop_2.png}
-	\caption{Mockup of \gls{atviras_seimas} second screen}
-	\label{fig:frontend_mockup_2}
-	\end{figure}
-
-	\subsubsection{Scatter plot}
-	
-	To visualize voting patterns data needs to be projected on two or one dimensional plot. Each dot represented can be different parliament member and its position can indicate its voting pattern. The more scattered two points are - the more different voting patterns are. Each point can have color of faction to easier indicate clusters with human eye. Another important feature is view different time periods, even arbitrarily chosen. This enables users to inspect differences during term of office.   
-	Also it is worth to mention that parliament member change factions throughout term of office. For the sake of simplicity point color can be left to be faction color when member was elected to office. This approach has a drawback when looking at data changes during different periods, but it can keep things simplified.
-	
- 	\subsubsection{Filtering data}
-	
-	For users to inspect data with more than hundred points, filtering for members and factions needs to be present.
-    
     \clearpage
     
     \section{Description of experimental research}
@@ -552,7 +555,7 @@
    	
 	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same period.
    	
-   	\subsection{Results}
+   	\subsection{Results and conclusions}
     
    
     \clearpage

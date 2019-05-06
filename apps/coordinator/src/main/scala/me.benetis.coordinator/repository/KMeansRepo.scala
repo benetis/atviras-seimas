@@ -6,7 +6,7 @@ import me.benetis.shared._
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.{read, write}
 
-object ClusteringRepo extends LazyLogging {
+object KMeansRepo extends LazyLogging {
   private lazy val ctx =
     new MysqlJdbcContext(SnakeCase, "ctx")
 
@@ -20,30 +20,23 @@ object ClusteringRepo extends LazyLogging {
   implicit val centroidsEncoding =
     MappedEncoding[KMeansCentroids, String](write(_))
 
-  implicit val kMeansPointEncoding =
-    MappedEncoding[Vector[KMeansPoint], String](write(_))
-
   implicit val centroidsDecoding =
     MappedEncoding[String, KMeansCentroids](
       read[KMeansCentroids](_)
     )
 
-  implicit val mdsCoordinatesDecoding =
-    MappedEncoding[String, MDSCoordinates[
-      MdsPointOnlyXAndY
-    ]]((coords: String) => {
-      read[MDSCoordinates[MdsPointOnlyXAndY]](coords)
-    })
-
   implicit val mdsCoordinatesEncoding =
-    MappedEncoding[MDSCoordinates[MdsPointOnlyXAndY], String](
+    MappedEncoding[MDSCoordinates[KMeansPoint], String](
       write(_)
     )
 
-  implicit val kMeansDecoding =
-    MappedEncoding[String, Vector[KMeansPoint]](
-      read[Vector[KMeansPoint]](_)
-    )
+  implicit val mdsCoordinatesDecoding =
+    MappedEncoding[String, MDSCoordinates[
+      KMeansPoint
+    ]]((coords: String) => {
+
+      read[MDSCoordinates[KMeansPoint]](coords)
+    })
 
   private implicit val ClusterMeta =
     insertMeta[KMeansResult]()
@@ -75,7 +68,9 @@ object ClusteringRepo extends LazyLogging {
       }
     }
 
-    ctx.run(q).headOption
+    val res: List[KMeansResult] = ctx.run(q)
+
+    res.headOption
   }
 
 }

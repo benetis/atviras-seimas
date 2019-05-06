@@ -20,14 +20,6 @@ object SQLVoteEncodersDecoders {
       VoteEncoding.encode
     )
 
-//  implicit val mdsProportionEncoding =
-//    MappedEncoding[MDSProportion, String](write(_))
-//
-//  implicit val mdsCoordinatesEncoding =
-//    MappedEncoding[MDSCoordinates[MdsPointOnlyXAndY], String](
-//      write(_)
-//    )
-
   implicit val decoding =
     MappedEncoding[String, VoteEncodingConfig](
       VoteEncoding.decode

@@ -21,7 +21,6 @@ import me.benetis.shared.{
   KMeansClusterNumber,
   KMeansDistortion,
   KMeansPoint,
-  KMeansPredictedPoints,
   KMeansResult,
   MDSCoordinates,
   MdsPointOnlyXAndY,
@@ -155,7 +154,7 @@ object KMeansComputing {
     members: List[ParliamentMember],
     mdsResultId: MdsResultId,
     data: Map[ParliamentMemberId, Array[Double]]
-  ): Either[ComputingError, KMeansPredictedPoints] = {
+  ): Either[ComputingError, MDSCoordinates[KMeansPoint]] = {
 
     def getFromPredictions(
       parliamentMemberId: ParliamentMemberId
@@ -199,7 +198,7 @@ object KMeansComputing {
       })
     }) match {
       case Some(value) =>
-        Right(KMeansPredictedPoints(MDSCoordinates(value)))
+        Right(MDSCoordinates(value))
       case None =>
         Left(CustomError("Mds by given id not found"))
     }
