@@ -44,7 +44,7 @@ object Coordinator extends LazyLogging {
           termOfOfficeId,
           VoteEncoding.VoteEncodingE3,
           mdsId
-        ) match {
+        ) match {2
           case Left(value) => logger.error(value.msg())
           case Right(value) =>
             KMeansRepo.insert(value)
