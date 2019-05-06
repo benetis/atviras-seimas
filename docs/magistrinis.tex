@@ -605,6 +605,15 @@
    		\captionof{table}{ Encoding of vote outcomes} \label{tab:vote_outcome_encoding}
    	\end{center}
    
+   	Since factions are important part when viewing visualizations, they need to be consistent throughout graphs. Faction assigned colors can be viewed in figure 
+   	
+ 	\begin{figure}[H]	
+  		\centering
+  		\includegraphics[width=9.5cm]{images/faction_colors.png}
+  		\caption{Colors assigned to factions in following visualizations}
+  		\label{fig:faction_colors}
+   	\end{figure}
+   
    	\clearpage
    	   	
    	\subsection{Multidimensional Scaling}
@@ -628,7 +637,7 @@
 	
 	Majority and minority are two groups which usually have different ideologies - they couldn't group up, therefore are voting differently on issues. Another experiment could be to test three groups - two for minority and majority and one for outsides, parliament members who left one group or another, changed parties or are voting individually.
 	
-	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, but this hypothesis is not confirmed numerically in this project. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
+	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, white points being a minority and blue ones belonging to majority. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
 	
 	
 	\noindent
@@ -654,6 +663,22 @@
 		\subfloat[k=2, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k2_e3}\label{fig:majority_vs_minority_k2_e3}}
 		\caption{majority vs minority, \gls{k-means} on \acrshort{mds} coordinates}
 	\end{figure}
+	
+	\clearpage
+
+	Looking at figures \ref{fig:majority_vs_minority_k3_e1},\ref{fig:majority_vs_minority_k3_e2}, \ref{fig:majority_vs_minority_k3_e3} suggests that \textit{k=3} is one cluster too much for \textit{E2, E3} encodings as it doesn't show anything meaningful. \ref{fig:majority_vs_minority_k3_e1} figure looks more shows points which are more truthful, white points being people who are outsiders as predicted in hypothesis. 
+
+	\begin{figure}[!tbp]
+	\centering
+	\subfloat[k=3, encoding = E1]{\includegraphics[width=0.46\textwidth]{images/kmeans_k3_e1}\label{fig:majority_vs_minority_k3_e1}}
+	\hfill
+	\subfloat[k=3, encoding = E2]{\includegraphics[width=0.46\textwidth]{images/kmeans_k3_e2}\label{fig:majority_vs_minority_k3_e2}}
+	\hfill
+	\subfloat[k=3, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k3_e3}\label{fig:majority_vs_minority_k3_e3}}
+   	\hfill
+	\subfloat[Actual factions]{\includegraphics[width=0.46\textwidth]{images/mds}\label{fig:majority_vs_minority_k3_actual}}
+	\caption{majority vs minority, k=3, \gls{k-means} on \acrshort{mds} coordinates}
+\end{figure}
 
 	\clearpage
 
@@ -661,7 +686,7 @@
 	
 	\subsubsection{Secret groups}
 	
-	There are 8 factions in current term of office. 8th faction is mixed group, meaning they will not vote in unison. In perfect scenario remaining 7 factions should be classified by classifier. To see how differently voting patterns can group - one group with less than 7 clusters should be tried and another one with more than 8 to see if there are secret groups.
+	There are 8 factions in current term of office. 8th faction is mixed group, meaning they will not vote in unison. In perfect scenario remaining 7 factions should be classified by classifier. To see how differently voting patterns can group - one group with less than 7 clusters should be tried and another one with more than 8 to see how well it matches current factions.
 
    	
    		\noindent
@@ -669,14 +694,53 @@
    		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
    			\multicolumn{2}{c}{}\\ 
    			\hline
-   			Encoding & k=2 & k=3 \\\hline
-   			E1 & 536738 & 500433 \\
-   			E2 & 121566 & 116326 \\
-   			E3 & 854237 & 811270 \\
+   			Encoding & k=7 & k=8 & k=9 \\\hline
+   			E1 & 446888 & 432739 & 428739 \\
+   			E2 & 100255 & 99660 & 98591 \\
+   			E3 & 706380 & 694879 & 688514 \\
+   			
    			\hline
    		\end{tabular}
-   		\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
+   		\captionof{table}{ Distortion for \gls{k-means} secret groups results} \label{tab:k_means_performance_secret}
    	\end{center} 
+   
+   \begin{figure}[!tbp]
+   	\centering
+   	\subfloat[k=7, encoding = E1]{\includegraphics[width=0.46\textwidth]{images/kmeans_k7_e1}\label{fig:secret_groups_k7_e1}}
+   	\hfill
+   	\subfloat[k=7, encoding = E2]{\includegraphics[width=0.46\textwidth]{images/kmeans_k7_e2}\label{fig:secret_groups_k7_e2}}
+   	\hfill
+   	\subfloat[k=7, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k7_e3}\label{fig:secret_groups_k7_e3}}
+   	\hfill
+	\subfloat[Actual factions]{\includegraphics[width=0.46\textwidth]{images/mds}\label{fig:majority_vs_minority_actual}}
+   	\caption{different clusters of members, \gls{k-means} on \acrshort{mds} coordinates}
+   \end{figure}
+   
+   \clearpage
+   
+   \begin{figure}[!tbp]
+   	\centering
+   	\subfloat[k=8, encoding = E1]{\includegraphics[width=0.46\textwidth]{images/kmeans_k8_e1}\label{fig:secret_groups_k8_e1}}
+   	\hfill
+   	\subfloat[k=8, encoding = E2]{\includegraphics[width=0.46\textwidth]{images/kmeans_k8_e2}\label{fig:secret_groups_k8_e2}}
+   	\hfill
+   	\subfloat[k=8, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k8_e3}\label{fig:secret_groups_k8_e3}}
+   	\caption{different clusters of members, \gls{k-means} on \acrshort{mds} coordinates}
+   \end{figure}
+   
+   \clearpage
+   
+     \begin{figure}[!tbp]
+   	\centering
+   	\subfloat[k=9, encoding = E1]{\includegraphics[width=0.46\textwidth]{images/kmeans_k9_e1}\label{fig:secret_groups_k9_e1}}
+   	\hfill
+   	\subfloat[k=9, encoding = E2]{\includegraphics[width=0.46\textwidth]{images/kmeans_k9_e2}\label{fig:secret_groups_k9_e2}}
+   	\hfill
+   	\subfloat[k=9, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k9_e3}\label{fig:secret_groups_k9_e3}}
+   	\caption{different clusters of members, \gls{k-means} on \acrshort{mds} coordinates}
+   \end{figure}
+   
+   \clearpage
    	
    	\subsection{Results and conclusions}
     

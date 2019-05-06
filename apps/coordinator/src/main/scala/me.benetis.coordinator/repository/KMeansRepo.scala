@@ -65,7 +65,7 @@ object KMeansRepo extends LazyLogging {
               termOfOfficeId.term_of_office_id
             )
           )
-          .filter(_.id.contains(KMeansId(29)))
+          .filter(_.id.contains(KMeansId(38)))
           .sortBy(_.createdAt)(Ord.desc)
       } yield {
         p
