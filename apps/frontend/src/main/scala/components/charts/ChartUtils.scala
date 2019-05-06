@@ -5,7 +5,10 @@ import me.benetis.shared.{
   ParliamentMemberSurname
 }
 
+case class ChartPointColor(value: String)
+
 object ChartUtils {
+
   def constructName(
     parliamentMemberName: ParliamentMemberName,
     parliamentMemberSurname: ParliamentMemberSurname

@@ -22,6 +22,7 @@ import me.benetis.shared.{
   KMeansDistortion,
   KMeansPoint,
   KMeansResult,
+  KMeansTotalClusters,
   MDSCoordinates,
   MdsPointOnlyXAndY,
   MdsPointWithAdditionalInfo,
@@ -74,9 +75,11 @@ object KMeansComputing {
               )
               .toMap
 
+          val totalClusters = 3
+
           val model = kmeans(
             data.values.toArray,
-            k = 3,
+            k = totalClusters,
             maxIter = 20
           )
 
@@ -95,7 +98,8 @@ object KMeansComputing {
                 termOfOfficeId,
                 SharedDateTime(DateTime.now().getMillis),
                 voteEncoding,
-                predicted
+                predicted,
+                KMeansTotalClusters(totalClusters)
               )
           )
         })

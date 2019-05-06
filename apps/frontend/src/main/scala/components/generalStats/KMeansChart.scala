@@ -1,6 +1,10 @@
 package components.generalStats
 
-import components.charts.{ChartUtils, ScatterPlot}
+import components.charts.{
+  ChartPointColor,
+  ChartUtils,
+  ScatterPlot
+}
 import components.filter.{DataFilter, Filter, FilterUtils}
 import components.generalStats.MDSChart.Props
 import components.{ChartDateRange, FactionLegend}
@@ -15,6 +19,7 @@ import me.benetis.shared.common.Charts.{
 }
 import me.benetis.shared._
 import model.FactionColors
+import org.scalajs.dom
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
 import services.GeneralStatisticsModel
@@ -38,6 +43,32 @@ object KMeansChart {
 
   class Backend($ : BackendScope[Props, Unit]) {
 
+    def clusterColor(
+      p: KMeansPoint,
+      totalClusters: KMeansTotalClusters
+    ): ChartPointColor = {
+
+      val colors = Map(
+        0  -> "#f8f9f9 ",
+        1  -> "#5dade2",
+        2  -> "#f5b041",
+        3  -> "#1abc9c",
+        4  -> "#2e4053",
+        5  -> "#e74c3c",
+        6  -> "#f39c12",
+        7  -> "#d35400",
+        -1 -> "#d5dbdb"
+      )
+
+      ChartPointColor(
+        colors.getOrElse(
+          p.clusterNumber.cluster_number,
+          "#d5dbdb"
+        )
+      )
+
+    }
+
     def addFilterFromState(
       props: Props,
       data: Vector[KMeansPoint]
@@ -48,30 +79,27 @@ object KMeansChart {
       )
     }
 
-    val kMeansPoint: (
-      KMeansPoint,
-      ScatterPlotPointPosition
-    ) => TagMod =
-      (point, position) => {
-        >.g(
-          >.circle(
-            ^^.cx := position.x,
-            ^^.cy := position.y,
-            ^^.r := 1,
-            ^^.fill := FactionColors
-              .factionColor(
-                point.factionName
-              )
-              .value,
-            >.title(
-              ChartUtils.constructName(
-                point.parliamentMemberName,
-                point.parliamentMemberSurname
+    val kMeansPoint =
+      (totalClusters: KMeansTotalClusters) =>
+        (
+          point: KMeansPoint,
+          position: ScatterPlotPointPosition
+        ) => {
+          >.g(
+            >.circle(
+              ^^.cx := position.x,
+              ^^.cy := position.y,
+              ^^.r := 1,
+              ^^.fill := clusterColor(point, totalClusters).value,
+              >.title(
+                ChartUtils.constructName(
+                  point.parliamentMemberName,
+                  point.parliamentMemberSurname
+                )
               )
             )
           )
-        )
-      }
+        }
 
     def render(
       p: Props,
@@ -91,7 +119,8 @@ object KMeansChart {
                       p,
                       result.coordinates.value
                     ),
-                    pointToTagMod = kMeansPoint,
+                    pointToTagMod =
+                      kMeansPoint(result.totalClusters),
                     unfilteredData =
                       result.coordinates.value
                   )

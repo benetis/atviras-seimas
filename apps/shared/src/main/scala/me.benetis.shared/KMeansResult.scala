@@ -16,6 +16,9 @@ case class KMeansDistortion(distortion: Double)
 case class KMeansClusterNumber(cluster_number: Int)
     extends Embedded
 
+case class KMeansTotalClusters(total_clusters: Int)
+    extends Embedded
+
 case class KMeansPoint(
   x: Double,
   y: Double,
@@ -39,7 +42,8 @@ case class KMeansResult(
   termOfOfficeId: TermOfOfficeId,
   createdAt: SharedDateTime,
   encoding: VoteEncodingConfig,
-  coordinates: MDSCoordinates[KMeansPoint])
+  coordinates: MDSCoordinates[KMeansPoint],
+  totalClusters: KMeansTotalClusters)
     extends Embedded
 
 object KMeansResult {
