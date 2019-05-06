@@ -621,6 +621,20 @@
    	To use \acrshort{mds} method proximity matrix needs to be generated. Distances need to be calculated from given data. Goal is to view voting patterns for given parliament members meaning that connection between somehow encoded votes and parliament members needs to be represented with this matrix.
    	
    	\subsubsection{Performance}
+   	
+   	\noindent
+   	\begin{center}
+   		\begin{tabular}{L{2cm} C{4cm}}
+   			\multicolumn{2}{c}{}\\ 
+   			\hline
+   			Encoding & Proportion of variance \\\hline
+   			E1 & 0.752 \\
+   			E2 & 0.790 \\
+   			E3 & 0.764 \\
+   			\hline
+   		\end{tabular}
+   		\captionof{table}{ Proportion of variance for MDS} \label{tab:mds_performance]}
+   	\end{center} 
    	   	
    	\clearpage
    	
@@ -637,7 +651,7 @@
 	
 	Majority and minority are two groups which usually have different ideologies - they couldn't group up, therefore are voting differently on issues. Another experiment could be to test three groups - two for minority and majority and one for outsides, parliament members who left one group or another, changed parties or are voting individually.
 	
-	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, white points being a minority and blue ones belonging to majority. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
+	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates with fixed encoding \textit{E1} for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, white points being a minority and blue ones belonging to majority. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
 	
 	
 	\noindent

@@ -12,6 +12,7 @@ object MDSRepo extends LazyLogging {
   import ctx._
 
   import me.benetis.coordinator.utils.SQLDateEncodersDecoders._
+  import me.benetis.coordinator.utils.SQLVoteEncodersDecoders._
 
   implicit val formats = DefaultFormats
 

@@ -13,6 +13,7 @@ import me.benetis.coordinator.utils.{
   LibraryNotBehavingAsExpected
 }
 import me.benetis.shared._
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingE1
 import org.joda.time.DateTime
 import scala.util.Try
 import smile.mds._
@@ -54,12 +55,15 @@ object MultidimensionalScaling extends LazyLogging {
     Either[ComputingError, MdsResult[MdsPointOnlyXAndY]]
   ] = {
 
+    val voteEncoding = VoteEncodingE1
+
     logger.info(s"Started MDS with ${termOfOffice.id}")
 
     ProximityMatrix
       .buildMatrices(
-        termOfOffice,
-        timeRangeOfMds
+        voteEncoding = voteEncoding,
+        termOfOffice = termOfOffice,
+        timeRangeOfMds = timeRangeOfMds
       )
       .map((matrix: (TimeRangeOfMds, ProximityMatrix)) => {
         val outputDimensions = 2
@@ -92,7 +96,8 @@ object MultidimensionalScaling extends LazyLogging {
                 ),
                 MdsResultTo(
                   matrix._1.to.toSharedDateTime()
-                )
+                ),
+                encoding = voteEncoding
               )
             })
           })

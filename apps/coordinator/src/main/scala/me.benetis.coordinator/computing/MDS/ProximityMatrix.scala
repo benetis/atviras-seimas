@@ -19,6 +19,7 @@ import me.benetis.shared.{
 }
 import me.benetis.coordinator.utils.dates.SharedDateDecoders._
 import me.benetis.coordinator.utils.dates.SharedDateEncoders._
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 import org.joda.time.DateTime
 
 case class ProximityMatrix(value: Array[Array[Double]]) {
@@ -30,6 +31,7 @@ case class ProximityMatrix(value: Array[Array[Double]]) {
 object ProximityMatrix extends LazyLogging {
 
   def buildMatrices(
+    voteEncoding: VoteEncodingConfig,
     termOfOffice: TermOfOffice,
     timeRangeOfMds: Option[Vector[TimeRangeOfMds]]
   ): Map[TimeRangeOfMds, ProximityMatrix] = {
@@ -52,9 +54,10 @@ object ProximityMatrix extends LazyLogging {
             .map(
               range =>
                 range -> buildMatrix(
-                  members,
-                  termOfOffice,
-                  Some(range)
+                  members = members,
+                  termOfOffice = termOfOffice,
+                  voteEncoding = voteEncoding,
+                  rangeOpt = Some(range)
                 )
             )
             .toMap
@@ -69,7 +72,11 @@ object ProximityMatrix extends LazyLogging {
               termOfOffice.dateTo.fold(
                 DateTime.now()
               )(d => sharedDOToDT(d.dateTo))
-            ) -> buildMatrix(members, termOfOffice)
+            ) -> buildMatrix(
+              members,
+              termOfOffice,
+              voteEncoding
+            )
           )
       }
 
@@ -81,6 +88,7 @@ object ProximityMatrix extends LazyLogging {
   private def buildMatrix(
     members: List[ParliamentMember],
     termOfOffice: TermOfOffice,
+    voteEncoding: VoteEncodingConfig,
     rangeOpt: Option[TimeRangeOfMds] = None
   ): ProximityMatrix = {
 
@@ -124,6 +132,7 @@ object ProximityMatrix extends LazyLogging {
     ProximityMatrix(
       fillProximityMatrix(
         termOfOffice,
+        voteEncoding,
         votesForMembers,
         matrix,
         cartesian
@@ -133,6 +142,7 @@ object ProximityMatrix extends LazyLogging {
 
   private def fillProximityMatrix(
     termOfOffice: TermOfOffice,
+    voteEncoding: VoteEncodingConfig,
     votesForMembers: Map[ParliamentMemberId, List[
       VoteReduced
     ]],
@@ -153,7 +163,7 @@ object ProximityMatrix extends LazyLogging {
           votesForMembers,
           pair._1,
           pair._2,
-          VoteEncoding.VoteEncodingE1.encode
+          voteEncoding.encode
         )
 
       matrix(

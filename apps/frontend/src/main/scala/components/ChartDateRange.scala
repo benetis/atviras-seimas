@@ -3,6 +3,7 @@ package components
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.~=>
 import japgolly.scalajs.react.vdom.html_<^._
+import me.benetis.shared.encoding.VoteEncoding
 import me.benetis.shared.{
   MdsPointWithAdditionalInfo,
   MdsResult,
@@ -42,7 +43,8 @@ object ChartDateRange {
 
       def dateToFormat(date: Date): String = {
 
-        s"${date.getFullYear()}-${appendZeros(
+        s"${VoteEncoding.encode(mdsResult.encoding)}-${date
+          .getFullYear()}-${appendZeros(
           date.getMonth() + 1
         )}-${appendZeros(date.getDay())}"
       }

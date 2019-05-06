@@ -5,6 +5,7 @@ import me.benetis.shared.common.Charts.{
   PointWithParliamentInfo,
   ScatterPoint
 }
+import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 
 case class EigenValues(value: Array[Double])
     extends Embedded
@@ -80,7 +81,8 @@ case class MdsResult[T <: ScatterPoint](
   createdAt: SharedDateTime,
   termOfOfficeId: TermOfOfficeId,
   rangeFrom: MdsResultFrom,
-  rangeTo: MdsResultTo)
+  rangeTo: MdsResultTo,
+  encoding: VoteEncodingConfig)
     extends Embedded
 
 object MdsResult {
