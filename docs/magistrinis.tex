@@ -136,7 +136,7 @@
 	
 	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 
-	This project aims to 
+	This project aims to deliver a software system which can be accessed online with research done available to any user. Research will include visualizations of \acrfull{mds} for specific time periods of a given term. \Gls{k-means} projected on \gls{mds} output to visualize minority vs majority and to see if there are secret groups.
     
     \clearpage
     
@@ -510,6 +510,17 @@
 	For users to inspect data with more than hundred points, filtering for members and factions needs to be present. Users are able to filter data by word. It is possible to filter by one word or phrase, however multiple words or phrases can also be used. In addition, while filtering data users can choose different periods of time. All this helps to compare separate factions to one another or parliament members to factions.
 	
 	\clearpage
+	
+	\begin{figure}[!tbp]
+		\centering
+		\subfloat[Data filter 1]{\includegraphics[width=0.4\textwidth]{images/filter1}\label{fig:f1}}
+		\hfill
+		\subfloat[Data filter 2]{\includegraphics[width=0.4\textwidth]{images/filter2}\label{fig:f2}}
+		\hfill
+		\caption{Figure 4: Data filters}
+	\end{figure}
+	
+	\clearpage
 
   	\subsection{Tools}
     \subsubsection{Programming language: {\textit Scala}}
@@ -593,32 +604,37 @@
 	
 	\subsubsection{Majority vs minority} 
 	
-	Majority and minority are two groups which usually have different ideologies - they couldn't group up, therefore are voting differently on issues. Another experiment could be to test three groups - two for minority and majority and one for outsides, parliament members who left one group or another, changed parties or are voting individually. 
+	Majority and minority are two groups which usually have different ideologies - they couldn't group up, therefore are voting differently on issues. Another experiment could be to test three groups - two for minority and majority and one for outsides, parliament members who left one group or another, changed parties or are voting individually.
 	
-	\begin{figure}%
-		\centering
-		\subfloat[label 1]{{\includegraphics[width=5cm]{images/kmeans_k2_e1} }}%
-		\qquad
-		\subfloat[label 2]{{\includegraphics[width=5cm]{images/kmeans_k2_e2} }}%
-		\qquad
-		\subfloat[label 2]{{\includegraphics[width=5cm]{images/kmeans_k2_e3} }}%
-		\caption{2 Figures side by side}%
-		\label{fig:example}%
-	\end{figure}
+	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, but this hypothesis is not confirmed numerically in this project. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
+	
 	
 	\noindent
-\begin{center}
-	\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
-		\multicolumn{2}{c}{}\\ 
-		\hline
-		Encoding & k=2 & k=3 \\\hline
-		E1 & 536738 & 500433 \\
-		E2 & 121566 & 116326 \\
-		E3 & 854237 & 811270 \\
-		\hline
-	\end{tabular}
-	\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
-\end{center}
+	\begin{center}
+		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
+			\multicolumn{2}{c}{}\\ 
+			\hline
+			Encoding & k=2 & k=3 \\\hline
+			E1 & 536738 & 500433 \\
+			E2 & 121566 & 116326 \\
+			E3 & 854237 & 811270 \\
+			\hline
+		\end{tabular}
+		\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
+	\end{center} 
+	
+	\begin{figure}[!tbp]
+		\centering
+		\subfloat[k=2, encoding = E1]{\includegraphics[width=0.46\textwidth]{images/kmeans_k2_e1}\label{fig:majority_vs_minority_k2_e1}}
+		\hfill
+		\subfloat[k=2, encoding = E2]{\includegraphics[width=0.46\textwidth]{images/kmeans_k2_e2}\label{fig:majority_vs_minority_k2_e2}}
+		\hfill
+		\subfloat[k=2, encoding = E3]{\includegraphics[width=0.46\textwidth]{images/kmeans_k2_e3}\label{fig:majority_vs_minority_k2_e3}}
+		\caption{majority vs minority, \gls{k-means} on \acrshort{mds} coordinates}
+	\end{figure}
+
+	\clearpage
+
 
 	
 	\subsubsection{Secret groups}
@@ -626,9 +642,21 @@
 	There are 8 factions in current term of office. 8th faction is mixed group, meaning they will not vote in unison. In perfect scenario remaining 7 factions should be classified by classifier. To see how differently voting patterns can group - one group with less than 7 clusters should be tried and another one with more than 8 to see if there are secret groups.
 
    	
+   		\noindent
+   	\begin{center}
+   		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
+   			\multicolumn{2}{c}{}\\ 
+   			\hline
+   			Encoding & k=2 & k=3 \\\hline
+   			E1 & 536738 & 500433 \\
+   			E2 & 121566 & 116326 \\
+   			E3 & 854237 & 811270 \\
+   			\hline
+   		\end{tabular}
+   		\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
+   	\end{center} 
+   	
    	\subsection{Results and conclusions}
-   	
-   	
     
    
     \clearpage

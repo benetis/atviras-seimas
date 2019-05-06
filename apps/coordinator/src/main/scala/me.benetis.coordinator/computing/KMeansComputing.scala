@@ -75,7 +75,7 @@ object KMeansComputing {
               )
               .toMap
 
-          val totalClusters = 3
+          val totalClusters = 7
 
           val model = kmeans(
             data.values.toArray,
