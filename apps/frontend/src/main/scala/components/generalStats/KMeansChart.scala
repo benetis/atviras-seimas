@@ -127,13 +127,16 @@ object KMeansChart {
               ),
               <.h2(
                 styles.title,
-                result.coordinates.value.headOption
-                  .fold("empty")(
-                    x => x.parliamentMemberSurname.person_surname
-                  ),
-                "PLACEHOLDER"
+                "Į kokias grupes seimo nariai atsiskiria atsižvelgus tik į jų balsavimus?"
               ),
-              FactionLegend(FactionLegend.Props())
+              <.p(
+                "Skirtingos spalvos reprezentuoja skirtingą grupę",
+                styles.title
+              ),
+              <.p(
+                "(Duomenys nuo 2016.11 iki 2019-04)",
+                styles.subtitle
+              )
             )
           }
         )
@@ -155,6 +158,10 @@ object KMeansChart {
       textAlign.center,
       marginTop(5 px),
       marginBottom(10 px)
+    )
+
+    val subtitle = title + style(
+      fontSize(0.8 em)
     )
 
     val fill = style(

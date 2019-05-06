@@ -64,6 +64,7 @@ object ChartDateRange {
         <.span(styles.label, "Duomenų laikotarpis"),
         styles.container,
         <.select(
+          styles.inputBox,
           ^.onChange ==> { e =>
             p.onChange(
               MdsResultId(
@@ -104,6 +105,14 @@ object ChartDateRange {
 
     val label = style(
       marginRight(5 px)
+    )
+
+    val inputBox = globalStyles.s.inputBox + style(
+      borderTopRightRadius(globalStyles.s.bitBorderRadius),
+      borderBottomRightRadius(
+        globalStyles.s.bitBorderRadius
+      ),
+      backgroundColor(white)
     )
 
   }

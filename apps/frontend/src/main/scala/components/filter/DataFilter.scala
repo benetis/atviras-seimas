@@ -85,7 +85,7 @@ object DataFilter {
           styles.inputBoxContainer,
           <.input(
             ^.autoFocus := true,
-            styles.inputBox,
+            globalStyles.s.inputBox,
             ^.placeholder := "Filtras pagal tekstą",
             ^.onChange ==> onChange,
             ^.onKeyUp ==> { e =>
@@ -148,18 +148,7 @@ object DataFilter {
       borderRadius(globalStyles.s.bitBorderRadius)
     )
 
-    val inputBox = style(
-      flexGrow(2),
-      borderTopLeftRadius(globalStyles.s.bitBorderRadius),
-      borderBottomLeftRadius(
-        globalStyles.s.bitBorderRadius
-      ),
-      padding(8 px, 16 px),
-      outline.none,
-      border.none
-    )
-
-    val inputBoxButton = globalStyles.s.commonBottomStyles + style(
+    val inputBoxButton = globalStyles.s.commonButtonStyles + style(
       padding(4 px, 8 px),
       borderTopRightRadius(globalStyles.s.bitBorderRadius),
       borderBottomRightRadius(

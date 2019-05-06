@@ -40,7 +40,7 @@ package object globalStyles {
       height(100 vh)
     )
 
-    val commonBottomStyles = style(
+    val commonButtonStyles = style(
       backgroundColor(parrotPink),
       &.hover - (
         color(parrotPink),
@@ -52,11 +52,22 @@ package object globalStyles {
       textAlign.center
     )
 
-    val navButton = commonBottomStyles + style(
+    val navButton = commonButtonStyles + style(
       textDecoration := "none",
       display.inlineBlock,
       padding(15 px, 20 px),
       borderRadius(40 px)
+    )
+
+    val inputBox = style(
+      flexGrow(2),
+      borderTopLeftRadius(bitBorderRadius),
+      borderBottomLeftRadius(
+        bitBorderRadius
+      ),
+      padding(8 px, 16 px),
+      outline.none,
+      border.none
     )
 
   }

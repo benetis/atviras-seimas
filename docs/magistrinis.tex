@@ -18,7 +18,7 @@
     \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
     \usepackage{tikz}
     \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
-    
+    \usepackage{url}
     
     \makeglossaries
     
@@ -67,6 +67,11 @@
 		name=draw.io,
 		description={ }
 	} 
+   \newglossaryentry{euclidian}
+{
+	name=Euclidian distance,
+	description={ }
+} 
 \newglossaryentry{mockup}
 {name={Mockup},description={description}}
 
@@ -130,7 +135,7 @@
 	
 	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 
-	This thesis goal is to X and Y
+	This project aims to 
     
     \clearpage
     
@@ -540,10 +545,30 @@
     \end{center}
 
     
-    \hfill
-    
+    \hfill 
     
    	\subsection{Experiments}
+   	\subsubsection{Encoding of data} 
+   	
+   	To use scientific methods data needs to be prepared for them. Two methods: \textit{\acrshort{mds}} and \gls{k-means} need distances between pairs or training rows to compare parliament members to each other. This means that to compare one member's to another some measure like \gls{euclidian} is needed to produce numerical difference between points. Vote outcomes in given data are categorical, meaning they need to be converted to numbers. Since authors in  \cite{vytautas_mick_magistrinis} tried few vote encodings for \acrshort{mds} and \gls{lrs} older data - this project will use different ones to capture broader scientific results.
+   	
+   	In table \ref{tab:vote_outcome_encoding} chosen voting outcomes encoding can be viewed. \textit{Encoding 1} straightforward scores are chosen. Voting abstain has negative score, because some legislature requires absolute majority to pass, therefore minority of parliament can block by abstaining. Did not vote is considered to be neutral, as some parliament members begin their term of office later and need to be assigned a score. \textit{Encoding 2} values are chosen more flexibly. Voting for and against are opposites, however voting abstain and not attending are neutral. This is to cover the case where members actually vote not to block specific vote, but don't have opinion on what to vote. \textit{Encoding 3} differs by having negative score for not voting at all. This is to cover the case where half or parliament members plus one is needed to pass certain laws, like changing constitution. This means that by not registering to vote you can actually vote against \cite{konstitucija}.
+ 
+ 	\noindent
+   	\begin{center}
+   		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
+   			\multicolumn{2}{c}{}\\ 
+   			\hline
+   			Vote outcome & Encoding 1 & Encoding 2& Encoding 3  \\\hline
+   			For & 2 & 1 & 2 \\
+ 			Against & -2 & -1 & -2\\
+ 			Abstain & -1 & 0 & -1\\
+ 			Did not vote & 0 & 0 & -1\\
+   			\hline
+   		\end{tabular}
+   		\captionof{table}{ Encoding of vote outcomes} \label{tab:vote_outcome_encoding}
+   	\end{center}
+   	   	
    	\subsubsection{MDS}
    	
    	To use \acrshort{mds} method proximity matrix needs to be generated. Distances need to be calculated from given data. Goal is to view voting patterns for given parliament members meaning that connection between somehow encoded votes and parliament members needs to be represented with this matrix.
@@ -551,11 +576,18 @@
    	
    	\subsubsection{Unsupervised learning: {\textit k-means} clusterization }
    	
+   		
+   	There are two goals for \gls{k-means}: classify majority from minority and see if there are groups not explicitly split into factions.
+   	
    	Since some members joined parliament after term of office start or left it before it ended - data is missing on their votes during that time. To avoid this issue - empty training rows are added for that missing time.
    	
-	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same period.
+	Results from \gls{k-means} are displayed on \acrshort{mds} calculated coordinates for the same time period.Training rows for clustering are prepared by encoding votes for given parliament member.
+	
+	\subsubsection{Performance}
    	
    	\subsection{Results and conclusions}
+   	
+   	
     
    
     \clearpage
