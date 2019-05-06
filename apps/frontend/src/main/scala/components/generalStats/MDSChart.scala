@@ -67,7 +67,8 @@ object MDSChart {
             ^^.r := 1,
             ^^.fill := FactionColors
               .factionColor(
-                point.factionName
+                point.factionName,
+                Some(point.parliamentMemberId)
               )
               .value,
             >.title(

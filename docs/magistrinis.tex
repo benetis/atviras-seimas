@@ -20,6 +20,8 @@
     \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
     \usepackage{url}
     \usepackage{subfig}
+    \usepackage[lithuanian,english]{babel}
+    \usepackage[T1]{fontenc}
     
     \makeglossaries
     
@@ -103,6 +105,7 @@
     \newacronym{sql}{SQL}{  Structured Query Language }   
     
     \begin{document}
+   	\selectlanguage{english}
    
     
     \pagenumbering{roman}
@@ -110,28 +113,35 @@
     \begin{center}
         \section*{Abstract}
     \end{center}
+	
         
-        \addcontentsline{toc}{section}{\numberline{}\kern-1.5emAbstract}%
-        
-%         \title{{\vspace{-4cm} \large Lithuanian parliament legislative voting analysis and vizualization} \vspace{-1cm}}
-%         \author{\small Author: Žygimantas Benetis\\\small Supervisor: Prof. Dr. Tomas Krilavičius}
-%         \maketitle
+        \addcontentsline{toc}{section}{\numberline{}\kern-1.5emAbstract}
         
         In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. Due nature of politics, a problem arises once citizens wants to observe and evaluate parliament members work. Main output of parliament is their votes for various legislatures. Voting data is publicly available through \gls{lrs} website. This project aims to visualize voting patterns and their changes. Another goal is to provide public access to results.
         
         In the project \gls{mds} and \gls{k-means} clustering are used to analyze voting patterns. Software to download, process and visualize  data is written with \gls{scala}.
         
-        
-        
+
     \clearpage
     
+    \begin{center}
+    	\section*{Santrauka}
+    \end{center}
+    
+    
+   	\addcontentsline{toc}{section}{\numberline{}\kern-1.5emSantrauka}
+    \begin{otherlanguage}{lithuanian}
+    	Atstovus į Lietuvos Respublikos Seimą (LRS), kuriame yra apsvarstomi ir priimami nauji įstatymai, išrenka Lietuvos piliečiai. Tačiau iškyla problemų visuomenei norint iš arčiau stebėti ir įvertinti Seimo narių darbą. Viena pagrindinių Seimo narių pareigų ir yra balsavimas priimant įvairius naujus įstatymus ar jų pataisymus. Kiekvieno Seimo nario balsai yra viešai prieinami Lietuvos Respublikos Seimo internetinėje svetainėje. Šiuo darbu siekiama šią informaciją vizualizuoti, kad būtų galima stebėti balsavimo modelius ir jų pasikeitimus. Taip pat yra siekiama suteikti viešą prieigą prie šių rezultatų.
+    	
+    	Darbe, analizuojant balsavimo modelius, yra naudojamas daugiadimencinis skalių metodas ir k-reikšmių klasterizacija. Programinė įranga, duomenų atsisiuntimas ir vizualizavimas yra parašytas naudojantis Scala.
+    	
+    \end{otherlanguage}
+
     \tableofcontents
     
     \clearpage
     
     \printglossary[type=\acronymtype]
-    
-    \clearpage
     
     \printglossary
     
@@ -620,7 +630,7 @@
    	
    	To use \acrshort{mds} method proximity matrix needs to be generated. Distances need to be calculated from given data. Goal is to view voting patterns for given parliament members meaning that connection between somehow encoded votes and parliament members needs to be represented with this matrix.
    	
-   	\subsubsection{Performance}
+   	In figures \ref{fig:mds_e1}, \ref{fig:mds_e2}, \ref{fig:mds_e3} MDS for current term of office is calculated and projected on 2d scatter plot. Three variants show how different vote encoding changes plot. Table \ref{tab:mds_performance]} shows that \textit{E2 encoding} has the highest proportion of variance of the scaled data which was accounted by MDS method. It shows that \textit{E2 encoding} loses the least amount of data, meaning simple vote for and vote against is the best encoding for this case. Also, in visualization, faction voting patterns are clearly visible, as member votes are close to each other. Forming clusters.
    	
    	\noindent
    	\begin{center}
@@ -635,8 +645,48 @@
    		\end{tabular}
    		\captionof{table}{ Proportion of variance for MDS} \label{tab:mds_performance]}
    	\end{center} 
-   	   	
+   
+   	\begin{figure}[!tbp]
+   	\centering
+   	\subfloat[encoding = E1]{\includegraphics[width=0.48\textwidth]{images/mds_e1}\label{fig:mds_e1}}
+   	\hfill
+   	\subfloat[encoding = E2]{\includegraphics[width=0.46\textwidth]{images/mds_e2}\label{fig:mds_e2}}
+   	\hfill
+   	\subfloat[encoding = E3]{\includegraphics[width=0.46\textwidth]{images/mds_e3}\label{fig:mds_e3}}
+   	\caption{MDS on 2d scatter plot}
+   \end{figure}
+  	   	
    	\clearpage
+   	
+   \subsubsection{Time periods}
+   	
+   	To get more insights, as discussed in problem analysis, data is split into 91.25 day periods. This enables to see what difference each of these periods introduce to the members. For example: Justas Džiugelis was a member of Greens majority faction during 2016-11-14 – 2018-09-10 period. If \gls{mds} were plotted to show how his voting is similar to his faction during current term of office - its possible to see how farther he gets before leaving the party. Comparison can be seen in figure \ref{fig:justas_all}, where green dots are members from his former faction, and light blue point is him. Before he leave the party on 2018-09-10, his voting patterns start to diverge starting 2018-02-01 voting period.
+   	
+   	 	\begin{figure}[!tbp]
+   		\centering
+   		\subfloat[2016-11-01 --- 2017-02-01]{\includegraphics[width=0.31\textwidth]{images/justas1}\label{fig:justas1}}
+   		\hfill
+   		\subfloat[2017-02-01 --- 2017-05-01]{\includegraphics[width=0.31\textwidth]{images/justas2}\label{fig:justas2}}
+   		\hfill
+		\subfloat[2017-05-01 --- 2017-08-01]{\includegraphics[width=0.31\textwidth]{images/justas11}\label{fig:justas11}}
+   		\hfill
+   		\subfloat[2017-08-01 --- 2017-11-01]{\includegraphics[width=0.31\textwidth]{images/justas4}\label{fig:justas4}}
+   		\hfill
+   		\subfloat[2017-11-01 --- 2018-02-01]{\includegraphics[width=0.31\textwidth]{images/justas5}\label{fig:justas5}}
+   		\hfill
+		\subfloat[2018-02-01 --- 2018-05-01]{\includegraphics[width=0.31\textwidth]{images/justas6}\label{fig:justas6}}
+		\hfill
+		\subfloat[2018-05-01 --- 2018-08-01]{\includegraphics[width=0.31\textwidth]{images/justas7}\label{fig:justas7}}
+		\hfill
+		\subfloat[2018-08-01 --- 2018-11-01]{\includegraphics[width=0.31\textwidth]{images/justas8}\label{fig:justas8}}
+		\hfill
+		\subfloat[2018-11-01 --- 2019-02-01]{\includegraphics[width=0.31\textwidth]{images/justas9}\label{fig:justas9}}
+		\hfill	
+   		\caption{Changes in Justas Džiugelis voting patterns}
+   		\label{fig:justas_all}
+   	\end{figure}
+   
+   \clearpage
    	
    	\subsection{Unsupervised learning: {\textit k-means} clusterization }
    	
@@ -651,7 +701,7 @@
 	
 	Majority and minority are two groups which usually have different ideologies - they couldn't group up, therefore are voting differently on issues. Another experiment could be to test three groups - two for minority and majority and one for outsides, parliament members who left one group or another, changed parties or are voting individually.
 	
-	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates with fixed encoding \textit{E1} for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, white points being a minority and blue ones belonging to majority. This finding can also suggest that simple vote for and vote against split for positive negative score is the best.
+	Figures \ref{fig:majority_vs_minority_k2_e1}, \ref{fig:majority_vs_minority_k2_e2}, \ref{fig:majority_vs_minority_k2_e3} can be observed for results projected on MDS coordinates with fixed encoding \textit{E1} for the same time period. Graphs show how parliament members are assigned to two clusters. Just from visual part it is not clear which encoding has best performance. From \Gls{k-means} \textit{distortion} in table \ref{tab:k_means_performance} shows \textit{E2 encoding} to have the lowest value. Closer look at \ref{fig:majority_vs_minority_k2_e2} suggests that most of points are classified correctly in this graph, white points being a minority and blue ones belonging to majority. This finding can also suggest that simple vote for and vote against split for positive negative score is the best as it was for MDS proportion of variance.
 	
 	
 	\noindent

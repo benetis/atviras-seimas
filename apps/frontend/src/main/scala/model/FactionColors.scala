@@ -2,7 +2,8 @@ package model
 
 import me.benetis.shared.{
   FactionName,
-  ParliamentMemberFactionName
+  ParliamentMemberFactionName,
+  ParliamentMemberId
 }
 import org.scalajs.dom
 
@@ -28,11 +29,24 @@ object FactionColors {
   )
 
   def factionColor(
-    factionName: ParliamentMemberFactionName
+    factionName: ParliamentMemberFactionName,
+    parliamentMemberId: Option[ParliamentMemberId] = None
   ): FactionColor = {
-    map.getOrElse(
-      factionName.faction_name,
-      FactionColor("#b5838d")
-    )
+    parliamentMemberId match {
+      case Some(id) =>
+        if (id == ParliamentMemberId(79168))
+          FactionColor("#3ae8ff")
+        else
+          map.getOrElse(
+            factionName.faction_name,
+            FactionColor("#b5838d")
+          )
+      case None =>
+        map.getOrElse(
+          factionName.faction_name,
+          FactionColor("#b5838d")
+        )
+
+    }
   }
 }
