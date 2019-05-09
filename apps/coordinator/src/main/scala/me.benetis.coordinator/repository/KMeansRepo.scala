@@ -56,7 +56,7 @@ object KMeansRepo extends LazyLogging {
 
   def byTermOfOffice(
     termOfOfficeId: TermOfOfficeId
-  ): Option[KMeansResult] = {
+  ): List[KMeansResult] = {
     val q = quote {
       for {
         p <- query[KMeansResult]
@@ -65,16 +65,13 @@ object KMeansRepo extends LazyLogging {
               termOfOfficeId.term_of_office_id
             )
           )
-          .filter(_.id.contains(KMeansId(38)))
-          .sortBy(_.createdAt)(Ord.desc)
+          .sortBy(_.totalClusters.total_clusters)(Ord.asc)
       } yield {
         p
       }
     }
 
-    val res: List[KMeansResult] = ctx.run(q)
-
-    res.headOption
+    ctx.run(q)
   }
 
 }

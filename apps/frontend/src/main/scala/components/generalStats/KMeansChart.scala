@@ -7,7 +7,7 @@ import components.charts.{
 }
 import components.filter.{DataFilter, Filter, FilterUtils}
 import components.generalStats.MDSChart.Props
-import components.{ChartDateRange, FactionLegend}
+import components.{ChartSelectorForKMeans, FactionLegend}
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.~=>
@@ -32,7 +32,9 @@ object KMeansChart {
   val styles = GlobalRegistry[Style].get
 
   case class Props(
-    kMeansResult: Option[KMeansResult],
+    kMeansResults: Vector[KMeansResult],
+    kMeansSelectedId: Option[KMeansId],
+    onKMeansResultChange: KMeansId ~=> Callback,
     proxy: ModelProxy[GeneralStatisticsModel])
 
   private val component = ScalaComponent
@@ -105,13 +107,20 @@ object KMeansChart {
       p: Props,
       s: Unit
     ) = {
-
-      p.kMeansResult
+      p.kMeansResults
+        .find(_.id == p.kMeansSelectedId)
         .fold(<.div("Empty KMeans result"))(
           (result: KMeansResult) => {
             <.div(
               styles.container,
               DataFilter(DataFilter.Props(p.proxy)),
+              ChartSelectorForKMeans(
+                ChartSelectorForKMeans.Props(
+                  p.kMeansSelectedId,
+                  p.kMeansResults,
+                  p.onKMeansResultChange
+                )
+              ),
               ScatterPlot(
                 ScatterPlot
                   .Props[KMeansPoint](

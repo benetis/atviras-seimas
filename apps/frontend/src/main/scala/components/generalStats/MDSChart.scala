@@ -1,6 +1,10 @@
 package components.generalStats
 
-import components.{ChartDateRange, FactionLegend}
+import components.{
+  ChartDateRange,
+  ChartSelectorForKMeans,
+  FactionLegend
+}
 import components.charts.{ChartUtils, ScatterPlot}
 import components.filter.{DataFilter, Filter, FilterUtils}
 import diode.react.ModelProxy

@@ -6,6 +6,7 @@ import japgolly.scalajs.react.extra.Reusable
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.{
+  KMeansId,
   MdsPointWithAdditionalInfo,
   MdsResult,
   MdsResultId,
@@ -23,6 +24,7 @@ import services.{
   SelectedClustering,
   SelectedMdsChart,
   SetSelectedGeneralStatsTab,
+  SetSelectedKMeansResult,
   SetSelectedMdsResult
 }
 import utils.Pages.{GeneralStats, Home}
@@ -105,6 +107,18 @@ object GeneralStatsPage {
 
       })
 
+    val onKMeansResultChange =
+      Reusable.fn((id: KMeansId) => {
+
+        $.props.flatMap(
+          props =>
+            props.proxy.dispatchCB(
+              SetSelectedKMeansResult(id)
+            )
+        )
+
+      })
+
     def render(
       p: Props,
       s: Unit
@@ -141,6 +155,8 @@ object GeneralStatsPage {
               KMeansChart.apply(
                 KMeansChart.Props(
                   p.proxy.value.generalStats.kMeansResults,
+                  p.proxy.value.generalStats.kMeansSelectedId,
+                  onKMeansResultChange,
                   p.proxy.zoom(_.generalStats)
                 )
               )

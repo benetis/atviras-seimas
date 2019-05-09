@@ -6,6 +6,7 @@ import diode.react.ReactConnector
 import me.benetis.shared.api.ApiForFrontend
 import me.benetis.shared.{
   DiscussionLength,
+  KMeansId,
   KMeansResult,
   MdsPointWithAdditionalInfo,
   MdsResult,
@@ -33,7 +34,8 @@ case class GeneralStatisticsModel(
   mdsSelectedId: Option[MdsResultId],
   mdsFilters: Set[Filter],
   kMeansFilters: Set[Filter],
-  kMeansResults: Option[KMeansResult])
+  kMeansSelectedId: Option[KMeansId],
+  kMeansResults: Vector[KMeansResult])
 
 case class LoadMdsResult(termOfOfficeId: TermOfOfficeId)
     extends Action
@@ -43,11 +45,14 @@ case class MdsResultLoaded(
 
 case class LoadKMeansResult(termOfOfficeId: TermOfOfficeId)
     extends Action
-case class KMeansResultLoaded(
-  KMeansResult: Option[KMeansResult])
+case class KMeansResultsLoaded(
+  KMeansResult: Vector[KMeansResult])
     extends Action
 
 case class SetSelectedMdsResult(mdsSelectedId: MdsResultId)
+    extends Action
+
+case class SetSelectedKMeansResult(kMeansId: KMeansId)
     extends Action
 
 case class SetSelectedGeneralStatsTab(
@@ -68,7 +73,8 @@ object AppCircuit
         mdsSelectedId = None,
         mdsFilters = Set.empty,
         kMeansFilters = Set.empty,
-        kMeansResults = None
+        kMeansSelectedId = None,
+        kMeansResults = Vector.empty
       )
     )
 
@@ -101,14 +107,23 @@ object AppCircuit
             AjaxClient[ApiForFrontend]
               .fetchKMeansResults(termOfOfficeId)
               .call()
-              .map(r => KMeansResultLoaded(r))
+              .map(r => KMeansResultsLoaded(r))
           )
         )
 
-      case KMeansResultLoaded(kMeansResult) =>
+      case SetSelectedKMeansResult(kMeansId: KMeansId) =>
         updated(
           value.copy(
-            kMeansResults = kMeansResult
+            kMeansSelectedId = Some(kMeansId)
+          )
+        )
+
+      case KMeansResultsLoaded(kMeansResult) =>
+        updated(
+          value.copy(
+            kMeansResults = kMeansResult,
+            kMeansSelectedId =
+              kMeansResult.headOption.flatMap(_.id)
           )
         )
 

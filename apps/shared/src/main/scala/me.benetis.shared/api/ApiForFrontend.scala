@@ -15,7 +15,11 @@ trait ApiForFrontend {
     termOfOfficeId: TermOfOfficeId
   ): Vector[MdsResult[MdsPointWithAdditionalInfo]]
 
-  def fetchKMeansResults(
+  def fetchKMeansResult(
     termOfOfficeId: TermOfOfficeId
   ): Option[KMeansResult]
+
+  def fetchKMeansResults(
+    termOfOfficeId: TermOfOfficeId
+  ): Vector[KMeansResult]
 }

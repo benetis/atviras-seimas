@@ -65,12 +65,22 @@ object ApiForFrontendController
     )
   }
 
-  override def fetchKMeansResults(
+  override def fetchKMeansResult(
     termOfOfficeId: TermOfOfficeId
   ): Option[KMeansResult] = {
     val result =
       KMeansRepo.byTermOfOffice(termOfOfficeId)
-    result
+
+    result.headOption
+  }
+
+  override def fetchKMeansResults(
+    termOfOfficeId: TermOfOfficeId
+  ): Vector[KMeansResult] = {
+    val result =
+      KMeansRepo.byTermOfOffice(termOfOfficeId)
+
+    result.toVector
   }
 
   override def fetchMdsResults(
