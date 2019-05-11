@@ -49,6 +49,10 @@ object Coordinator extends LazyLogging {
           case Right(value) =>
             KMeansRepo.insert(value)
         }
+      case ComputeMultiFactionsList =>
+        VoteRepo.aggregateDistinctFactions(
+          TermOfOfficeId(8)
+        )
     }
   }
 }

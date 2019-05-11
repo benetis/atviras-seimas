@@ -1,7 +1,9 @@
 package me.benetis.coordinator.repository
 
+import org.joda.time.DateTime
 import io.getquill.{MysqlJdbcContext, SnakeCase}
 import me.benetis.coordinator.repository.DiscussionEventRepo.ctx
+import me.benetis.coordinator.repository.VoteRepo.ctx
 import me.benetis.coordinator.utils.{
   ComputingError,
   DBNotExpectedResult
@@ -159,6 +161,41 @@ object VoteRepo {
 
   private def toVoteReduced(v: Vote): VoteReduced = {
     VoteReduced(v.id, v.vote, v.personId, v.time, None)
+  }
+
+  def aggregateDistinctFactions(
+    termOfOfficeId: TermOfOfficeId
+  ) = {
+
+//    val d = new DateTime(2016, 11, 14).getMillis
+//    val q = quote {
+//      for {
+//        p <- query[Vote]
+//          .filter(
+//            _.faction.nonEmpty
+//          )
+//          .filter(_.time.time.millis >= lift(d))
+//          .groupBy(_.personId)
+//          .map { case (person, votesList) =>
+//
+//            val personVotesWithFactions = votesList
+//              .groupBy(v => v.faction)
+//
+//            val allFactions = personVotesWithFactions.map(_._1).filter(_.nonEmpty).asInstanceOf[ctx.Query[FactionAcronym]]
+//
+//            var list = ""
+//
+//
+//
+//          }
+//      } yield {
+//        p
+//      }
+//    }
+//
+//    ctx.run(q).filter(_.)
+//    println(result)
+
   }
 
 }

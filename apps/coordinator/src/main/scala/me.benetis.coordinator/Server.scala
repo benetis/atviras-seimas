@@ -55,6 +55,16 @@ object Server {
             )
           )
         }
+      } ~ path("compute" / "multi-factions-list") {
+        get {
+          computing.Coordinator(ComputeKMeans)
+          complete(
+            HttpEntity(
+              ContentTypes.`text/html(UTF-8)`,
+              "<h1>Computed KMeans</h1>"
+            )
+          )
+        }
       } ~ path("download" / "parliament-members") {
         get {
           downloader.Coordinator(FetchParliamentMembers)

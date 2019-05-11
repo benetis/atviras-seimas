@@ -43,6 +43,7 @@ case class Vote(
   surname: ParliamentMemberSurname,
   faction: Option[FactionAcronym],
   vote: SingleVote)
+    extends Embedded
 
 case class VoteReduced(
   id: VoteId,
