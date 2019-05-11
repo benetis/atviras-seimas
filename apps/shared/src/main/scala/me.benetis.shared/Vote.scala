@@ -2,11 +2,15 @@ package me.benetis.shared
 
 import io.getquill.Embedded
 
-sealed trait SingleVote       extends Embedded
-case object SingleVoteFor     extends SingleVote
-case object SingleVoteAgainst extends SingleVote
-case object SingleVoteAbstain extends SingleVote
-case object DidntVote         extends SingleVote
+sealed trait SingleVote   extends Embedded
+case object SingleVoteFor extends SingleVote with Embedded
+case object SingleVoteAgainst
+    extends SingleVote
+    with Embedded
+case object SingleVoteAbstain
+    extends SingleVote
+    with Embedded
+case object DidntVote extends SingleVote with Embedded
 
 sealed trait VoteType         extends Embedded
 case object Open              extends VoteType

@@ -4,5 +4,5 @@ sealed trait ComputingSettings
 
 case object ComputeMDS    extends ComputingSettings
 case object ComputeKMeans extends ComputingSettings
-case object ComputeMultiFactionsList
+case object ComputeMultiFactionsItems
     extends ComputingSettings

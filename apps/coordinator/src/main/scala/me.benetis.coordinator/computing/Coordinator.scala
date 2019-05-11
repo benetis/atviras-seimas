@@ -4,6 +4,8 @@ import me.benetis.coordinator.computing.MDS.MultidimensionalScaling
 import me.benetis.coordinator.repository.{
   KMeansRepo,
   MDSRepo,
+  MultiFactionItemRepo,
+  TermOfOfficeRepo,
   VoteRepo
 }
 import me.benetis.coordinator.utils.ComputingError
@@ -49,10 +51,14 @@ object Coordinator extends LazyLogging {
           case Right(value) =>
             KMeansRepo.insert(value)
         }
-      case ComputeMultiFactionsList =>
-        VoteRepo.aggregateDistinctFactions(
-          TermOfOfficeId(8)
+      case ComputeMultiFactionsItems =>
+        val termOfOffice =
+          TermOfOfficeRepo.byId(TermOfOfficeId(8))
+
+        termOfOffice.foreach(
+          MultiFactionItemRepo.addFactionsToCurrentList
         )
+
     }
   }
 }

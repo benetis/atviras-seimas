@@ -12,7 +12,8 @@ import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.model.StatusCodes._
 import me.benetis.coordinator.computing.{
   ComputeKMeans,
-  ComputeMDS
+  ComputeMDS,
+  ComputeMultiFactionsItems
 }
 import me.benetis.shared.{
   FetchFactions,
@@ -57,11 +58,11 @@ object Server {
         }
       } ~ path("compute" / "multi-factions-list") {
         get {
-          computing.Coordinator(ComputeKMeans)
+          computing.Coordinator(ComputeMultiFactionsItems)
           complete(
             HttpEntity(
               ContentTypes.`text/html(UTF-8)`,
-              "<h1>Computed KMeans</h1>"
+              "<h1>Computed multi faction list</h1>"
             )
           )
         }

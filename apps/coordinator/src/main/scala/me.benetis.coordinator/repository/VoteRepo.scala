@@ -97,7 +97,7 @@ object VoteRepo {
     }
   }
 
-  private def isDateInTermOfficeRange(
+  def isDateInTermOfficeRange(
     voteTime: VoteTime,
     termOfOffice: TermOfOffice
   ): Boolean = {
