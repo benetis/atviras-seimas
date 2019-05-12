@@ -18,9 +18,12 @@ object Coordinator extends LazyLogging {
   def apply(computingSettings: ComputingSettings) = {
     computingSettings match {
       case ComputeMDS =>
-        val termOfOfficeId = TermOfOfficeId(8)
+        val termOfOfficeId    = TermOfOfficeId(8)
+        val singleFactionOnly = MdsSingleFactionOnly(true)
+
         MultidimensionalScaling.calculate(
           termOfOfficeId,
+          singleFactionOnly,
           periods = false
         ) match {
           case Right(
@@ -41,16 +44,40 @@ object Coordinator extends LazyLogging {
         }
       case ComputeKMeans =>
         val termOfOfficeId = TermOfOfficeId(8)
-        val mdsId          = MdsResultId(39)
-        KMeansComputing.compute(
-          termOfOfficeId,
-          VoteEncoding.VoteEncodingE3,
-          mdsId
-        ) match {
-          case Left(value) => logger.error(value.msg())
-          case Right(value) =>
-            KMeansRepo.insert(value)
-        }
+        val mdsId          = MdsResultId(41)
+        val totalClusters  = KMeansTotalClusters(2)
+        val kMeansSingleFactionOnly =
+          KMeansSingleFactionOnly(true)
+
+        val allEncodings = Vector(
+          VoteEncoding.VoteEncodingE1
+//          VoteEncoding.VoteEncodingE2,
+//          VoteEncoding.VoteEncodingE3
+        )
+
+        val mdsOpt = MDSRepo.findById(mdsId)
+
+        mdsOpt.foreach(
+          mds =>
+            allEncodings
+              .map(
+                enc =>
+                  KMeansComputing.compute(
+                    termOfOfficeId,
+                    enc,
+                    mds,
+                    kMeansSingleFactionOnly,
+                    totalClusters
+                  )
+              )
+              .foreach {
+                case Left(value) =>
+                  logger.error(value.msg())
+                case Right(value) =>
+                  KMeansRepo.insert(value)
+              }
+        )
+
       case ComputeMultiFactionsItems =>
         val termOfOffice =
           TermOfOfficeRepo.byId(TermOfOfficeId(8))

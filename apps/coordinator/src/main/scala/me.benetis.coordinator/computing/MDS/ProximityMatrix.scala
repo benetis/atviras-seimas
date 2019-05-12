@@ -2,6 +2,7 @@ package me.benetis.coordinator.computing.MDS
 
 import com.typesafe.scalalogging.LazyLogging
 import java.io
+import me.benetis.coordinator.computing.Utils
 import me.benetis.coordinator.repository.{
   ParliamentMemberRepo,
   VoteRepo
@@ -9,6 +10,7 @@ import me.benetis.coordinator.repository.{
 import me.benetis.coordinator.utils.ComputingError
 import me.benetis.shared.encoding.VoteEncoding
 import me.benetis.shared.{
+  MdsSingleFactionOnly,
   ParliamentMember,
   ParliamentMemberId,
   SharedDateOnly,
@@ -33,16 +35,20 @@ object ProximityMatrix extends LazyLogging {
   def buildMatrices(
     voteEncoding: VoteEncodingConfig,
     termOfOffice: TermOfOffice,
-    timeRangeOfMds: Option[Vector[TimeRangeOfMds]]
+    timeRangeOfMds: Option[Vector[TimeRangeOfMds]],
+    singleFactionOnly: MdsSingleFactionOnly
   ): Map[TimeRangeOfMds, ProximityMatrix] = {
     ParliamentMemberRepo.updateTermsSpecificIds(
       termOfOffice
     )
 
-    val members =
-      ParliamentMemberRepo.listByTermOfOffice(
-        termOfOffice.id
-      )
+    val members: List[ParliamentMember] =
+      if (singleFactionOnly.single_faction_only)
+        Utils.membersForSingleFaction(termOfOffice.id)
+      else
+        ParliamentMemberRepo.listByTermOfOffice(
+          termOfOffice.id
+        )
 
     val result =
       timeRangeOfMds match {

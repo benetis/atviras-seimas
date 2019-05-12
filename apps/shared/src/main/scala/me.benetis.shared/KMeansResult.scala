@@ -19,6 +19,10 @@ case class KMeansClusterNumber(cluster_number: Int)
 case class KMeansTotalClusters(total_clusters: Int)
     extends Embedded
 
+case class KMeansSingleFactionOnly(
+  single_faction_only: Boolean)
+    extends Embedded
+
 case class KMeansId(id: Int) extends Embedded
 
 case class KMeansPoint(
@@ -46,7 +50,8 @@ case class KMeansResult(
   createdAt: SharedDateTime,
   encoding: VoteEncodingConfig,
   coordinates: MDSCoordinates[KMeansPoint],
-  totalClusters: KMeansTotalClusters)
+  totalClusters: KMeansTotalClusters,
+  singleFactionOnly: KMeansSingleFactionOnly)
     extends Embedded
 
 object KMeansResult {
