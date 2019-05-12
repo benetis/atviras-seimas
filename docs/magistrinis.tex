@@ -541,9 +541,7 @@
 	
 	\subsubsection{User flow}
 	
-	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool.
-	
-	Happy path NEEDS CITATION is x and y, copy from scatter plot.
+	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool. These mockups show main user interaction flow for the application.
 	
 	. It can and be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
 	
@@ -596,11 +594,9 @@
 	
 	This subsystem handles incoming \gls{http} requests from users. It uses \textit{Akka-http} library \cite{akka_http}. Both computing and application requests are handled in this subsystem. Computing requests tell server to download specific set of data, update to newest data or order server to compute data for scientific methods. Application requests serve data to the client, querying it from the database. Since both client and server side are written with one programming language there are many benefits to use. While client side can remain as a single page application, server side can still share code with it. One such benefit - no need to write serializers and deserializers, since data types can be shared between two projects and process can be automatic. 
 	
-	\subsection{Coordinator}
-        
     \subsection{Downloader}
     
-    Downloader consists of few parts: \textit{Download coordinator, Scraper, Parser, Error handler}. 
+    Downloader's main aim is to download, clean and save data to database. Data flow can be viewed in figure \ref{fig:data_flow_pipeline}. Downloader also has a feature to update just the data it is missing. It can be achieved two ways in this project: by requesting downloads for specifics terms of office or data ranges. Another way is just to download all of the data again, since all data has unique primary keys, data will not be duplicated and only new data will be added, leaving old data unchanged. Downloader does small pauses after each hit to \gls{lrs_open} \acrshort{api}. This is to prevent too much traffic at one time for the serving \acrshort{api}. All of the data can be downloaded in few hours with this limitation.
     
  
 %    \subsection{Repository}
