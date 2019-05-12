@@ -54,8 +54,7 @@ object ApiForFrontendController
                 mds.termOfOfficeId,
                 mds.rangeFrom,
                 mds.rangeTo,
-                mds.encoding,
-                mds.singleFactionOnly
+                mds.encoding
               )
             )
           case Left(err) =>

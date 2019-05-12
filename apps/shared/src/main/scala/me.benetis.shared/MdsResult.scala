@@ -73,10 +73,6 @@ case class MdsResultTo(range_to: SharedDateTime)
 
 case class MdsResultId(id: Int) extends Embedded
 
-case class MdsSingleFactionOnly(
-  single_faction_only: Boolean)
-    extends Embedded
-
 case class MdsResult[T <: ScatterPoint](
   id: Option[MdsResultId],
   eigenValues: EigenValues,
@@ -86,8 +82,7 @@ case class MdsResult[T <: ScatterPoint](
   termOfOfficeId: TermOfOfficeId,
   rangeFrom: MdsResultFrom,
   rangeTo: MdsResultTo,
-  encoding: VoteEncodingConfig,
-  singleFactionOnly: MdsSingleFactionOnly)
+  encoding: VoteEncodingConfig)
     extends Embedded
 
 object MdsResult {

@@ -7,7 +7,6 @@ import me.benetis.coordinator.computing.MDS.{
 import me.benetis.shared.encoding.VoteEncoding.VoteEncodingConfig
 import me.benetis.coordinator.repository.{
   MDSRepo,
-  MultiFactionItemRepo,
   ParliamentMemberRepo,
   TermOfOfficeRepo,
   VoteRepo
@@ -23,7 +22,6 @@ import me.benetis.shared.{
   KMeansDistortion,
   KMeansPoint,
   KMeansResult,
-  KMeansSingleFactionOnly,
   KMeansTotalClusters,
   MDSCoordinates,
   MdsPointOnlyXAndY,
@@ -45,9 +43,7 @@ object KMeansComputing {
   def compute(
     termOfOfficeId: TermOfOfficeId,
     voteEncoding: VoteEncodingConfig,
-    mdsResult: MdsResult[MdsPointOnlyXAndY],
-    singleFactionOnly: KMeansSingleFactionOnly,
-    totalClusters: KMeansTotalClusters
+    mdsId: MdsResultId
   ): Either[ComputingError, KMeansResult] = {
 
     val termOfOfficeOpt =
@@ -55,13 +51,10 @@ object KMeansComputing {
 
     termOfOfficeOpt
       .map(termOfOffice => {
-        val membersI: List[ParliamentMember] =
-          if (singleFactionOnly.single_faction_only)
-            Utils.membersForSingleFaction(termOfOfficeId)
-          else
-            ParliamentMemberRepo.listByTermOfOffice(
-              termOfOfficeId
-            )
+        val members: List[ParliamentMember] =
+          ParliamentMemberRepo.listByTermOfOffice(
+            termOfOfficeId
+          )
 
         val votesIds = VoteRepo
           .listForTermOfOffice(termOfOfficeId)
@@ -70,7 +63,7 @@ object KMeansComputing {
 
         votesIds.flatMap(allVotesIds => {
           val data: Map[ParliamentMemberId, Array[Double]] =
-            membersI
+            members
               .map(
                 m =>
                   m.personId -> transformToTrainingRow(
@@ -82,16 +75,18 @@ object KMeansComputing {
               )
               .toMap
 
+          val totalClusters = 9
+
           val model = kmeans(
             data.values.toArray,
-            k = totalClusters.total_clusters,
+            k = totalClusters,
             maxIter = 20
           )
 
           val predictedEith = predictByModel(
             model = model,
-            members = membersI,
-            mdsResult = mdsResult,
+            members = members,
+            mdsResultId = mdsId,
             data = data
           )
 
@@ -105,8 +100,7 @@ object KMeansComputing {
                 SharedDateTime(DateTime.now().getMillis),
                 voteEncoding,
                 predicted,
-                totalClusters,
-                singleFactionOnly
+                KMeansTotalClusters(totalClusters)
               )
           )
         })
@@ -163,17 +157,9 @@ object KMeansComputing {
   def predictByModel(
     model: KMeans,
     members: List[ParliamentMember],
-    mdsResult: MdsResult[MdsPointOnlyXAndY],
+    mdsResultId: MdsResultId,
     data: Map[ParliamentMemberId, Array[Double]]
   ): Either[ComputingError, MDSCoordinates[KMeansPoint]] = {
-    val mds = AdditionalInfo
-      .transformToAdditionalInfo(mdsResult, members)
-      .map(coords => mdsResult.copy(coordinates = coords))
-
-    val predictions: Map[ParliamentMemberId, Int] =
-      data.map(tupl => {
-        tupl._1 -> model.predict(tupl._2)
-      })
 
     def getFromPredictions(
       parliamentMemberId: ParliamentMemberId
@@ -181,24 +167,46 @@ object KMeansComputing {
       predictions.get(parliamentMemberId)
     }
 
-    mds
-      .map(mdsRes => {
-        mdsRes.coordinates.value.map(point => {
-          KMeansPoint(
-            point.x,
-            point.y,
-            point.factionName,
-            point.parliamentMemberId,
-            point.parliamentMemberName,
-            point.parliamentMemberSurname,
-            KMeansClusterNumber(
-              getFromPredictions(point.parliamentMemberId)
-                .getOrElse(-1)
-            )
-          )
-        })
+    lazy val mds =
+      MDSRepo
+        .findById(mdsResultId)
+        .flatMap(
+          (res: MdsResult[MdsPointOnlyXAndY]) => {
+            AdditionalInfo
+              .transformToAdditionalInfo(res, members)
+              .map(coords => res.copy(coordinates = coords)) match {
+              case Left(value)  => None
+              case Right(value) => Some(value)
+            }
+          }
+        )
+
+    lazy val predictions: Map[ParliamentMemberId, Int] =
+      data.map(tupl => {
+        tupl._1 -> model.predict(tupl._2)
       })
-      .map(MDSCoordinates(_))
+
+    mds.map(mdsRes => {
+      mdsRes.coordinates.value.map(point => {
+        KMeansPoint(
+          point.x,
+          point.y,
+          point.factionName,
+          point.parliamentMemberId,
+          point.parliamentMemberName,
+          point.parliamentMemberSurname,
+          KMeansClusterNumber(
+            getFromPredictions(point.parliamentMemberId)
+              .getOrElse(-1)
+          )
+        )
+      })
+    }) match {
+      case Some(value) =>
+        Right(MDSCoordinates(value))
+      case None =>
+        Left(CustomError("Mds by given id not found"))
+    }
 
   }
 }

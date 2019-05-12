@@ -22,7 +22,6 @@ object MultidimensionalScaling extends LazyLogging {
 
   def calculate(
     termOfOfficeId: TermOfOfficeId,
-    singleFactionOnly: MdsSingleFactionOnly,
     periods: Boolean = true
   ): Either[ComputingError, Vector[
     Either[ComputingError, MdsResult[MdsPointOnlyXAndY]]
@@ -37,20 +36,9 @@ object MultidimensionalScaling extends LazyLogging {
 
         if (periods)
           Right(
-            calculateForPeriod(
-              termOfOffice,
-              singleFactionOnly,
-              Some(ranges)
-            )
+            calculateForPeriod(termOfOffice, Some(ranges))
           )
-        else
-          Right(
-            calculateForPeriod(
-              termOfOffice,
-              singleFactionOnly,
-              None
-            )
-          )
+        else Right(calculateForPeriod(termOfOffice, None))
       case None =>
         Left(
           CustomError(
@@ -62,7 +50,6 @@ object MultidimensionalScaling extends LazyLogging {
 
   private def calculateForPeriod(
     termOfOffice: TermOfOffice,
-    singleFactionOnly: MdsSingleFactionOnly,
     timeRangeOfMds: Option[Vector[TimeRangeOfMds]]
   ): Vector[
     Either[ComputingError, MdsResult[MdsPointOnlyXAndY]]
@@ -76,8 +63,7 @@ object MultidimensionalScaling extends LazyLogging {
       .buildMatrices(
         voteEncoding = voteEncoding,
         termOfOffice = termOfOffice,
-        timeRangeOfMds = timeRangeOfMds,
-        singleFactionOnly = singleFactionOnly
+        timeRangeOfMds = timeRangeOfMds
       )
       .map((matrix: (TimeRangeOfMds, ProximityMatrix)) => {
         val outputDimensions = 2
@@ -111,8 +97,7 @@ object MultidimensionalScaling extends LazyLogging {
                 MdsResultTo(
                   matrix._1.to.toSharedDateTime()
                 ),
-                encoding = voteEncoding,
-                singleFactionOnly = singleFactionOnly
+                encoding = voteEncoding
               )
             })
           })
