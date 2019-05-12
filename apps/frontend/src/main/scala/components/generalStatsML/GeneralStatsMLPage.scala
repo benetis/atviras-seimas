@@ -1,4 +1,4 @@
-package components.generalStats
+package components.generalStatsML
 
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
@@ -7,15 +7,29 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import me.benetis.shared.{
   KMeansId,
+  MdsPointWithAdditionalInfo,
+  MdsResult,
   MdsResultId,
   TermOfOfficeId
 }
+import diode.ActionHandler._
+import org.scalajs.dom
 import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
-import services._
-import utils.Pages.Home
+import services.{
+  GeneralStatsSelectedChart,
+  LoadKMeansResult,
+  LoadMdsResult,
+  RootModel,
+  SelectedClustering,
+  SelectedMdsChart,
+  SetSelectedGeneralStatsTab,
+  SetSelectedKMeansResult,
+  SetSelectedMdsResult
+}
+import utils.Pages.{GeneralStatsML, Home}
 
-object GeneralStatsPage {
+object GeneralStatsMLPage {
 
   import globalStyles.CssSettings._
 
@@ -27,7 +41,7 @@ object GeneralStatsPage {
     ctl: RouterCtl[utils.Pages.Page])
 
   private val component = ScalaComponent
-    .builder[Props]("general stats page")
+    .builder[Props]("Home page")
     .stateless
     .renderBackend[Backend]
     .componentDidMount(
@@ -127,11 +141,25 @@ object GeneralStatsPage {
         p.proxy.value.generalStats.selectedGeneralStatsChart match {
           case SelectedMdsChart =>
             <.div(
-              <.div("empty")
+              MDSChart.apply(
+                MDSChart.Props(
+                  p.proxy.value.generalStats.mdsResults,
+                  p.proxy.value.generalStats.mdsSelectedId,
+                  onDateRangeChange,
+                  p.proxy.zoom(_.generalStats)
+                )
+              )
             )
           case SelectedClustering =>
             <.div(
-              <.div("empty")
+              KMeansChart.apply(
+                KMeansChart.Props(
+                  p.proxy.value.generalStats.kMeansResults,
+                  p.proxy.value.generalStats.kMeansSelectedId,
+                  onKMeansResultChange,
+                  p.proxy.zoom(_.generalStats)
+                )
+              )
             )
         }
       )

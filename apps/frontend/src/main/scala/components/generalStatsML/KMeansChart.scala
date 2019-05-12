@@ -1,4 +1,4 @@
-package components.generalStats
+package components.generalStatsML
 
 import components.charts.{
   ChartPointColor,
@@ -6,7 +6,7 @@ import components.charts.{
   ScatterPlot
 }
 import components.filter.{DataFilter, Filter, FilterUtils}
-import components.generalStats.MDSChart.Props
+import components.generalStatsML.MDSChart.Props
 import components.{ChartSelectorForKMeans, FactionLegend}
 import diode.react.ModelProxy
 import japgolly.scalajs.react._

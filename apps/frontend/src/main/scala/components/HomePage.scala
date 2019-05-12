@@ -1,6 +1,6 @@
 package components
 
-import components.generalStats.GeneralStatsPage
+import components.generalStatsML.GeneralStatsMLPage
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -14,7 +14,7 @@ import scalacss.ScalaCssReact.scalacssStyleaToTagMod
 import scalacss.internal.mutable.GlobalRegistry
 import services.{LoadMdsResult, RootModel}
 import japgolly.scalajs.react.vdom.html_<^._
-import utils.Pages.GeneralStats
+import utils.Pages.{GeneralStats, GeneralStatsML}
 
 object HomePage {
 
@@ -51,9 +51,15 @@ object HomePage {
         globalStyles.s.pageContainer,
         <.div(
           styles.navigationContainer,
+          p.ctl.link(GeneralStatsML)(
+            globalStyles.s.navButton,
+            styles.link,
+            "Kaip vienodai balsuoja seimo nariai?"
+          ),
           p.ctl.link(GeneralStats)(
             globalStyles.s.navButton,
-            "Kaip vienodai balsuoja seimo nariai?"
+            styles.link,
+            "Kaip seimo nariai keičia frakcijas?"
           )
         )
       )
@@ -69,8 +75,14 @@ object HomePage {
     val navigationContainer = style(
       height(100 %%),
       display.flex,
+      flexWrap.wrap,
+      flexDirection.column,
       justifyContent.center,
       alignItems.center
+    )
+
+    val link = style(
+      marginBottom(10 px)
     )
   }
 }

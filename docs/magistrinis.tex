@@ -2,7 +2,7 @@
     \usepackage[acronym,toc]{glossaries}
     \usepackage{graphicx} % For figures later
     \usepackage[utf8]{inputenc}
-    \usepackage{mathptmx}
+	\usepackage{mathptmx}
     \usepackage{titling}
     \usepackage{comment}
     \graphicspath{ {../images/} }
@@ -22,7 +22,20 @@
     \usepackage{subfig}
     \usepackage[lithuanian,english]{babel}
     \usepackage[T1]{fontenc}
-    
+
+    \usepackage[a4paper,bindingoffset=0.2in,%
+	left=30mm,right=10mm,top=20mm,bottom=20mm,%
+    footskip=.25in]{geometry}
+
+	\usepackage{sectsty}
+	
+	\sectionfont{\fontsize{16}{19}\selectfont}
+	\subsectionfont{\fontsize{14}{16}\selectfont}
+	\subsubsectionfont{\fontsize{12}{14}\selectfont}
+	
+	\usepackage{setspace}
+	\onehalfspacing
+	
     \makeglossaries
     
     \newglossaryentry{mysql}
@@ -101,7 +114,7 @@
     \newacronym{io}{IO}{ Input/Output }
     \newacronym{mds}{MDS}{ Multidimensional scaling}
     \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania } 
-    \newacronym{xml}{XML}{ PLACEHOLDER }   
+    \newacronym{xml}{XML}{ Extensible Markup Language }   
     \newacronym{sql}{SQL}{  Structured Query Language }   
     
     \begin{document}
@@ -111,11 +124,29 @@
     \pagenumbering{roman}
     
     \begin{center}
-        \section*{Abstract}
+        \section*{ABSTRACT}
     \end{center}
 	
         
-        \addcontentsline{toc}{section}{\numberline{}\kern-1.5emAbstract}
+        \addcontentsline{toc}{section}{\numberline{}\kern-1.5emABSTRACT}
+        
+        \noindent
+        \begin{center}
+        	\begin{tabular}{L{4.5cm} L{8cm}}
+        		\multicolumn{2}{c}{}\\ 
+        		Author of research project & Žygimantas Benetis \\
+        		Title of research project & PLACEHOLDER\\
+        		Supervisor & prof. dr. Tomas Krilavičius\\
+        		Presented at & Vytautas Magnus university, Faculty of Informatics, Kaunas, 2018\\
+        		Number of pages & 0\\
+        		Number of tables & 0\\
+        		Number of figures & 0\\
+        		Number of appendices & 0\\
+        		Lines of code & 0\\
+        	\end{tabular}
+        \end{center} 
+        
+        \vspace{5mm}
         
         In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. Due nature of politics, a problem arises once citizens wants to observe and evaluate parliament members work. Main output of parliament is their votes for various legislatures. Voting data is publicly available through \gls{lrs} website. This project aims to visualize voting patterns and their changes. Another goal is to provide public access to results.
         
@@ -125,11 +156,11 @@
     \clearpage
     
     \begin{center}
-    	\section*{Santrauka}
+    	\section*{SANTRAUKA}
     \end{center}
     
     
-   	\addcontentsline{toc}{section}{\numberline{}\kern-1.5emSantrauka}
+   	\addcontentsline{toc}{section}{\numberline{}\kern-1.5emSANTRAUKA}
     \begin{otherlanguage}{lithuanian}
     	Atstovus į Lietuvos Respublikos Seimą (LRS), kuriame yra apsvarstomi ir priimami nauji įstatymai, išrenka Lietuvos piliečiai. Tačiau iškyla problemų visuomenei norint iš arčiau stebėti ir įvertinti Seimo narių darbą. Viena pagrindinių Seimo narių pareigų ir yra balsavimas priimant įvairius naujus įstatymus ar jų pataisymus. Kiekvieno Seimo nario balsai yra viešai prieinami Lietuvos Respublikos Seimo internetinėje svetainėje. Šiuo darbu siekiama šią informaciją vizualizuoti, kad būtų galima stebėti balsavimo modelius ir jų pasikeitimus. Taip pat yra siekiama suteikti viešą prieigą prie šių rezultatų.
     	
@@ -138,24 +169,29 @@
     \end{otherlanguage}
 
 	\clearpage
-
-    \tableofcontents
+	
+	\begingroup
+	\singlespacing
+	\tableofcontents
+	\endgroup
     
     \clearpage
     
-    \printglossary[type=\acronymtype]
+    \printglossary[type=\acronymtype,title={ACRONYMS}]
     
-    \printglossary
+    \clearpage
+    
+    \printglossary[title={GLOSSARY}]
     
     \clearpage
     
     \pagenumbering{arabic}
     
-    \section{Introduction}
+    \section{INTRODUCTION}
     
     In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. By this election each citizen delegates specifics of legislation process to their representatives so they don't have to actively participate in the process.
 	
-	However, a problem arises once citizen wants to validate what his representative has been doing. Single term of office NEEDS-CITATION involves thousands of complicated laws and votes. To analyze everything becomes almost an impossible task for a single citizen who is out of the loop. 
+	However, a problem arises once citizen wants to validate what his representative has been doing. Single term of office involves thousands of complicated laws and votes as seen in table \ref{tab:data_statistics}. To analyze everything becomes almost an impossible task for a single citizen who is out of the loop. 
 	
 	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 
@@ -163,7 +199,7 @@
     
     \clearpage
     
-    \section{Analysis}
+    \section{ANALYSIS}
    
    	\subsection{Literature analysis}
    	
@@ -421,7 +457,9 @@
  		\item Software development
  	\end{itemize}
  	
- 	If considered what is output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say there is a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters $P = \{timestamp, term\; of\; office, parliament\;member\;id, voting\;outcome,...\}$. Votes can be divided into groups depended on term of office $T$ during which they were cast. Each term of office $T_i$ can be divided into smaller arbitrarily chosen time periods $\{p_1, p_2, ...p_n\}$. Each time periods can have votes assigned which were cast during that time. Goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
+ 	If considered what is output of parliaments during their term of office in parliament - it would be their voting outcomes. Let's say there is a set of all votes made by parliament members $V = \{v_1, v_2, ... v_n\}$ where each vote $v_i$ has a tuple of parameters
+	$	P = \{timestamp, term\; of\; office, \\ parliament\;member\;id, voting\;outcome,...\}.$	
+ 	 Votes can be divided into groups depended on term of office $T$ during which they were cast. Each term of office $T_i$ can be divided into smaller arbitrarily chosen time periods $\{p_1, p_2, ...p_n\}$. Each time periods can have votes assigned which were cast during that time. Goal is visualize set $V$ in a way that similar voting patterns of different members are visible. 
  	
  	In order to visualize voting patterns by members, its dimensions need to be reduced. With help of \acrfull{mds}, vote set $V$ with parameters set $P$ can be visualized on a two or one dimensional coordinate system. As discussed in literature analysis and \cite{poole_2005} voting patterns can be captured by only few dimensions. To observe how voting patterns change during time, different time periods could be chosen. Term of office should be the maximum time period $p_n$ to analyze, as majority and minority usually changes together with parliament members.
  	
@@ -442,7 +480,7 @@
     
     \clearpage
     
-    \section{Design and development of atviras-seimas.lt}
+    \section{DESIGN AND DEVELOPMENT OF ATVIRAS-SEIMAS.LT}
     \subsection{Components of system}
    	\subsubsection{Functional requirements}
    	
@@ -568,7 +606,7 @@
 %    \subsection{Repository}
     \clearpage
     
-    \section{Description of experimental research}
+    \section{DESCRIPTION OF EXPERIMENTAL RESEARCH}
     \subsection{Data statistics}
     
    	Data statistics are calculated from data \gls{lrs_open} \acrshort{api} which was downloaded and saved to local database. Quite a big chunk data from 1990-2012 is missing due different information systems used at that time and other reasons. It was not migrated to current open data \acrshort{api}. For this reason this project focuses more on recent data, but it is not limited to analyze older data too if it becomes available.
@@ -828,7 +866,7 @@
     \pagenumbering{roman}
       
 	\appendix
-	\section{Appendix}
+	\section{APPENDIX}
 	
 	\subsection{Research project no. 1 summary}
 	
@@ -847,6 +885,8 @@
 			Number of appendices & 1\\
 		\end{tabular}
 	\end{center} 
+
+	\vspace{5mm}
 	
 	In this research project problem of internet bots was considered. Specifically ones which post to forums, comments sections on twitter. Since economic incentive behind bots is big, they were getting more and more popular. In the project most popular Lithuanian news website delfi.lt dataset of all comments written after articles was analyzed. Literature was reviewed to see similar work done on this topic. Data was inspected to see the properties, problem analysis and project plan done to plan future work on this topic. 
 	
@@ -869,6 +909,8 @@
 			Number of appendices & 0\\
 		\end{tabular}
 	\end{center} 
+
+	\vspace{5mm}
 	
 	In this research project work on same problem was continued. To classify comments on internet website delfi.lt. More statistics  and visual graphs needed to be done to find patterns and better choose methods for experiment part. Since amount of data did not fit into computer memory, more complex algorithmic solutions were required to deal with this problem. \textit{Term Frequency Inverse Document Frequency} and \textit{k-means clusterization} were chosen to work with. Pipelines for experimental research were designed and developed to reproduce research and compute in a faster manner.
 	
@@ -893,6 +935,8 @@
     		Lines of code & 2010\\
     	\end{tabular}
     \end{center} 
+
+	\vspace{5mm}
     
     In this research project work on same problem was continued. More detailed method analysis, more detailed performance evaluation and use of statistics were employed to help achieve results. Architecture for data pipelines was finalized and used to produce the results. Data extraction and other pipelines could be reused and research can be reproduced even for huge amounts of data. This is due the use of distributed big data library Spark. Final thesis project plan was added, however, due to lack of results produced by the methods decision was made not to follow up and choose a different topic.
     

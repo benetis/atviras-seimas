@@ -1,4 +1,4 @@
-package components.generalStats
+package components.generalStatsML
 
 import components.{
   ChartDateRange,

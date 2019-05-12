@@ -1,5 +1,6 @@
 import components.HomePage
 import components.generalStats.GeneralStatsPage
+import components.generalStatsML.GeneralStatsMLPage
 import components.styleguide.StyleguidePage
 import diode.react.ModelProxy
 import japgolly.scalajs.react.component.Scala.Unmounted
@@ -31,6 +32,16 @@ object AppRouter {
               (p: ModelProxy[RootModel]) =>
                 HomePage(
                   HomePage.Props(p, ctl)
+                )
+            )
+        )
+        | staticRoute("#general-stats-ml", GeneralStatsML) ~> renderR(
+          (ctl: RouterCtl[Page]) =>
+            circuit(
+              (p: ModelProxy[RootModel]) =>
+                GeneralStatsMLPage(
+                  GeneralStatsMLPage
+                    .Props(p, ctl)
                 )
             )
         )

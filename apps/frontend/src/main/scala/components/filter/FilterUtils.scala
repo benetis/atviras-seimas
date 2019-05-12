@@ -1,7 +1,7 @@
 package components.filter
 
 import components.charts.ChartUtils
-import components.generalStats.KMeansChart.Props
+import components.generalStatsML.KMeansChart.Props
 import me.benetis.shared.common.Charts.PointWithParliamentInfo
 
 object FilterUtils {
