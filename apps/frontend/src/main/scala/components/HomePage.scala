@@ -55,12 +55,12 @@ object HomePage {
             globalStyles.s.navButton,
             styles.link,
             "Kaip vienodai balsuoja seimo nariai?"
-          ),
-          p.ctl.link(GeneralStats)(
-            globalStyles.s.navButton,
-            styles.link,
-            "Kaip seimo nariai keičia frakcijas?"
           )
+//          p.ctl.link(GeneralStats)(
+//            globalStyles.s.navButton,
+//            styles.link,
+//            "Kaip seimo nariai keičia frakcijas?"
+//          )
         )
       )
     }
