@@ -150,14 +150,14 @@ footskip=.25in]{geometry}
 		\begin{tabular}{L{4.5cm} L{8cm}}
 			\multicolumn{2}{c}{}\\ 
 			Author of research project & Žygimantas Benetis \\
-			Title of research project & PLACEHOLDER\\
+			Title of research project & Lithuanian Parliament roll-call voting analysis and visualization\\
 			Supervisor & prof. dr. Tomas Krilavičius\\
 			Presented at & Vytautas Magnus university, Faculty of Informatics, Kaunas, 2018\\
-			Number of pages & 0\\
-			Number of tables & 0\\
-			Number of figures & 0\\
-			Number of appendices & 0\\
-			Lines of code & 0\\
+			Number of pages & 45\\
+			Number of tables & 15\\
+			Number of figures & 12\\
+			Number of appendices & 3\\
+			Lines of code & 6605\\
 		\end{tabular}
 	\end{center} 
 	
@@ -617,6 +617,8 @@ footskip=.25in]{geometry}
 	Downloader's main aim is to download, clean and save data to database. Data flow can be viewed in figure \ref{fig:data_flow_pipeline}. Downloader also has a feature to update just the data it is missing. It can be achieved two ways in this project: by requesting downloads for specifics terms of office or data ranges. Another way is just to download all of the data again, since all data has unique primary keys, data will not be duplicated and only new data will be added, leaving old data unchanged. Downloader does small pauses after each hit to \gls{lrs_open} \acrshort{api}. This is to prevent too much traffic at one time for the serving \acrshort{api}. All of the data can be downloaded in few hours with this limitation.
 	
 	\subsection{Deployment}
+	
+	Both server and client parts of the software are deployed to virtual machine on a datacenter. Client part artifacts are wrapped in \gls{docker} container and deployed to the virtual machine. Docker container is built locally by running a specific script. Server side is assembled into one archive file and moved to server where specific configuration with database password is passed through arguments. Database is installed locally on the virtual machine and is update migrated by hand.
 	
  	\subsection{Testing}
  	
