@@ -23,6 +23,10 @@
 \usepackage[lithuanian,english]{babel}
 \usepackage[T1]{fontenc}
 
+\usepackage{caption} 
+\captionsetup[table]{skip=-10pt,position=above,font=small,labelsep=period}
+\captionsetup[figure]{font=small,labelsep=period}
+
 \usepackage[a4paper,bindingoffset=0.2in,%
 left=30mm,right=10mm,top=20mm,bottom=20mm,%
 footskip=.25in]{geometry}
@@ -130,13 +134,15 @@ footskip=.25in]{geometry}
 \newacronym{mds}{MDS}{ Multidimensional scaling}
 \newacronym{lrs}{LRS}{ Parliament of the Republic of Lithuania } 
 \newacronym{xml}{XML}{ Extensible Markup Language }   
-\newacronym{sql}{SQL}{  Structured Query Language }   
+\newacronym{sql}{SQL}{  Structured Query Language }  
+\newacronym{rpc}{RPC}{  Remote Procedure Call }   
 
 \begin{document}
 	\selectlanguage{english}
 	
 	
-	\pagenumbering{roman}
+%	\pagenumbering{roman}
+	\pagenumbering{gobble}
 	
 	\begin{center}
 		\section*{ABSTRACT}
@@ -152,8 +158,8 @@ footskip=.25in]{geometry}
 			Author of research project & Žygimantas Benetis \\
 			Title of research project & Lithuanian Parliament Legislative Voting Analysis and Visualization\\
 			Supervisor & prof. dr. Tomas Krilavičius\\
-			Presented at & Vytautas Magnus university, Faculty of Informatics, Kaunas, 2018\\
-			Number of pages & 45\\
+			Presented at & Vytautas Magnus university, Faculty of Informatics, Kaunas, 2019\\
+			Number of pages & 46\\
 			Number of tables & 15\\
 			Number of figures & 12\\
 			Number of appendices & 4\\
@@ -163,9 +169,9 @@ footskip=.25in]{geometry}
 	
 	\vspace{5mm}
 	
-	In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. Due to nature of politics, a problem arises once citizens want to observe and evaluate parliament members work. Main output of parliament is their votes for various legislation. Voting data is publicly available through \gls{lrs} website. This project aims to visualize voting patterns and their changes. Another goal is to provide public access to results.
+	In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. Due to nature of politics, a problem arises once citizens want to observe and evaluate parliament members work. Main output of parliament is their votes for various legislation, meaning that analyzing voting data can provide actual insight about parliament representation. Voting data is publicly available through \gls{lrs} website. This project aims to visualize voting patterns and their changes. Another goal is to provide public access to results.
 	
-	In the project \gls{mds} and \gls{k-means} clustering are used to analyze voting patterns. Software to download, process and visualize  data is written with \gls{scala}.
+	In the project \gls{mds} \cite{BorgGroenen2005} and \gls{k-means} clustering are used to analyze voting patterns. Software to download, process and visualize  data is written with \gls{scala}. \Gls{mds} proved to be a decent way to visualize voting patterns due low amounts of data being lost. Splitting data into 91 days time chunks proved to be useful for understanding how single parliament member voting patterns change.
 	
 	\clearpage
 	
@@ -173,12 +179,26 @@ footskip=.25in]{geometry}
 		\section*{SANTRAUKA}
 	\end{center}
 	
-	
+	\noindent
+	\begin{center}
+		\begin{tabular}{L{4.5cm} L{8cm}}
+			\multicolumn{2}{c}{}\\ 
+			Tiriamojo darbo autorius & Žygimantas Benetis \\
+			Tiriamojo darbo pavadinimas & Lietuvos Parlamento balsavimo analizė ir vizualizavimas\\
+			Vadovas & prof. dr. Tomas Krilavičius\\
+			Darbas pristatytas & Vytauto Didžiojo Universitetas, Informatikos fakultetas, Kaunas, 2019\\
+			Puslapių skaičius & 46\\
+			Lentelių skaičius & 15\\
+			Paveikslų skaičius & 12\\
+			Priedų skaičius & 4\\
+			PĮ kodo eilučių kiekis & 6605\\
+		\end{tabular}
+	\end{center} 
 	\addcontentsline{toc}{section}{\numberline{}\kern-1.5emSANTRAUKA}
 	\begin{otherlanguage}{lithuanian}
-		Atstovus į Lietuvos Respublikos Seimą (LRS), kuriame yra apsvarstomi ir priimami nauji įstatymai, išrenka Lietuvos piliečiai. Tačiau iškyla problemų visuomenei norint iš arčiau stebėti ir įvertinti Seimo narių darbą. Viena pagrindinių Seimo narių pareigų ir yra balsavimas priimant įvairius naujus įstatymus ar jų pataisymus. Kiekvieno Seimo nario balsai yra viešai prieinami Lietuvos Respublikos Seimo internetinėje svetainėje. Šiuo darbu siekiama šią informaciją vizualizuoti, kad būtų galima stebėti balsavimo modelius ir jų pasikeitimus. Taip pat yra siekiama suteikti viešą prieigą prie šių rezultatų.
+		Atstovus į Lietuvos Respublikos Seimą (LRS), kuriame yra apsvarstomi ir priimami nauji įstatymai, išrenka Lietuvos piliečiai. Tačiau iškyla problemų visuomenei norint iš arčiau stebėti ir įvertinti Seimo narių darbą. Pagrindins Seimo narių kadencijos rezultatas - balsavimas už naujus teisės aktus ar jų pakeitimus. Tai reiškia kad analizuojant balsavimus galima geriau suprasti kaip seimo narys atlieka savo pareigas. Kiekvieno Seimo nario balsai yra viešai prieinami Lietuvos Respublikos Seimo internetinėje svetainėje. Šiuo darbu siekiama šią informaciją vizualizuoti, kad būtų galima stebėti balsų pasiskirstymų modelius ir jų pasikeitimus. Taip pat yra siekiama suteikti viešą prieigą prie šių rezultatų.
 		
-		Darbe, analizuojant balsavimo modelius, yra naudojamas daugiadimencinis skalių metodas ir k-reikšmių klasterizacija. Programinė įranga, duomenų atsisiuntimas ir vizualizavimas yra parašytas naudojantis Scala.
+		Darbe, analizuojant balsavimo modelius, yra naudojamas daugiamačių skalių metodas ir k-vidurkių klasterizacija. Programinė įranga, duomenų atsisiuntimas ir vizualizavimas yra parašytas naudojantis Scala. Patvirtinta jog su \gls{mds} galima atvaizduoti balsavimų pasiskirstymus dėl mažo kiekio duomenų praradimo po metodo panaudojimo. Duomenų padalinimas į laiko gabalus po 91-ną dieną buvo naudingas. Tai leido geriau suprasti kaip vieno ar kelių parlamento narių balsavimų pasiskirstymai keičiasi.
 		
 	\end{otherlanguage}
 	
@@ -205,7 +225,7 @@ footskip=.25in]{geometry}
 	
 	In Republic of Lithuania, public elects their representatives to a parliament in which new legislation is considered. By this election each citizen delegates specifics of legislation process to their representatives so they don't have to actively participate in the process.
 	
-	However, a problem arises once citizen wants to validate what his representative has been doing. Single term of office involves thousands of complicated laws and votes as seen in table \ref{tab:data_statistics}. To analyze everything becomes almost an impossible task for a single citizen who is out of the loop. 
+	However, a problem arises once citizen wants to validate what his representative has been doing. Single term of office involves thousands of complicated laws. This statistic can be observed in table \ref{tab:data_statistics}, as there were $3933006$ votes cast in total during $8$ terms of office. To analyze everything becomes almost an impossible task for a single citizen who is out of the loop. 
 	
 	To make it easier there are journalists, politologists and other personas who review new legislation, current issues. Delegates themselves also do press conferences, debates where they state their intentions, comment on their actions. However, this requires citizens to trust that journalists and delegates only state truth, don't omit important information and don't have other hidden agendas. Study done about intrinsic honesty showed that the more society is corrupt - the more people lie in a simple dice game. This applies to politicians too and citizens trust in parliament is relatively low.  Therefore, anything that can be done to better observe representatives is useful.
 	
@@ -244,6 +264,7 @@ footskip=.25in]{geometry}
 	\noindent
 	Table \ref{tab:term_of_office} contains term of office table structure.
 	\begin{center}
+		\captionof{table}{Term of office table structure}
 		\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -254,8 +275,7 @@ footskip=.25in]{geometry}
 			data\_nuo & date\_from & date not null & Date when term of office begins \\ 
 			data\_iki & date\_to & default null & Date when term of office ends \\
 			\hline
-		\end{tabular}
-		\captionof{table}{Term of office table structure} \label{tab:term_of_office}
+		\end{tabular} \label{tab:term_of_office}
 	\end{center}
 	
 	\hfill
@@ -264,6 +284,7 @@ footskip=.25in]{geometry}
 	\noindent
 	Table \ref{tab:sessions} contains parliament sessions table structure.
 	\begin{center}
+		\captionof{table}{Parliament session table structure}
 		\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -276,15 +297,16 @@ footskip=.25in]{geometry}
 			data\_nuo & date\_from & date not null & Date when session begins \\
 			data\_iki & date\_to & date default null & Date when session ends. Current session doesn't have this value set. \\
 			\hline
-		\end{tabular}
-		\captionof{table}{Parliament session table structure} \label{tab:sessions}
+		\end{tabular} \label{tab:sessions}
 	\end{center}
 	
-	\hfill
+	\clearpage
 	
 	\noindent
 	Table \ref{tab:plenary} contains parliament plenaries table structure.
 	\begin{center}
+		
+		\captionof{table}{Plenary table structure}
 		\begin{tabular}{L{3cm} L{3cm} L{2.2cm} L{3.8cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -298,14 +320,15 @@ footskip=.25in]{geometry}
 			pabaiga & time\_finish & datetime default null & Plenary ending time. Some plenaries are not yet finished and some entries don't include times at all \\
 			\hline
 		\end{tabular}
-		\captionof{table}{Plenary table structure} \label{tab:plenary}
+	 \label{tab:plenary}
 	\end{center}
 	
-	\hfill
+	\clearpage
 	
 	\noindent
 	Table \ref{tab:parliament_member} contains parliament member table structure.
 	\begin{center}
+		\captionof{table}{Parliament member table structure}
 		\begin{tabular}{L{2.5cm} L{4cm} L{2.2cm} L{3.3cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -326,14 +349,15 @@ footskip=.25in]{geometry}
 			- &	faction\_id & int(11) not null & Faction id \\
 			\hline
 		\end{tabular}
-		\captionof{table}{Parliament member table structure} \label{tab:parliament_member}
+	 \label{tab:parliament_member}
 	\end{center}
 	
-	\hfill
+	\clearpage
 	
 	\noindent
 	Table \ref{tab:agenda_question} contains agenda question table structure.
 	\begin{center}
+		\captionof{table}{Agenda question table structure} \label{tab:agenda_question}
 		\begin{tabular}{L{3cm} L{4.2cm} L{3cm} L{2.5cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -355,14 +379,14 @@ footskip=.25in]{geometry}
 			- & plenary\_id & int(11) not null & Plenary id\\			                                    
 			\hline
 		\end{tabular}
-		\captionof{table}{Agenda question table structure} \label{tab:agenda_question}
 	\end{center}
 	
-	\hfill
+	\clearpage
 	
 	\noindent
 	Table \ref{tab:plenary_question} contains plenary question table structure.
 	\begin{center}
+		\captionof{table}{Plenary question table structure}
 		\begin{tabular}{L{3cm} L{4.2cm} L{3cm} L{2.5cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -379,7 +403,7 @@ footskip=.25in]{geometry}
 			- & plenary\_id & int(11) not null & Plenary id\\				                                    
 			\hline
 		\end{tabular}
-		\captionof{table}{Plenary question table structure} \label{tab:plenary_question}
+		 \label{tab:plenary_question}
 	\end{center}
 	
 	\hfill
@@ -387,6 +411,7 @@ footskip=.25in]{geometry}
 	\noindent
 	Table \ref{tab:discussion_events} contains discussion event table structure.
 	\begin{center}
+		\captionof{table}{Discussion event table structure}
 		\begin{tabular}{L{3cm} L{4.2cm} L{3cm} L{2.5cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -401,14 +426,15 @@ footskip=.25in]{geometry}
 			- & plenary\_id & int(11) not null & Plenary id\\				                                    
 			\hline
 		\end{tabular}
-		\captionof{table}{Discussion event table structure} \label{tab:discussion_events}
+		 \label{tab:discussion_events}
 	\end{center}
 	
-	\hfill
+	\clearpage
 	
 	\noindent
 	Table \ref{tab:vote} contains vote table structure.
 	\begin{center}
+		\captionof{table}{Votes table structure} \label{tab:vote}
 		\begin{tabular}{L{3cm} L{4.2cm} L{3cm} L{2.5cm}}
 			\multicolumn{4}{c}{}\\ 
 			\hline
@@ -434,7 +460,6 @@ footskip=.25in]{geometry}
 			- & plenary\_id & int(11) not null & Plenary id\\				                                    
 			\hline
 		\end{tabular}
-		\captionof{table}{Votes table structure} \label{tab:vote}
 	\end{center}
 	
 	\hfill
@@ -507,6 +532,7 @@ footskip=.25in]{geometry}
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{Functional requirements for \gls{atviras_seimas}} 
 		\begin{tabular}{L{8cm} C{1cm} C{2cm}}
 			\multicolumn{3}{c}{}\\ 
 			\hline
@@ -522,7 +548,7 @@ footskip=.25in]{geometry}
 			Automatically compute data with http query &  & \checkmark \\
 			\hline
 		\end{tabular}
-		\captionof{table}{Functional requirements for \gls{atviras_seimas}} \label{tab:system_features}
+		\label{tab:system_features}
 	\end{center}
 	
 	\hfill
@@ -559,24 +585,26 @@ footskip=.25in]{geometry}
 	
 	\glspl{mockup} are created for desktop size application with \gls{drawio} diagramming tool. These mockups show main user interaction flow for the application.
 	
-	Mockups can be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}.
+	Mockups can be viewed in figures \ref{fig:frontend_mockup} and \ref{fig:frontend_mockup_2}. In figure \ref{fig:frontend_mockup} it is visible that  when user clicks landing page button, user is redirected to second screen with two tabs. Tab content can be visible together with filter controls. Clicking on tabs results into switching to another tab and can be seen on figure \ref{fig:frontend_mockup_2}. 
+	
+	Tab content in figure \ref{fig:frontend_mockup} will include 2D graph showing \acrfull{mds} results together with graph filter controls and faction list colors. Faction list will act as an legend for colors on the graph. Tab content in figure \ref{fig:frontend_mockup_2} will show \acrshort{k-means} results projected on previously calculated \acrshort{mds} coordinates.
 	
 	\begin{figure}[H]	
 		\centering
-		\includegraphics[width=9.5cm]{images/frontend_mockup_crop_1.png}
+		\includegraphics[width=11.5cm]{images/frontend_mockup_crop_1.png}
 		\caption{Mockup of \gls{atviras_seimas} first screen}
 		\label{fig:frontend_mockup}
 	\end{figure}
 	
 	\begin{figure}[H]	
 		\centering
-		\includegraphics[width=9.5cm]{images/frontend_mockup_crop_2.png}
+		\includegraphics[width=11.5cm]{images/frontend_mockup_crop_2.png}
 		\caption{Mockup of \gls{atviras_seimas} second screen}
 		\label{fig:frontend_mockup_2}
 	\end{figure}
 
 	\subsubsection{\Gls{scalajs} and \gls{react}}
-	\Gls{scalajs} is used to develop client facing part of software. As mentioned before, this enables types and common functions sharing between server and client part. Since \gls{scalajs} compiles to \gls{javascript}, all DOM \acrshort{api} is available to use within \Gls{scala}. For better library support and declarative style of development \gls{react} framework is used. 
+	\Gls{scalajs} is used to develop frontend part of software. As mentioned before, this enables types and common functions sharing between server and client part. Since \gls{scalajs} compiles to \gls{javascript}, all DOM \acrshort{api} is available to use within \Gls{scala}. For better library support and declarative style of development \gls{react} framework is used. 
 	
 	\subsubsection{Scatter plot}
 	
@@ -595,7 +623,7 @@ footskip=.25in]{geometry}
 		\hfill
 		\subfloat[Data filter 2]{\includegraphics[width=0.4\textwidth]{images/filter2}\label{fig:f2}}
 		\hfill
-		\caption{Figure 4: Data filters}
+		\caption{Data filters}
 	\end{figure}
 	
 	\clearpage
@@ -635,6 +663,7 @@ footskip=.25in]{geometry}
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{Statistics of downloaded data}
 		\begin{tabular}{L{5cm} R{3cm}}
 			\multicolumn{2}{c}{}\\ 
 			\hline
@@ -649,8 +678,7 @@ footskip=.25in]{geometry}
 			Plenary questions (2012-) & 15108\\
 			Discussion events (2007-) & 361996\\
 			\hline
-		\end{tabular}
-		\captionof{table}{Statistics of downloaded data} \label{tab:data_statistics}
+		\end{tabular} \label{tab:data_statistics}
 	\end{center}
 	
 	
@@ -658,12 +686,13 @@ footskip=.25in]{geometry}
 	
 	\subsection{Encoding of data} 
 	
-	To use scientific methods data needs to be prepared for them. Two methods: \textit{\acrshort{mds}} and \gls{k-means} need distances between pairs or training rows to compare parliament members to each other. This means that to compare one member's to another some measure like \gls{euclidian} is needed to produce numerical difference between points. Vote outcomes in given data are categorical, meaning they need to be converted to numbers. Since authors in  \cite{vytautas_mick_magistrinis} tried few vote encoding for \acrshort{mds} and \gls{lrs} older data - this project will use different ones to capture broader scientific results. Data for experiments only includes current term, which start in 2016.
+	To use scientific methods, data needs to be prepared for them. Two methods: \textit{\acrshort{mds}} and \gls{k-means} need distances between pairs or training rows to compare parliament members to each other. This means that to compare one member's to another some measure like \gls{euclidian} is needed to produce numerical difference between points. Vote outcomes in given data are categorical, meaning they need to be converted to numbers. Since authors in  \cite{vytautas_mick_magistrinis} tried few vote encoding for \acrshort{mds} and \gls{lrs} older data - this project will use different ones to capture broader scientific results. Data for experiments only includes current term, which start in 2016.
 	
 	In table \ref{tab:vote_outcome_encoding} chosen voting outcomes encoding can be viewed. \textit{Encoding 1} straightforward scores are chosen. Voting abstain has negative score, because some legislature requires absolute majority to pass, therefore minority of parliament can block by abstaining. Did not vote is considered to be neutral, as some parliament members begin their term of office later and need to be assigned a score. \textit{Encoding 2} values are chosen more flexibly. Voting for and against are opposites, however voting abstain and not attending are neutral. This is to cover the case where members actually vote not to block specific vote, but don't have opinion on how to vote. \textit{Encoding 3} differs by having negative score for not voting at all. This is to cover the case where half or parliament members plus one is needed to pass certain laws, like changing constitution. This means that by not registering to vote you can actually vote against \cite{konstitucija}.
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{ Encoding of vote outcomes}
 		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
 			\multicolumn{2}{c}{}\\ 
 			\hline
@@ -673,8 +702,7 @@ footskip=.25in]{geometry}
 			Abstain & -1 & 0 & -1\\
 			Did not vote & 0 & 0 & -1\\
 			\hline
-		\end{tabular}
-		\captionof{table}{ Encoding of vote outcomes} \label{tab:vote_outcome_encoding}
+		\end{tabular} \label{tab:vote_outcome_encoding}
 	\end{center}
 	
 	Since factions are important part when viewing visualizations, they need to be consistent throughout graphs. Faction assigned colors can be viewed in figure 
@@ -696,6 +724,7 @@ footskip=.25in]{geometry}
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{ Proportion of variance for MDS}
 		\begin{tabular}{L{2cm} C{4cm}}
 			\multicolumn{2}{c}{}\\ 
 			\hline
@@ -704,8 +733,7 @@ footskip=.25in]{geometry}
 			E2 & 0.790 \\
 			E3 & 0.764 \\
 			\hline
-		\end{tabular}
-		\captionof{table}{ Proportion of variance for MDS} \label{tab:mds_performance]}
+		\end{tabular} \label{tab:mds_performance]}
 	\end{center} 
 	
 	\begin{figure}[!tbp]
@@ -768,6 +796,7 @@ footskip=.25in]{geometry}
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
 		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
 			\multicolumn{2}{c}{}\\ 
 			\hline
@@ -777,7 +806,6 @@ footskip=.25in]{geometry}
 			E3 & 854237 & 811270 \\
 			\hline
 		\end{tabular}
-		\captionof{table}{ Distortion for \gls{k-means} majority vs minority results} \label{tab:k_means_performance}
 	\end{center} 
 	
 	\begin{figure}[!tbp]
@@ -817,6 +845,7 @@ footskip=.25in]{geometry}
 	
 	\noindent
 	\begin{center}
+		\captionof{table}{ Distortion for \gls{k-means} secret groups results} \label{tab:k_means_performance_secret}
 		\begin{tabular}{L{3cm} C{2cm} C{2cm} C{2cm}}
 			\multicolumn{2}{c}{}\\ 
 			\hline
@@ -827,7 +856,6 @@ footskip=.25in]{geometry}
 			
 			\hline
 		\end{tabular}
-		\captionof{table}{ Distortion for \gls{k-means} secret groups results} \label{tab:k_means_performance_secret}
 	\end{center} 
 	\begin{center}
 			\begin{tabular}{llc}
@@ -921,23 +949,36 @@ footskip=.25in]{geometry}
 	
 	\clearpage
 	
-	\subsection{Results and conclusions}
+	\subsection{Results}
+	
+	\begin{enumerate}
+		\item Literature analysis was done to find out similar research to this project's topic.
+		\item Data semantics and structure of open data \acrshort{api} were reviewed.
+		\item Problem and method analysis were done to write in better detail about the problem and its goals.
+		\item Data statistics were counted to understand size of the data set.
+		\item Experiments were done with \acrshort{mds} and \acrshort{k-means} to tweak hyper parameters.
+		\item Visualizations were created according to research results.
+		\item Software to serve \acrshort{api} requests and process the data according to research done was developed.
+		\item Custom components, scatter plot and data filter, were  specifically developed to visualize data.
+		\item User interface was designed and developed.
+		\item Software was deployed to data center's virtual server and made available to public.
+	\end{enumerate}
+	
+	\clearpage
+	
+	\subsection{Conclusions}
 	
 	
-	\begin{itemize}
+	\begin{enumerate}
 		\item Confirmed that \acrfull{mds} works well to visualize voting patterns. Reason is probably due ideology behind parliament member choices as stated by \cite{poole_2005}.
 		\item Splitting voting data into fixed periods and analyzing them against each other can give insight if certain members will change political faction due their voting patterns becoming different from their faction.
 		\item Using \gls{k-means} on voting patterns data can roughly classify majority from minority giving insights on possible future alliances.
 		\item \gls{k-means} can discern interesting results how politicians are grouped by their votes, especially highlighting few different voters from the majority of specific faction.
 		\item \gls{k-means} can be quite accurate to help visualize specific voting patterns with specific amount of clusters. Secret factions cannot be seen by simple glimpse, but by deeper analysis some smaller groups in factions can be found. Especially splitting members who take other positions from their faction voting pattern.
-		\item Projecting \acrshort{k-means} data on \acrshort{mds} is a great way to visualize clusters of member voting patterns.
-		\item \gls{scala} ability to compile to both \gls{jvm} and \gls{javascript} proved useful. This is due messaging types between server and client.
-		\item Creating scatter plot library from scratch gives more flexibility to implement features needed.
-		\item \gls{react} enabled to write data filters and other components faster as code can be written in declarative manner.
-		\item \gls{scala} powerful type system enabled to write applications without null type errors, enabled to write better parser for downloaded data, thus improving development time significantly. 
+		\item \gls{scala} ability to compile to both \gls{jvm} and \gls{javascript} proved useful. This is due \acrshort{rpc} being done with help of macros. It enabled shared data types between server and client.
 		
 		
-	\end{itemize}
+	\end{enumerate}
 	
 	\clearpage
 	
